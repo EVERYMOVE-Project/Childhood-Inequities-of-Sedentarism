@@ -116,7 +116,6 @@ rii_sedentarism_clase <- rii_sedentarism_overall_clase %>%
   mutate(exp="RII Social Class") %>% 
   rename(est = rii, infci=rii_infci, supci=rii_supci, strata=sexo)
 save(rii_sedentarism_clase, file = "Datasets/clase_tr_2/rii_sedentarism.RData")
-clipr::write_clip(rii_sedentarism_clase)
 
 #### Slope Index of Inequality (SII) ####
 # Tells us the absolute difference in prevalence of sedentarism between the
@@ -214,25 +213,19 @@ sii_sedentarism_clase <- sii_sedentarism_overall_clase %>%
   mutate(exp="SII Social Class") %>% 
   rename(est = sii, infci = sii_infci, supci = sii_supci, strata = sexo)
 sii_sedentarism_clase
-clipr::write_clip(sii_sedentarism_clase)
 save(sii_sedentarism_clase, file = "Datasets/clase_tr_2/sii_sedentarism_clase.RData")
 
 #### Databases of RII, SII, Sex Inequality ####
 inequalities_sedentarism <- bind_rows(
   rii_sedentarism_clase %>% mutate(exp = "RII Social Class"),
-  rbind(sii_sedentarism_clase) %>% mutate(exp = "SII Social Class"),
-  rbind(sex_sedentarism_all) %>% mutate(exp = "Sex Inequality Adjusted by Age"),
-  rbind(sex_sedentarism_class) %>% mutate(exp = "Sex Inequality stratified by Social Class Adjusted by Age"),
-  rbind(sex_sedentarism_class_3) %>% mutate(exp = "Sex Inequality stratified by Social Class 3 Levels Adjusted by Age"),
-  rbind(sex_sedentarism_geo) %>% mutate(exp = "Sex Inequality stratified by Region Adjusted by Age"),
-  rbind(sex_sedentarism_nationality) %>% mutate(exp = "Sex Inequality stratified by Nationality Adjusted by Age"))
-print(inequalities_sedentarism, n = 90)
+  rbind(sii_sedentarism_clase) %>% mutate(exp = "SII Social Class"))
+print(inequalities_sedentarism, n = 30)
   
 ## database of all regression
-save(inequalities_sedentarism, file = "Datasets/inequalities_sedentarism.RData")
+save(inequalities_sedentarism, file = "Datasets/clase_tr_2/inequalities_sedentarism.RData")
 
 #### Visualization of RII in Sedentarism ####
-load("Datasets/inequalities_sedentarism.RData")
+load("Datasets/clase_tr_2/inequalities_sedentarism.RData")
 
 # Define theme()
 theme_inequalities <- function() {
@@ -265,17 +258,9 @@ theme_inequalities <- function() {
 
 ## Order variable levels for RII and SII
 inequalities_sedentarism$strata <- factor(inequalities_sedentarism$strata, 
-                                          levels = c("Overall", "Girls", "Boys",
-                                                     "Class I", "Class II", "Class III", "Class IV", "Class V", "Class VI",
-                                                     "3-Class I", "3-Class II", "3-Class III", 
-                                                     "Urban", "Semi-urban", "Rural",
-                                                     "Spanish", "Foreign"))
+                                          levels = c("Overall", "Girls", "Boys"))
 inequalities_sedentarism$exp <- factor(inequalities_sedentarism$exp, 
-                                         levels = c("RII Social Class", "SII Social Class", "Sex Inequality Adjusted by Age",
-                                                    "Sex Inequality stratified by Social Class Adjusted by Age",
-                                                    "Sex Inequality stratified by Social Class 3 Levels Adjusted by Age",
-                                                    "Sex Inequality stratified by Region Adjusted by Age",
-                                                    "Sex Inequality stratified by Nationality Adjusted by Age"))
+                                         levels = c("RII Social Class", "SII Social Class"))
 # RII Social Class per Sex
 inequalities_sedentarism$encuesta <- as.numeric(as.character(inequalities_sedentarism$encuesta))
 
@@ -326,7 +311,7 @@ fig_rii_class <- inequalities_sedentarism %>%
   ) +
   theme_inequalities()
 fig_rii_class
-ggsave("Figures/17-12/fig_rii_class.png", width = 4000, height = 2200, dpi=300, units = "px")
+ggsave("Figures/clase_tr_2/fig_rii_class.png", width = 4000, height = 2200, dpi=300, units = "px")
 
 ## new rii figure
 fig_rii_class_sex <- inequalities_sedentarism %>%
@@ -340,7 +325,7 @@ fig_rii_class_sex <- inequalities_sedentarism %>%
     aes(label = round(est, 2)),
     vjust = -1.35,                # vertical adjustment (move slightly above points)
     nudge_x = 1,
-    size = 4,
+    size = 3,
     fontface = "bold",
     show.legend = FALSE
   ) +
@@ -354,7 +339,7 @@ fig_rii_class_sex <- inequalities_sedentarism %>%
   scale_y_continuous(
     trans = "log",
     breaks = c(1.0, 5.0, 10),
-    limits = c(0.75, 11)
+    limits = c(0.75, 12)
   ) +
   scale_x_continuous(
     breaks = c(2003, 2006, 2011, 2017, 2023)
@@ -371,7 +356,7 @@ fig_rii_class_sex <- inequalities_sedentarism %>%
     axis.title.y = element_text(size = 12)
   )
 fig_rii_class_sex
-ggsave("Figures/17-12/fig_rii_class_sex.png", width = 4000, height = 2200, dpi=300, units = "px")
+ggsave("Figures/clase_tr_2/fig_rii_class_sex.png", width = 4000, height = 2200, dpi=300, units = "px")
 
 #### Visualization of SII in Sedentarism ####
 # SII Social Class by Sex
@@ -410,7 +395,7 @@ fig_sii_class <- inequalities_sedentarism %>%
   ) +
   theme_inequalities()
 fig_sii_class
-ggsave("Figures/17-12/fig_sii_class.png", width = 4000, height = 2200, dpi=300, units = "px")
+ggsave("Figures/clase_tr_2/fig_sii_class.png", width = 4000, height = 2200, dpi=300, units = "px")
 
 # SII Social Class by Sex
 ## new sii figure
@@ -437,7 +422,7 @@ fig_sii_class_sex <- inequalities_sedentarism %>%
   ) +
   scale_y_continuous(
     breaks = c(-5.0, 1.0, 5.0, 10, 15, 20, 25),
-    limits = c(-0.75, 25)
+    limits = c(-0.75, 30)
   ) +
   scale_x_continuous(
     breaks = c(2003, 2006, 2011, 2017, 2023)
@@ -454,7 +439,7 @@ fig_sii_class_sex <- inequalities_sedentarism %>%
     axis.title.y = element_text(size = 12)
   )
 fig_sii_class_sex
-ggsave("Figures/17-12/fig_sii_class_sex.png", width = 4000, height = 2200, dpi=300, units = "px")
+ggsave("Figures/clase_tr_2/fig_sii_class_sex.png", width = 4000, height = 2200, dpi=300, units = "px")
 
 # Original Figure - 3 Figures
 fig_sii_separate_class <- inequalities_sedentarism %>% 
@@ -490,7 +475,7 @@ fig_sii_separate_class <- inequalities_sedentarism %>%
   ) +
   theme_inequalities()
 fig_sii_separate_class
-ggsave("Figures/17-12/fig_sii_separate_class.png", width = 4000, height = 2200, dpi=300, units = "px")
+ggsave("Figures/clase_tr_2/fig_sii_separate_class.png", width = 4000, height = 2200, dpi=300, units = "px")
 
 #### RII and SII Figures Together ####
 fig_sii_rii <- inequalities_sedentarism %>% 
@@ -518,7 +503,7 @@ fig_sii_rii <- inequalities_sedentarism %>%
   scale_fill_brewer(palette = "Set2") +
   theme_inequalities()
 fig_sii_rii
-ggsave("Figures/17-12/fig_sii_rii.png", width = 4000, height = 2200, dpi=300, units = "px")
+ggsave("Figures/clase_tr_2/fig_sii_rii.png", width = 4000, height = 2200, dpi=300, units = "px")
 
 #### RII in Sedentarism by CCAA, Survey and Sex (Multi-level) ####
 # This model estimates the association between social class and sedentarism for each year, while:
