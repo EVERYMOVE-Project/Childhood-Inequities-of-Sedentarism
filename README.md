@@ -1,4 +1,3 @@
-# Childhood-Inequities-of-Sedentarism
 # Childhood Inequities of Sedentarism
 
 ## Overview
