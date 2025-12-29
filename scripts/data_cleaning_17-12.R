@@ -1041,19 +1041,18 @@ print(na_table_2023, n = 21)
 ense_list <- list(ense2003_rename, ense2006_rename, ense2011_rename, ense2017_rename, ense2023_rename)
 
 # join all datasets together
-joined <- bind_rows(ense_list)
-View(joined)
+joined <- bind_rows(ense_list) ## 0 to 15 without dropping NAs
 save(joined, file = "joined.RData")
+
+joined_clean <- joined %>% ## 0 to 15 dropping NAs
+  drop_na(edad, sexo, nacionalidad, sedentarismo, clase, ccaa, urb_rur)
+save(joined_clean, file = "joined_clean.RData")
 
 joined_6 <- joined %>%  ## 6 to 15 without dropping NAs
   filter(edad >= 6)
 save(joined_6, file = "joined_6.RData")
 
-# with complete case analysis
-joined_clean <- joined %>% drop_na(edad, sexo, nacionalidad, sedentarismo, clase, ccaa, urb_rur)
-save(joined_clean, file = "joined_clean.RData")
-
-joined_clean_6 <- joined_6 %>% 
+joined_clean_6 <- joined_6 %>%  ## 6 to 15 dropping NAs
   drop_na(edad, sexo, nacionalidad, sedentarismo, clase, ccaa, urb_rur)
 
 # clean those 0 to 15
