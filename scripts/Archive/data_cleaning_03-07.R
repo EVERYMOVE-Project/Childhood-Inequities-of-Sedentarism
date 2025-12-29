@@ -446,6 +446,7 @@ ense2003 <- ense2003 %>%
     clase = na_if(clase, 7),
     clase = na_if(clase, 9),
     clase = factor(clase, levels = 1:6, labels = clase_labels),
+    clase = relevel(clase, ref = "Class I"),
     clase_tr=cume_dist(as.numeric(clase)),
     
     # Municipality size
@@ -532,6 +533,7 @@ ense2006 <- ense2006 %>%
     # Occupation class
     clase = na_if(clase, 9),
     clase = factor(clase, levels = 1:6, labels = clase_labels),
+    clase = relevel(clase, ref = "Class I"),
     clase_tr=cume_dist(as.numeric(clase)),
     
     # Municipality size
@@ -579,6 +581,8 @@ ense2006 <- ense2006 %>%
     
     obesity = ifelse(imc == "Obesity", "Yes", ifelse(is.na(imc), NA, "No")),
     overweight = ifelse(imc == "Overweight", "Yes", ifelse(is.na(imc), NA, "No")),
+    obesity = factor(obesity, levels = c("No", "Yes")),
+    overweight = factor(overweight, levels = c("No", "Yes")),
     
     # Weight perception
     percep_peso_menor = na_if(as.numeric(percep_peso_menor), 9),
@@ -598,7 +602,7 @@ ense2006 <- ense2006 %>%
       sedentarismo == 1 ~ "Yes", # sedentary
       sedentarismo == 2 | sedentarismo == 3 | sedentarismo == 4 ~ "No" # not sedentary
     ),
-    sedentarismo = factor(sedentarismo, levels = c("Yes", "No")),
+    sedentarismo = factor(sedentarismo, levels = c("No", "Yes")),
     
     # Placeholder for relationship
     rel_con_menor = factor(rel_con_menor, levels = 1:7, labels = rel_con_menor_labels),
@@ -626,6 +630,7 @@ ense2006 <- ense2006 %>%
     adultos_hogar = as.numeric(adultos_hogar),
     menores_hogar = as.numeric(menores_hogar))
 View(ense2006)
+summary(ense2006$sedentarismo)
 ## ENSE 2011 ####
 ense2011 <- ense2011 %>% 
   mutate( 
@@ -658,6 +663,7 @@ ense2011 <- ense2011 %>%
     # Occupation class
     clase = na_if(clase, 9),
     clase = factor(clase, levels = 1:6, labels = clase_labels),
+    clase = relevel(clase, ref = "Class I"),
     clase_tr=cume_dist(as.numeric(clase)),
     
     # Municipality size
@@ -699,6 +705,8 @@ ense2011 <- ense2011 %>%
     
     obesity = ifelse(imc == "Obesity", "Yes", ifelse(is.na(imc), NA, "No")),
     overweight = ifelse(imc == "Overweight", "Yes", ifelse(is.na(imc), NA, "No")),
+    obesity = factor(obesity, levels = c("No", "Yes")),
+    overweight = factor(overweight, levels = c("No", "Yes")),
     
     # Weight perception
     percep_peso_menor = case_when(
@@ -782,6 +790,7 @@ ense2017 <- ense2017 %>%
     # Occupation class
     clase = na_if(clase, 9),
     clase = factor(clase, levels = 1:6, labels = clase_labels),
+    clase = relevel(clase, ref = "Class I"),
     clase_tr=cume_dist(as.numeric(clase)),
     
     # Municipality size
@@ -830,6 +839,8 @@ ense2017 <- ense2017 %>%
     
     obesity = ifelse(imc == "Obesity", "Yes", ifelse(is.na(imc), NA, "No")),
     overweight = ifelse(imc == "Overweight", "Yes", ifelse(is.na(imc), NA, "No")),
+    obesity = factor(obesity, levels = c("No", "Yes")),
+    overweight = factor(overweight, levels = c("No", "Yes")),
     
     # Weight perception
     percep_peso_menor = case_when(
@@ -934,6 +945,7 @@ ense2023 <- ense2023 %>%
       TRUE ~ as.numeric(clase)
     ),
     clase = factor(clase, levels = 1:6, labels = clase_labels),
+    clase = relevel(clase, ref = "Class I"),
     clase_tr = cume_dist(as.numeric(clase)),
     
     # Municipality size
@@ -982,6 +994,8 @@ ense2023 <- ense2023 %>%
     
     obesity = ifelse(imc == "Obesity", "Yes", ifelse(is.na(imc), NA, "No")),
     overweight = ifelse(imc == "Overweight", "Yes", ifelse(is.na(imc), NA, "No")),
+    obesity = factor(obesity, levels = c("No", "Yes")),
+    overweight = factor(overweight, levels = c("No", "Yes")),
     
     # Weight perception
     percep_peso_menor = case_when(
@@ -1048,4 +1062,5 @@ View(ense2023)
 ense_list <- list(ense2003, ense2006, ense2011, ense2017, ense2023)
 joined_ense_menores <- bind_rows(ense_list)
 View(joined_ense_menores)
-save(dta, file = "joined_ense_menores.RData")
+save(joined_ense_menores, file = "joined_ense_menores.RData")
+
