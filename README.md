@@ -110,8 +110,9 @@ Supporting files used across analyses, including:
 
 ## Data Access and Ethics
 
-INE microdata are subject to data access agreements.  
-Users wishing to reproduce the analysis must obtain the data directly from the **Instituto Nacional de Estadística (INE)**.
+- INE microdata are subject to data access agreements.  
+- Users wishing to reproduce the analysis must obtain the data directly from the **Instituto Nacional de Estadística (INE)**.
+
 ---
 
 ## Contact
