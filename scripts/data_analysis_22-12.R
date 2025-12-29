@@ -1,4 +1,8 @@
-# Data Analysis - RII and SII
+## Author: Diana Juanita Mora
+## Proyect: Childhood Inequities of Sedentarism
+## Script: Data Analysis - RII and SII
+## Finalized: 28th of July 2025
+## Edited: 29th of December 2025
 
 ## Load libraries
 library(tidyverse)
