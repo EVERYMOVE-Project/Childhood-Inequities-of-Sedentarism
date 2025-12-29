@@ -6,6 +6,7 @@
 
 ## Load libraries
 library(tidyverse)
+library(conflicted)
 conflicts_prefer(dplyr::select)
 conflicts_prefer(dplyr::filter)
 library(scales)
@@ -18,181 +19,123 @@ library(sjPlot)
 
 setwd("~/UAH/PhD Documents/INEdatos/Analysis")
 
-## Command to remove all lists from environment
-rm(list=ls())
-
 # Databases: ####
-### ENSE 2001 - INFANT01.txt
 ### ENSE 2003 - INFANT03.txt, HOGAR03.txt, ADULTO03.txt
 ### ENSE 2006 - INFANT06.txt, HOGAR06.txt, ADULTO06.txt
 ### ENSE 2012 - INFANT12.txt, HOGAR12.txt, MicrodatoAdultos.txt
 ### ENSE 2017 - MICRODAT.CM.txt, MICRODAT.CH.txt, MICRODAT.CA.txt
 ### ESDE 2023 - INFANT23.RData, HOGAR23.RData, ADULTOS23.RData
 
-## ENSE 2001 ####
-# Define start and end positions
-# Define column widths and names based on documentation
-start <- c(1, 5, 10, 12, 14, 17, 18, 19, 21, 24, 28, 31, 32, 33, 35, 
-           37, 38, 40, 42, 92, 93, 97, 102, 104, 107, 122, 128, 130, 
-           153, 154, 156, 179, 180, 182, 183, 227,228, 230, 232, 234, 
-           237, 239, 242, 245, 247, 249, 251, 253, 263,264, 273, 274, 
-           275, 278, 280, 282, 285, 287, 362, 365, 382, 385,388, 422, 
-           439, 441, 443, 446, 448, 450, 453, 455, 456, 459, 461,463)
-end <- c( 4, 9, 11, 13, 16, 17, 18, 
-          20, 23, 27, 28, 31, 32, 34, 36, 37, 39, 41, 91, 92, 96, 101, 103,
-          106, 110, 127, 129, 152, 153, 155, 178, 181, 181, 226, 226, 229,
-          231, 233, 236, 238, 241, 244, 246, 248, 250, 252, 262, 263, 272,
-          273, 274, 277, 279, 281, 284, 286, 293, 363, 378, 384, 387, 388,
-          438, 440, 442, 445, 447, 449, 452, 454, 455, 458, 460, 462, 464)
-names_menores2001 <- c("n_estudio", "n_cuestionario", "ccaa", "provincia", "municipio", "tam_habitat", "area_metro", 
-                       "distrito", "seccion", "n_entrevistador", "submuestra_1", "cuestionario_infantil",
-                       "p32_precod", "edad_meses_1", "edad_anos_1", "p37_precod", "edad_entrevistado",
-                       "n_personas_vivienda", "p2_p4_familia", "p5_precod", "p5a_edad_dedicacion",
-                       "p5b_p6a_precod", "p7_precod", "p8_p10_precod", "p10a_dolencia_10dias",
-                       "p12_p13_precod", "p13a_dias_lim_act_libre", "p13a_precod_rest", "p14_precod",
-                       "p14a_dias_act_principal", "p14b_precod", "p15_precod", "p15a_dias_en_cama",
-                       "p16_precod", "p16a_b_precod", "p17_precod", "p17a_anos", "p17a_meses",
-                       "p18_n_veces_consulta", "p18b_precod", "p18c_especialidad", "p18d_tiempo_domicilio",
-                       "p18e_tiempo_espera", "p18f_p19_precod", "p19a_dentista_veces", "p20_anos",
-                       "p20_meses", "p21_precod", "p22_precod", "p23_precod", "p23a_precod", "p24a_n_hospital",
-                       "p24b_dias_ingreso", "p24c_d_precod", "p24e_espera_meses", "p24f_p25_precod",
-                       "p25a_urgencias_veces", "p25b_p27_precod", "p38_horas_sueno", "p40_p43a_precod",
-                       "p45_peso", "p46_estatura", "p46a_precod", "p52_p57_precod", "p57a_estudios_entrevistado",
-                       "p58_p58a_precod", "p59_ocupacion", "p60_p60a_precod", "p61_rama_empresa",
-                       "p62_p64_precod", "p64a_estudios_cabeza", "p65_precod", "p66_ocupacion_cabeza",
-                       "p67_p67a_precod", "p67b_rama_empresa", "p69_p70_precod"
-)
-
-# Calculate widths
-width_menores2001 <- end - start + 1
-menores2001 <- read_fwf("~/UAH/PhD Documents/INEdatos/2001ENSE/INFANT2001/INFANT01.txt", col_positions = fwf_widths(widths = width_menores2001, col_names = names_menores2001))
-rm(names_menores2001, width_menores2001, start, end)
-
 ## ENSE 2003 ####
 ## menores
-menores2003 <- read_excel("~/UAH/PhD Documents/INEdatos/2003ENSE/Infantil-ENSE-2003/codebook_menores2003.xlsx")
+menores2003 <- read_excel("~/UAH/PhD Documents/INEdatos/Analysis/Raw Data/2003ENSE/Infantil-ENSE-2003/codebook_menores2003.xlsx")
 names_menores2003 <- menores2003$VARIABLE
 width_menores2003  <- menores2003$LONGITUD %>% as.numeric
 
-menores2003 <- read_fwf("~/UAH/PhD Documents/INEdatos/2003ENSE/Infantil-ENSE-2003/INFANT03.txt", col_positions = fwf_widths(widths = width_menores2003, col_names = names_menores2003))
-#saveRDS(menores2003, "~/UAH/PhD Documents/INEdatos/2003ENSE/menores2003.rds")
+menores2003 <- read_fwf("~/UAH/PhD Documents/INEdatos/Analysis/Raw Data/2003ENSE/Infantil-ENSE-2003/INFANT03.txt", col_positions = fwf_widths(widths = width_menores2003, col_names = names_menores2003))
 rm(names_menores2003, width_menores2003)
 
 ## hogar
-hogar2003 <- read_excel("~/UAH/PhD Documents/INEdatos/2003ENSE/Hogar-ENSE-2003/codebook_hogar2003.xlsx")
+hogar2003 <- read_excel("~/UAH/PhD Documents/INEdatos/Analysis/Raw Data/2003ENSE/Hogar-ENSE-2003/codebook_hogar2003.xlsx")
 names_hogar2003 <- hogar2003$VARIABLE
 width_hogar2003  <- hogar2003$LONGITUD %>% as.numeric
 
-hogar2003 <- read_fwf("~/UAH/PhD Documents/INEdatos/2003ENSE/Hogar-ENSE-2003/HOGAR03.txt", col_positions = fwf_widths(widths = width_hogar2003, col_names = names_hogar2003))
-#saveRDS(hogar2003, "~/UAH/PhD Documents/INEdatos/2003ENSE/hogar2003.rds")
+hogar2003 <- read_fwf("~/UAH/PhD Documents/INEdatos/Analysis/Raw Data/2003ENSE/Hogar-ENSE-2003/HOGAR03.txt", col_positions = fwf_widths(widths = width_hogar2003, col_names = names_hogar2003))
 rm(names_hogar2003, width_hogar2003)
 
 ## adultos (16-18)
-adultos2003 <- read_excel("~/UAH/PhD Documents/INEdatos/2003ENSE/Adultos-ENSE-2003/codebook_adultos2003.xlsx")
+adultos2003 <- read_excel("~/UAH/PhD Documents/INEdatos/Analysis/Raw Data/2003ENSE/Adultos-ENSE-2003/codebook_adultos2003.xlsx")
 names_adultos2003 <- adultos2003$VARIABLE
 width_adultos2003  <- adultos2003$LONGITUD %>% as.numeric
 
-adultos2003 <- read_fwf("~/UAH/PhD Documents/INEdatos/2003ENSE/Adultos-ENSE-2003/ADULTO03.txt", col_positions = fwf_widths(widths = width_adultos2003, col_names = names_adultos2003))
-# saveRDS(adultos2003, "~/UAH/PhD Documents/INEdatos/2003ENSE/adultos2003.rds")
+adultos2003 <- read_fwf("~/UAH/PhD Documents/INEdatos/Analysis/Raw Data/2003ENSE/Adultos-ENSE-2003/ADULTO03.txt", col_positions = fwf_widths(widths = width_adultos2003, col_names = names_adultos2003))
 rm(names_adultos2003, width_adultos2003)
 
 ## ENSE 2006 ####
-menores2006 <- read_excel("~/UAH/PhD Documents/INEdatos/2006ENSE/Infantil-ENSE-2006/codebook_menores2006.xlsx")
+menores2006 <- read_excel("~/UAH/PhD Documents/INEdatos/Analysis/Raw Data/2006ENSE/Infantil-ENSE-2006/codebook_menores2006.xlsx")
 names_menores2006 <- menores2006$VARIABLE
 width_menores2006  <- menores2006$LONGITUD %>% as.numeric
 
-menores2006 <- read_fwf("~/UAH/PhD Documents/INEdatos/2006ENSE/Infantil-ENSE-2006/INFANT06.txt", col_positions = fwf_widths(widths = width_menores2006, col_names = names_menores2006))
-#saveRDS(menores2006, "~/UAH/PhD Documents/INEdatos/2006ENSE/menores2006.rds")
+menores2006 <- read_fwf("~/UAH/PhD Documents/INEdatos/Analysis/Raw Data/2006ENSE/Infantil-ENSE-2006/INFANT06.txt", col_positions = fwf_widths(widths = width_menores2006, col_names = names_menores2006))
 rm(names_menores2006, width_menores2006)
 
 ## hogar
-hogar2006 <- read_excel("~/UAH/PhD Documents/INEdatos/2006ENSE/Hogar-ENSE-2006/codebook_hogar2006.xlsx")
+hogar2006 <- read_excel("~/UAH/PhD Documents/INEdatos/Analysis/Raw Data/2006ENSE/Hogar-ENSE-2006/codebook_hogar2006.xlsx")
 names_hogar2006 <- hogar2006$VARIABLE
 width_hogar2006  <- hogar2006$LONGITUD %>% as.numeric
 
-hogar2006 <- read_fwf("~/UAH/PhD Documents/INEdatos/2006ENSE/Hogar-ENSE-2006/HOGAR06.txt", col_positions = fwf_widths(widths = width_hogar2006, col_names = names_hogar2006))
-#saveRDS(hogar2006, "~/UAH/PhD Documents/INEdatos/2006ENSE/hogar2006.rds")
+hogar2006 <- read_fwf("~/UAH/PhD Documents/INEdatos/Analysis/Raw Data/2006ENSE/Hogar-ENSE-2006/HOGAR06.txt", col_positions = fwf_widths(widths = width_hogar2006, col_names = names_hogar2006))
 rm(names_hogar2006, width_hogar2006)
 
 ## adultos (16-18)
-adultos2006 <- read_excel("~/UAH/PhD Documents/INEdatos/2006ENSE/Adulto-ENSE-2006/codebook_adultos2006.xlsx")
+adultos2006 <- read_excel("~/UAH/PhD Documents/INEdatos/Analysis/Raw Data/2006ENSE/Adulto-ENSE-2006/codebook_adultos2006.xlsx")
 names_adultos2006 <- adultos2006$VARIABLE
 width_adultos2006  <- adultos2006$LONGITUD %>% as.numeric
 
-adultos2006 <- read_fwf("~/UAH/PhD Documents/INEdatos/2006ENSE/Adulto-ENSE-2006/ADULTO06.txt", col_positions = fwf_widths(widths = width_adultos2006, col_names = names_adultos2006))
-#saveRDS(adultos2006, "~/UAH/PhD Documents/INEdatos/2006ENSE/adultos2006.rds")
+adultos2006 <- read_fwf("~/UAH/PhD Documents/INEdatos/Analysis/Raw Data/2006ENSE/Adulto-ENSE-2006/ADULTO06.txt", col_positions = fwf_widths(widths = width_adultos2006, col_names = names_adultos2006))
 rm(names_adultos2006, width_adultos2006)
 
 ## ENSE 2011 ####
-menores2012 <- read_excel("~/UAH/PhD Documents/INEdatos/2012ENSE/codebook_menores2011.xlsx")
+menores2012 <- read_excel("~/UAH/PhD Documents/INEdatos/Analysis/Raw Data/2012ENSE/codebook_menores2011.xlsx")
 names_menores2012 <- menores2012$VARIABLE
 width_menores2012  <- menores2012$LONGITUD %>% as.numeric
 
-menores2012 <- read_fwf("~/UAH/PhD Documents/INEdatos/2012ENSE/datos_ensalud12/INFANT12.txt", col_positions = fwf_widths(widths = width_menores2012, col_names = names_menores2012))
-#saveRDS(menores2012, "~/UAH/PhD Documents/INEdatos/2012ENSE/menores2012.rds")
+menores2012 <- read_fwf("~/UAH/PhD Documents/INEdatos/Analysis/Raw Data/2012ENSE/datos_ensalud12/INFANT12.txt", col_positions = fwf_widths(widths = width_menores2012, col_names = names_menores2012))
 rm(names_menores2012, width_menores2012)
 
 ## hogar
-hogar2012 <- read_excel("~/UAH/PhD Documents/INEdatos/2012ENSE/codebook_hogar2011.xlsx")
+hogar2012 <- read_excel("~/UAH/PhD Documents/INEdatos/Analysis/Raw Data/2012ENSE/codebook_hogar2011.xlsx")
 names_hogar2012 <- hogar2012$VARIABLE
 width_hogar2012  <- hogar2012$LONGITUD %>% as.numeric
 
-hogar2012 <- read_fwf("~/UAH/PhD Documents/INEdatos/2012ENSE/datos_ensalud12/HOGAR12.txt", col_positions = fwf_widths(widths = width_hogar2012, col_names = names_hogar2012))
-#saveRDS(hogar2012, "~/UAH/PhD Documents/INEdatos/2012ENSE/hogar2012.rds")
+hogar2012 <- read_fwf("~/UAH/PhD Documents/INEdatos/Analysis/Raw Data/2012ENSE/datos_ensalud12/HOGAR12.txt", col_positions = fwf_widths(widths = width_hogar2012, col_names = names_hogar2012))
 rm(names_hogar2012, width_hogar2012)
 
 ## adultos (16-18)
-adultos2011 <- read_excel("~/UAH/PhD Documents/INEdatos/2012ENSE/codebook_adultos2011.xlsx")
+adultos2011 <- read_excel("~/UAH/PhD Documents/INEdatos/Analysis/Raw Data/2012ENSE/codebook_adultos2011.xlsx")
 names_adultos2011 <- adultos2011$VARIABLE
 width_adultos2011  <- adultos2011$LONGITUD %>% as.numeric
 
-adultos2011 <- read_fwf("~/UAH/PhD Documents/INEdatos/2012ENSE/datos_ensalud12/ADULTO12.txt", col_positions = fwf_widths(widths = width_adultos2011, col_names = names_adultos2011))
-# saveRDS(adultos2011, "~/UAH/PhD Documents/INEdatos/2012ENSE/adultos2011.rds")
+adultos2011 <- read_fwf("~/UAH/PhD Documents/INEdatos/Analysis/Raw Data/2012ENSE/datos_ensalud12/ADULTO12.txt", col_positions = fwf_widths(widths = width_adultos2011, col_names = names_adultos2011))
 rm(names_adultos2011, width_adultos2011)
 
 ## ENSE 2017 ####
-menores2017 <- read_excel("~/UAH/PhD Documents/INEdatos/2017ENSE/codebook_menores2017.xlsx")
+menores2017 <- read_excel("~/UAH/PhD Documents/INEdatos/Analysis/Raw Data/2017ENSE/codebook_menores2017.xlsx")
 names_menores2017 <- menores2017$VARIABLE
 width_menores2017  <- menores2017$LONGITUD %>% as.numeric
 
-menores2017 <- read_fwf("~/UAH/PhD Documents/INEdatos/2017ENSE/Menores_ENSE17/MICRODAT.CM.txt", col_positions = fwf_widths(widths = width_menores2017, col_names = names_menores2017))
-#saveRDS(menores2017, "~/UAH/PhD Documents/INEdatos/2017ENSE/menores2017.rds")
+menores2017 <- read_fwf("~/UAH/PhD Documents/INEdatos/Analysis/Raw Data/2017ENSE/Menores_ENSE17/MICRODAT.CM.txt", col_positions = fwf_widths(widths = width_menores2017, col_names = names_menores2017))
 rm(names_menores2017, width_menores2017)
 
 ## hogar
-hogar2017 <- read_excel("~/UAH/PhD Documents/INEdatos/2017ENSE/codebook_hogar2017.xlsx")
+hogar2017 <- read_excel("~/UAH/PhD Documents/INEdatos/Analysis/Raw Data/2017ENSE/codebook_hogar2017.xlsx")
 names_hogar2017 <- hogar2017$VARIABLE
 width_hogar2017  <- hogar2017$LONGITUD %>% as.numeric
 
-hogar2017 <- read_fwf("~/UAH/PhD Documents/INEdatos/2017ENSE/HOGAR_ENSE17/MICRODAT.CH.txt", col_positions = fwf_widths(widths = width_hogar2017, col_names = names_hogar2017))
-#saveRDS(hogar2017, "~/UAH/PhD Documents/INEdatos/2017ENSE/hogar2017.rds")
+hogar2017 <- read_fwf("~/UAH/PhD Documents/INEdatos/Analysis/Raw Data/2017ENSE/HOGAR_ENSE17/MICRODAT.CH.txt", col_positions = fwf_widths(widths = width_hogar2017, col_names = names_hogar2017))
 rm(names_hogar2017, width_hogar2017)
 
 ## adultos (16-18)
-adultos2017 <- read_excel("~/UAH/PhD Documents/INEdatos/2017ENSE/codebook_adultos2017.xlsx")
+adultos2017 <- read_excel("~/UAH/PhD Documents/INEdatos/Analysis/Raw Data/2017ENSE/codebook_adultos2017.xlsx")
 names_adultos2017 <- adultos2017$VARIABLE
 width_adultos2017  <- adultos2017$LONGITUD %>% as.numeric
 
-adultos2017 <- read_fwf("~/UAH/PhD Documents/INEdatos/2017ENSE/Adultos_ENSE2017/MICRODAT.CA.txt", col_positions = fwf_widths(widths = width_adultos2017, col_names = names_adultos2017))
-# saveRDS(adultos2017, "~/UAH/PhD Documents/INEdatos/2017ENSE/adultos2017.rds")
+adultos2017 <- read_fwf("~/UAH/PhD Documents/INEdatos/Analysis/Raw Data/2017ENSE/Adultos_ENSE2017/MICRODAT.CA.txt", col_positions = fwf_widths(widths = width_adultos2017, col_names = names_adultos2017))
 rm(names_adultos2017, width_adultos2017)
 
 ## ENSE 2023 ####
 ## menores
-load("~/UAH/PhD Documents/INEdatos/2023ESdE/ESdEmenor_2023/R/INFANT23.RData")
+load("~/UAH/PhD Documents/INEdatos/Analysis/Raw Data/2023ESdE/ESdEmenor_2023/R/INFANT23.RData")
 menores2023 <- Microdatos
-#saveRDS(menores2023, "~/UAH/PhD Documents/INEdatos/2023ESdE/menores2023.rds")
 
 ## hogar
-load("~/UAH/PhD Documents/INEdatos/2023ESdE/ESdEhogar_2023/R/HOGAR23.RData")
+load("~/UAH/PhD Documents/INEdatos/Analysis/Raw Data/2023ESdE/ESdEhogar_2023/R/HOGAR23.RData")
 hogar2023 <- Microdatos
-#saveRDS(hogar2023, "~/UAH/PhD Documents/INEdatos/2023ESdE/hogar2023.rds")
 rm(Microdatos, Metadatos)
 
 ## adultos (16-18)
-load("~/UAH/PhD Documents/INEdatos/2023ESdE/ESdEadulto_2023/R/ADULTO23.RData")
+load("~/UAH/PhD Documents/INEdatos/Analysis/Raw Data/2023ESdE/ESdEadulto_2023/R/ADULTO23.RData")
 adultos2023 <- Microdatos
-#saveRDS(adultos2023, "~/UAH/PhD Documents/INEdatos/2023ESdE/adultos2023.rds")
 rm(Microdatos, Metadatos)
 
 # Select variables ####
@@ -497,8 +440,8 @@ ense2023a <- adultos2023 %>%
 
 # merge menores and adultos <= 15 databases
 # check variable names 
-names(ense2023m)
-names(ense2023a)
+# names(ense2023m)
+# names(ense2023a)
 
 # combined menores and adults (all <= 15)
 ense2023 <- bind_rows(ense2023m, ense2023a)
@@ -626,7 +569,35 @@ ense2003_rename <- ense2003 %>%
     clase = na_if(clase, 9),
     clase = factor(clase, levels = 1:6, labels = clase_labels),
     clase = relevel(clase, ref = "Class I"),
-    clase_tr=cume_dist(as.numeric(clase)),
+    clase_tr = cume_dist(as.numeric(clase)),
+    
+    clase_3 = case_when(
+      clase %in% c("Class I", "Class II") ~ "Class I",
+      clase %in% c("Class III", "Class IV") ~ "Class II",
+      clase %in% c("Class V", "Class VI") ~ "Class III",
+      TRUE ~ NA_character_
+    ),
+    clase_3 = factor(clase_3, levels = c("Class I", "Class II", "Class III")),
+    
+    clase_tr_2 = {
+      # counts per class
+      class_counts <- as.numeric(table(clase))
+      # fraction of total population
+      class_props <- class_counts / sum(class_counts)
+      # cumulative proportion
+      cum_props <- cumsum(class_props)
+      # midpoint per class
+      cum_props[as.numeric(clase)] - class_props[as.numeric(clase)]/2
+    },
+    
+    clase_tr_3 = {
+      # counts per class (within this dataset; if this dataset is one year, it's per year)
+      class_counts <- as.numeric(table(clase_3))
+      class_props <- class_counts / sum(class_counts)
+      cum_props <- cumsum(class_props)
+      # midpoint per class
+      cum_props[as.numeric(clase_3)] - class_props[as.numeric(clase_3)]/2
+    },
     
     # Municipality size
     tamano = factor(
@@ -645,13 +616,13 @@ ense2003_rename <- ense2003 %>%
     ),
     
     # Convert urb_rur to an ordered factor
-    urb_rur = factor(urb_rur, levels = c("Rural", "Semi-urban", "Urban"), ordered = TRUE),
+    urb_rur = factor(urb_rur, levels = c("Rural", "Semi-urban", "Urban")),
     
     # Anthropometry
     peso = as.numeric(na_if(peso, "999")), 
     altura = as.numeric(na_if(altura, "999")),
     imc_num = round(peso / (altura / 100)^2, 2),
-    imc = NA, # for now
+    imc = NA, # placeholder
     
     obesity = NA,
     overweight = NA,
@@ -694,6 +665,34 @@ ense2006_rename <- ense2006 %>%
     clase = relevel(clase, ref = "Class I"),
     clase_tr=cume_dist(as.numeric(clase)),
     
+    clase_3 = case_when(
+      clase %in% c("Class I", "Class II") ~ "Class I",
+      clase %in% c("Class III", "Class IV") ~ "Class II",
+      clase %in% c("Class V", "Class VI") ~ "Class III",
+      TRUE ~ NA_character_
+    ),
+    clase_3 = factor(clase_3, levels = c("Class I", "Class II", "Class III")),
+    
+    clase_tr_2 = {
+      # counts per class
+      class_counts <- as.numeric(table(clase))
+      # fraction of total population
+      class_props <- class_counts / sum(class_counts)
+      # cumulative proportion
+      cum_props <- cumsum(class_props)
+      # midpoint per class
+      cum_props[as.numeric(clase)] - class_props[as.numeric(clase)]/2
+    },
+    
+    clase_tr_3 = {
+      # counts per class (within this dataset; if this dataset is one year, it's per year)
+      class_counts <- as.numeric(table(clase_3))
+      class_props <- class_counts / sum(class_counts)
+      cum_props <- cumsum(class_props)
+      # midpoint per class
+      cum_props[as.numeric(clase_3)] - class_props[as.numeric(clase_3)]/2
+    },
+    
     # Municipality size
     # Urban/rural
     urb_rur = case_when(
@@ -703,7 +702,7 @@ ense2006_rename <- ense2006 %>%
       TRUE ~ NA_character_
     ), 
     
-    urb_rur = factor(urb_rur, levels = c("Rural", "Semi-urban", "Urban"), ordered = TRUE),
+    urb_rur = factor(urb_rur, levels = c("Rural", "Semi-urban", "Urban")),
     
     # estrato
     estrato = factor(estrato, levels = 0:6, labels = estrato_labels),
@@ -787,6 +786,34 @@ ense2011_rename <- ense2011 %>%
     clase = relevel(clase, ref = "Class I"),
     clase_tr=cume_dist(as.numeric(clase)),
     
+    clase_3 = case_when(
+      clase %in% c("Class I", "Class II") ~ "Class I",
+      clase %in% c("Class III", "Class IV") ~ "Class II",
+      clase %in% c("Class V", "Class VI") ~ "Class III",
+      TRUE ~ NA_character_
+    ),
+    clase_3 = factor(clase_3, levels = c("Class I", "Class II", "Class III")),
+    
+    clase_tr_2 = {
+      # counts per class
+      class_counts <- as.numeric(table(clase))
+      # fraction of total population
+      class_props <- class_counts / sum(class_counts)
+      # cumulative proportion
+      cum_props <- cumsum(class_props)
+      # midpoint per class
+      cum_props[as.numeric(clase)] - class_props[as.numeric(clase)]/2
+    },
+    
+    clase_tr_3 = {
+      # counts per class (within this dataset; if this dataset is one year, it's per year)
+      class_counts <- as.numeric(table(clase_3))
+      class_props <- class_counts / sum(class_counts)
+      cum_props <- cumsum(class_props)
+      # midpoint per class
+      cum_props[as.numeric(clase_3)] - class_props[as.numeric(clase_3)]/2
+    },
+    
     # Municipality size
     # Urban/rural
     urb_rur = case_when(
@@ -796,7 +823,7 @@ ense2011_rename <- ense2011 %>%
       TRUE ~ NA_character_
     ), 
     
-    urb_rur = factor(urb_rur, levels = c("Rural", "Semi-urban", "Urban"), ordered = TRUE),
+    urb_rur = factor(urb_rur, levels = c("Rural", "Semi-urban", "Urban")),
     
     # estrato
     estrato = factor(estrato, levels = 0:6, labels = estrato_labels),
@@ -862,6 +889,34 @@ ense2017_rename <- ense2017 %>%
     clase = relevel(clase, ref = "Class I"),
     clase_tr=cume_dist(as.numeric(clase)),
     
+    clase_3 = case_when(
+      clase %in% c("Class I", "Class II") ~ "Class I",
+      clase %in% c("Class III", "Class IV") ~ "Class II",
+      clase %in% c("Class V", "Class VI") ~ "Class III",
+      TRUE ~ NA_character_
+    ),
+    clase_3 = factor(clase_3, levels = c("Class I", "Class II", "Class III")),
+    
+    clase_tr_2 = {
+      # counts per class
+      class_counts <- as.numeric(table(clase))
+      # fraction of total population
+      class_props <- class_counts / sum(class_counts)
+      # cumulative proportion
+      cum_props <- cumsum(class_props)
+      # midpoint per class
+      cum_props[as.numeric(clase)] - class_props[as.numeric(clase)]/2
+    },
+    
+    clase_tr_3 = {
+      # counts per class (within this dataset; if this dataset is one year, it's per year)
+      class_counts <- as.numeric(table(clase_3))
+      class_props <- class_counts / sum(class_counts)
+      cum_props <- cumsum(class_props)
+      # midpoint per class
+      cum_props[as.numeric(clase_3)] - class_props[as.numeric(clase_3)]/2
+    },
+    
     # Municipality size
     # Urban/rural
     urb_rur = case_when(
@@ -871,7 +926,7 @@ ense2017_rename <- ense2017 %>%
       TRUE ~ NA_character_
     ), 
     
-    urb_rur = factor(urb_rur, levels = c("Rural", "Semi-urban", "Urban"), ordered = TRUE),
+    urb_rur = factor(urb_rur, levels = c("Rural", "Semi-urban", "Urban")),
     
     # estrato
     estrato = factor(estrato, levels = 0:6, labels = estrato_labels),
@@ -951,6 +1006,34 @@ ense2023_rename <- ense2023 %>%
     clase = relevel(clase, ref = "Class I"),
     clase_tr = cume_dist(as.numeric(clase)),
     
+    clase_3 = case_when(
+      clase %in% c("Class I", "Class II") ~ "Class I",
+      clase %in% c("Class III", "Class IV") ~ "Class II",
+      clase %in% c("Class V", "Class VI") ~ "Class III",
+      TRUE ~ NA_character_
+    ),
+    clase_3 = factor(clase_3, levels = c("Class I", "Class II", "Class III")),
+    
+    clase_tr_2 = {
+      # counts per class
+      class_counts <- as.numeric(table(clase))
+      # fraction of total population
+      class_props <- class_counts / sum(class_counts)
+      # cumulative proportion
+      cum_props <- cumsum(class_props)
+      # midpoint per class
+      cum_props[as.numeric(clase)] - class_props[as.numeric(clase)]/2
+    },
+    
+    clase_tr_3 = {
+      # counts per class (within this dataset; if this dataset is one year, it's per year)
+      class_counts <- as.numeric(table(clase_3))
+      class_props <- class_counts / sum(class_counts)
+      cum_props <- cumsum(class_props)
+      # midpoint per class
+      cum_props[as.numeric(clase_3)] - class_props[as.numeric(clase_3)]/2
+    },
+    
     # Municipality size
     # Urban/rural
     urb_rur = case_when(
@@ -960,7 +1043,7 @@ ense2023_rename <- ense2023 %>%
       TRUE ~ NA_character_
     ), 
     
-    urb_rur = factor(urb_rur, levels = c("Rural", "Semi-urban", "Urban"), ordered = TRUE),
+    urb_rur = factor(urb_rur, levels = c("Rural", "Semi-urban", "Urban")),
     
     # estrato
     estrato = factor(estrato, levels = 0:6, labels = estrato_labels),
@@ -1057,18 +1140,7 @@ save(joined_6, file = "joined_6.RData")
 joined_clean_6 <- joined_6 %>%  ## 6 to 15 dropping NAs
   drop_na(edad, sexo, nacionalidad, sedentarismo, clase, ccaa, urb_rur)
 
-# clean those 0 to 15
-joined_clean <- joined_clean %>% 
-  mutate(
-    clase_3 = case_when(
-      clase %in% c("Class I", "Class II") ~ "Class I",
-      clase %in% c("Class III", "Class IV") ~ "Class II",
-      clase %in% c("Class V", "Class VI") ~ "Class III",
-      TRUE ~ NA_character_
-    ),
-    clase_3 = factor(clase_3, levels = c("Class I", "Class II", "Class III"))
-  )
-
+# New Social Class Categorization for MAIHDA (0 to 15)
 joined_clean <- joined_clean %>% 
   mutate(
     clase_2 = case_when(
@@ -1081,35 +1153,23 @@ joined_clean <- joined_clean %>%
 
 save(joined_clean, file = "joined_clean.RData")
 
-# filter joined and complete case data to those older than 5 years
-# create two categorizations of age groups
-
+# New Age Categorization for MAIHDA (6 to 15)
 joined_clean_6 <- joined_clean_6 %>% 
   mutate(
     edad_cat = case_when(
     edad >= 6 & edad <= 11 ~ "6-11",
     edad >= 12 & edad <= 15 ~ "12-15"
   ),
-  edad_cat3 = case_when(
+    edad_cat3 = case_when(
     edad >= 6 & edad <= 9 ~ "6-9",
     edad >= 10 & edad <= 12 ~ "10-12",
     edad >= 13 & edad <= 15 ~ "13-15"
   ),
-  edad_cat = factor(edad_cat, levels = c("6-11", "12-15")),
-  edad_cat3 = factor(edad_cat3, levels = c("6-9", "10-12", "13-15"))
+    edad_cat = factor(edad_cat, levels = c("6-11", "12-15")),
+    edad_cat3 = factor(edad_cat3, levels = c("6-9", "10-12", "13-15"))
   )
 
-joined_clean_6 <- joined_clean_6 %>% 
-  mutate(
-    clase_3 = case_when(
-      clase %in% c("Class I", "Class II") ~ "Class I",
-      clase %in% c("Class III", "Class IV") ~ "Class II",
-      clase %in% c("Class V", "Class VI") ~ "Class III",
-      TRUE ~ NA_character_
-    ),
-    clase_3 = factor(clase_3, levels = c("Class I", "Class II", "Class III"))
-  )
-
+# New Social Class Categorization for MAIHDA (6 to 15)
 joined_clean_6 <- joined_clean_6 %>% 
   mutate(
     clase_2 = case_when(
