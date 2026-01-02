@@ -2134,7 +2134,7 @@ rii_map_survey <- ggplot(
   ) +
   geom_sf(aes(fill = rii), color = "white", linewidth = 0.2) +
   facet_wrap(~ survey) +
-  scale_fill_distiller(palette = "Blues", direction = 1) +
+  scale_fill_distiller(palette = "Reds", direction = 1) +
   labs( title = "Boys: Inequalities in Childhood Sedentarism by Autonomous Community per Survey Year",
         subtitle = "Unit: Relative Index of Inequality",
         fill = "Relative Index of Inequality") +
@@ -2663,68 +2663,38 @@ fig_NUTS1_combined
 ggsave("Figures/17-12/fig_rii_NUTS1_sex.png", width = 4000, height = 2200, dpi=300, units = "px")
 
 ## NUTS1 Map ####
-#Comunidades Autónomas Mapa RII Sedentarismo#
-
-ccaa_mainland <- st_read("lineas_limite/SHP_ETRS89/recintos_autonomicas_inspire_peninbal_etrs89/recintos_autonomicas_inspire_peninbal_etrs89.shp") # Leemos los datos de capa
-ccaa_canary <- st_read("lineas_limite/SHP_REGCAN95/recintos_autonomicas_inspire_canarias_regcan95/recintos_autonomicas_inspire_canarias_regcan95.shp") # Leemos los datos de capa
-ccaa_mainland <- st_transform(ccaa_mainland, 25830)
-st_crs(ccaa_mainland)
-ccaa_canary <- st_transform(ccaa_canary, 25830)
-st_crs(ccaa_canary)
-data_ccaa <- rbind(ccaa_mainland, ccaa_canary)
+NUTS1 <- st_read("Resources/NUTS1_ES_20M_2024_3035.shp") # Leemos los datos de capa
 
 ## explore shapefile data
-names(data_ccaa)
-unique(data_ccaa$NAMEUNIT)
-table(data_ccaa$NAMEUNIT)
+names(NUTS1)
+unique(NUTS1$NAME_LATN)
+names(rii_sedentarism_NUTS1_combined)
+unique(rii_sedentarism_NUTS1_combined$NUTS1)
 
-names(rii_sedentarism_CCAA_combined)
-unique(rii_sedentarism_CCAA_combined$ccaa)
-unique(data_ccaa$NAMEUNIT)
-
-data_ccaa <- data_ccaa %>%
-  filter(NAMEUNIT != "Territorios no asociados a ninguna autonomía")
-
-ccaa_crosswalk <- tibble::tribble(
-  ~NAMEUNIT,                                      ~ccaa_en,
-  "Andalucía",                                   "Andalusia",
-  "Aragón",                                      "Aragon",
-  "Principado de Asturias",                      "Asturias",
-  "Illes Balears",                               "Balearic Islands",
-  "Canarias",                                    "Canary Islands",
-  "Cantabria",                                   "Cantabria",
-  "Castilla y León",                             "Castile and Leon",
-  "Castilla-La Mancha",                          "Castilla-La Mancha",
-  "Cataluña/Catalunya",                          "Catalonia",
-  "Comunitat Valenciana",                        "Valencian Community",
-  "Extremadura",                                 "Extremadura",
-  "Galicia",                                     "Galicia",
-  "Comunidad de Madrid",                         "Madrid",
-  "Región de Murcia",                            "Murcia",
-  "Comunidad Foral de Navarra",                  "Navarre",
-  "País Vasco/Euskadi",                          "Basque Country",
-  "La Rioja",                                    "La Rioja",
-  "Ciudad Autónoma de Ceuta",                    "Ceuta and Melilla",
-  "Ciudad Autónoma de Melilla",                  "Ceuta and Melilla"
+NUTS1_crosswalk <- tibble::tribble(
+  ~NAME_LATN,                                   ~NUTS1_ENG,
+  "Noroeste",                                   "North-West",
+  "Noreste",                                    "North-East",
+  "Comunidad de Madrid",                        "Madrid",
+  "Centro (ES)",                                "Centre",
+  "Este",                                       "East",
+  "Sur",                                        "South",
+  "Canarias",                                   "Canary Islands"
 )
+NUTS1_crosswalk
 
-data_ccaa <- data_ccaa %>%
-  left_join(ccaa_crosswalk, by = "NAMEUNIT")
+NUTS1_join <- NUTS1 %>%
+  left_join(NUTS1_crosswalk, by = "NAME_LATN")
+View(NUTS1_join)
 
-data_ccaa %>%
+NUTS1_join %>%
   st_drop_geometry() %>%
-  count(ccaa_en)
-
-data_ccaa <- data_ccaa %>% ## merging ceuta and melilla to one geometry
-  group_by(ccaa_en) %>%
-  summarise(across(where(is.numeric), first),
-            geometry = st_union(geometry),
-            .groups = "drop")
+  count(NUTS1_ENG)
 
 ## join RII database and shapefile
-map_ccaa <- data_ccaa %>%
-  left_join(rii_sedentarism_CCAA_combined,
-            by = c("ccaa_en" = "ccaa"))
+map_NUTS1 <- NUTS1_join %>%
+  left_join(rii_sedentarism_NUTS1_combined,
+            by = c("NUTS1_ENG" = "NUTS1"))
 
 ## plot map
 theme_map <- function(bg_color = "white", title_size = 16){
@@ -2739,21 +2709,25 @@ theme_map <- function(bg_color = "white", title_size = 16){
   )
 }
 
-ggplot(map_ccaa) +
+ggplot(map_NUTS1) +
   geom_sf(aes(fill = rii), color = "white", linewidth = 0.2)
 
-rii_map_survey <- ggplot(map_ccaa) +
+rii_map_survey <- ggplot(
+  map_NUTS1 %>% dplyr::filter(sex == "Boys") # note change to Overall, Girls, Boys for diff maps
+) +
   geom_sf(aes(fill = rii), color = "white", linewidth = 0.2) +
   facet_wrap(~ survey) +
-  scale_fill_distiller(palette = "Blues", direction = 1) +
-  labs( title = "Inequalities in Childhood Sedentarism by Autonomous Community per Survey Year",
+  scale_fill_distiller(palette = "Reds", direction = 1) +
+  labs( title = "Boys: Inequalities in Childhood Sedentarism by NUTS per Survey Year",
         subtitle = "Unit: Relative Index of Inequality",
-        #caption = "Source: Mis cojones",
+        caption = "Nomenclature of Territorial Units for Statistics (NUTS) Regions",
         fill = "Relative Index of Inequality") +
   theme_map()
 
+rii_map_survey
+
 ggsave(
-  filename = "Figures/17-12/rii_map_survey.png",
+  filename = "Figures/clase_tr/rii_map_NUTS_survey_male.png",
   plot = rii_map_survey,
   width = 13.3,
   height = 7.3,
@@ -2761,7 +2735,7 @@ ggsave(
   units = "in"
 )
 
-#### RII in Sedentarism by NUTs1, Survey, Autonomous Community and Sex (Multi-level) ####
+#### OLD: RII in Sedentarism by NUTs1, Survey, Autonomous Community and Sex (Multi-level) ####
 extract_rii_multilevel <- function(
     model,
     outcome_label = "Sedentarism",
