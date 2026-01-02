@@ -1207,7 +1207,7 @@ extract_rii_by_group_NUTS1 <- function(
     ) %>%
     mutate(
       survey = as.integer(survey),
-      sex = "Females",
+      sex = "Males",
       Outcome = outcome_label
     )
   
@@ -1235,6 +1235,7 @@ table_NUTS <- dt %>%
     .groups = "drop"
   ) %>%
   filter(clase_tr_2 < 15)
+table_NUTS
 clipr::write_clip(table_NUTS)
 
 rii_sedentarism_NUTS1 <- glmmTMB(sedentarismo~clase_tr_2+edad+sexo+
@@ -1253,7 +1254,7 @@ rii_sedentarism_NUTS1 <- extract_rii_by_group_NUTS1(
 
 rii_sedentarism_NUTS1
 clipr::write_clip(rii_sedentarism_NUTS1)
-save(rii_sedentarism_NUTS1, file = "Datasets/rii_sedentarism_NUTS1.RData")
+save(rii_sedentarism_NUTS1, file = "Datasets/clase_tr_2/rii_sedentarism_NUTS1.RData")
 
 ## wide table overall
 rii_sedentarism_NUTS1_wide <- rii_sedentarism_NUTS1 %>%
@@ -1275,6 +1276,7 @@ table_NUTS_f <- dt %>%
     .groups = "drop"
   ) %>%
   filter(clase_tr_2 < 15)
+table_NUTS_f
 clipr::write_clip(table_NUTS_f)
 
 rii_sedentarism_NUTS1_females <- glmmTMB(sedentarismo~clase_tr_2+edad+(1+clase_tr_2|survey) 
@@ -1313,6 +1315,7 @@ table_NUTS_m <- dt %>%
     .groups = "drop"
   ) %>%
   filter(clase_tr_2 < 15)
+table_NUTS_m
 clipr::write_clip(table_NUTS_m)
 
 rii_sedentarism_NUTS1_males <- glmmTMB(sedentarismo~clase_tr_2+edad+(1+clase_tr_2|survey) 
@@ -1348,13 +1351,14 @@ rii_sedentarism_NUTS1_combined <- rii_sedentarism_NUTS1 %>%
   rbind(rii_sedentarism_NUTS1_males)
 
 rii_sedentarism_NUTS1_combined
+
 rii_sedentarism_NUTS1_combined <- rii_sedentarism_NUTS1_combined %>%
   mutate(sex = case_when(
     sex == "Females" ~ "Girls",
     sex == "Males" ~ "Boys",
     TRUE ~ sex  # keep any other values as they are
   ))
-save(rii_sedentarism_NUTS1_combined, file = "Datasets/rii_sedentarism_NUTS1_combined.RData")
+save(rii_sedentarism_NUTS1_combined, file = "Datasets/clase_tr_2/rii_sedentarism_NUTS1_combined.RData")
 
 ## Relative Rate of Change of sedentarism overtime per CCAA
 rii_change <- rii_sedentarism_NUTS1_wide %>%
@@ -1416,7 +1420,7 @@ fig_NUTS1_multilineal <- ggplot(rii_sedentarism_NUTS1,
     panel.grid.minor = element_blank()
   )
 fig_NUTS1_multilineal
-ggsave("Figures/fig_rii_NUTS1.png", width = 4000, height = 2200, dpi=300, units = "px")
+ggsave("Figures/clase_tr_2/fig_rii_NUTS1.png", width = 4000, height = 2200, dpi=300, units = "px")
 
 ## new figure of RII by NUTS1
 fig_NUTS1_multilineal <- ggplot(rii_sedentarism_NUTS1, 
@@ -1457,7 +1461,7 @@ fig_NUTS1_multilineal <- ggplot(rii_sedentarism_NUTS1,
     plot.title = element_text(face = "bold", size = 13, hjust = 0.5)
   )
 fig_NUTS1_multilineal 
-ggsave("Figures/17-12/fig_rii_NUTS1.png", width = 4000, height = 2200, dpi=300, units = "px")
+ggsave("Figures/clase_tr_2/fig_rii_NUTS1.png", width = 4000, height = 2200, dpi=300, units = "px")
 
 ## Overall, Boys and Girls
 fig_NUTS1_combined <- ggplot(
@@ -1528,7 +1532,7 @@ fig_NUTS1_combined <- ggplot(
     legend.key.width = unit(1.2, "cm")
   )
 fig_NUTS1_combined
-ggsave("Figures/17-12/fig_rii_NUTS1_sex.png", width = 4000, height = 2200, dpi=300, units = "px")
+ggsave("Figures/clase_tr_2/fig_rii_NUTS1_sex.png", width = 4000, height = 2200, dpi=300, units = "px")
 
 ## NUTS1 Map ####
 #Comunidades Autónomas Mapa RII Sedentarismo#
