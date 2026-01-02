@@ -578,6 +578,7 @@ ense2003_rename <- ense2003 %>%
       TRUE ~ NA_character_
     ),
     clase_3 = factor(clase_3, levels = c("Class I", "Class II", "Class III")),
+    clase_tr_4 = cume_dist(as.numeric(clase_3)),
     
     clase_tr_2 = {
       # counts per class
@@ -672,6 +673,7 @@ ense2006_rename <- ense2006 %>%
       TRUE ~ NA_character_
     ),
     clase_3 = factor(clase_3, levels = c("Class I", "Class II", "Class III")),
+    clase_tr_4 = cume_dist(as.numeric(clase_3)),
     
     clase_tr_2 = {
       # counts per class
@@ -793,6 +795,7 @@ ense2011_rename <- ense2011 %>%
       TRUE ~ NA_character_
     ),
     clase_3 = factor(clase_3, levels = c("Class I", "Class II", "Class III")),
+    clase_tr_4 = cume_dist(as.numeric(clase_3)),
     
     clase_tr_2 = {
       # counts per class
@@ -896,6 +899,7 @@ ense2017_rename <- ense2017 %>%
       TRUE ~ NA_character_
     ),
     clase_3 = factor(clase_3, levels = c("Class I", "Class II", "Class III")),
+    clase_tr_4 = cume_dist(as.numeric(clase_3)),
     
     clase_tr_2 = {
       # counts per class
@@ -1013,20 +1017,30 @@ ense2023_rename <- ense2023 %>%
       TRUE ~ NA_character_
     ),
     clase_3 = factor(clase_3, levels = c("Class I", "Class II", "Class III")),
+    clase_tr_4 = cume_dist(as.numeric(clase_3)),
     
     clase_tr_2 = {
       # counts per class
-      class_counts <- as.numeric(table(clase))
+      class_counts <- as.numeric(table(clase)) # remove class names keep values
       # fraction of total population
-      class_props <- class_counts / sum(class_counts)
+      class_props <- class_counts / sum(class_counts) # what fraction of the population is in each class, therefore can know % of children per class
       # cumulative proportion
-      cum_props <- cumsum(class_props)
+      cum_props <- cumsum(class_props) # cumulative proportions, from Class I to Class VI, "covering X % of children per class"
       # midpoint per class
-      cum_props[as.numeric(clase)] - class_props[as.numeric(clase)]/2
+      cum_props[as.numeric(clase)] - class_props[as.numeric(clase)]/2 
+      # as.numeric(clase) converts class labels into indices , so R knows which class segment each child belongs to
+      # for example: class_props = c(0.21, 0.45, 0.34)
+      #              cum_props = c(0.21, 0.66, 1.00)
+      # want the midpoint of each segment: 
+                     # Class I: 0.00 - 0.21
+                     # Class II: 0.21 - 0.66
+                     # Class III: 0.66 - 1.00
+      #                Midpoint = (end of the segment - width)/2
+      # class_props[as.numeric(clase)]/2 is half the width of the class segment
+      # subtracting this value from the end givess the midpoint of the segment
     },
     
     clase_tr_3 = {
-      # counts per class (within this dataset; if this dataset is one year, it's per year)
       class_counts <- as.numeric(table(clase_3))
       class_props <- class_counts / sum(class_counts)
       cum_props <- cumsum(class_props)

@@ -512,7 +512,7 @@ ggsave("Figures/clase_tr_2/fig_sii_rii.png", width = 4000, height = 2200, dpi=30
   # Allowing the effect of social class to vary by region (i.e., random slopes and intercepts)
 
 ## CCAA list
-ccaas <- read_delim("ccaas.csv", delim = ";", 
+ccaas <- read_delim("Resources/ccaas.csv", delim = ";", 
                     escape_double = FALSE, trim_ws = TRUE)
 
 ## New age variable
@@ -587,8 +587,56 @@ extract_rii_by_group_CCAA <- function(
   return(out)
 }
 
+extract_rii_by_group_CCAA <- function(
+    model,
+    ccaa_ref,
+    outcome_label = "Sedentarismo",
+    effect_name = "clase_tr_2",
+    random_group = "survey:ccaa"
+) {
+  
+  # Fixed effect and SE
+  fe <- fixef(model)$cond[effect_name]
+  fe_se <- summary(model)$coefficients$cond[effect_name, "Std. Error"]
+  
+  # Random effects
+  re_list <- ranef(model)$cond
+  if (!random_group %in% names(re_list)) {
+    stop(paste("Random effect", random_group, "not found in model"))
+  }
+  
+  re_df <- re_list[[random_group]] %>%
+    as.data.frame() %>%
+    tibble::rownames_to_column("group")  # keep survey:ccaa
+  
+  # Combine fixed + random slope
+  if (!effect_name %in% names(re_df)) stop("Slope column not found in random effects")
+  re_df <- re_df %>%
+    mutate(
+      linear_pred = fe + .data[[effect_name]],
+      rii = exp(linear_pred),
+      rii_infci = exp(linear_pred - 1.96 * fe_se),
+      rii_supci = exp(linear_pred + 1.96 * fe_se)
+    )
+  
+  # Split survey and ccaa
+  re_df <- re_df %>%
+    tidyr::separate(group, into = c("survey", "ccaa"), sep = ":", remove = TRUE) %>%
+    mutate(
+      survey = as.integer(survey),
+      sex = "Female",
+      Outcome = outcome_label
+    )
+  
+  # Final tidy output
+  out <- re_df %>%
+    select(survey, ccaa, rii, rii_infci, rii_supci, sex, Outcome) %>%
+    arrange(survey, ccaa)
+  
+  return(out)
+}
 
-# Overall
+# Overall, where surveyxccaaxclase_tr_2 cells are less than 15 
 table_ccaa <- dt %>%
   group_by(survey, ccaa) %>%
   summarise(
@@ -597,6 +645,7 @@ table_ccaa <- dt %>%
   ) %>%
   filter(clase_tr_2 < 15)
 table_ccaa
+
 clipr::write_clip(table_ccaa)
 
 rii_sedentarism_CCAA <- glmmTMB(sedentarismo~clase_tr_2+edad+sexo+
@@ -604,22 +653,10 @@ rii_sedentarism_CCAA <- glmmTMB(sedentarismo~clase_tr_2+edad+sexo+
                                   (1+clase_tr_2|survey:ccaa), # allows the same variations to differ between autonomous communities within each survey year
                                 data = dt,
                                  family = "poisson", weights = factor2) # generalized linear mixed model
+rii_sedentarism_CCAA
 VarCorr(rii_sedentarism_CCAA)
-# In (1 + clase_tr_2 | survey) → the “1” means that each survey year (2003, 2006, 2011, 2017, 2023) gets its own baseline level of sedentarism.
-# So, 2003 can start at a higher or lower average sedentarism than 2006, etc.
-# This is the random intercept by survey.
 
-# In (1 + clase_tr_2 | survey:ccaa) → the “1” here means that each autonomous community (CCAA) within each survey year can also have its own baseline.
-# For example, Madrid in 2003 may start with lower sedentarism than Andalucía in 2003.
-# This is the random intercept by region within survey.
-
-# The “+ clase_tr_2” part in both random-effect terms means that the effect (slope) of social class (clase_tr_2) is allowed to vary:
-# Between survey years (so inequality may strengthen or weaken over time), and
-# Between regions within each survey year (so some regions may have higher or lower inequality than others).
-
-# The random slopes say that the relationship between social class and sedentarism is not fixed — it can change by time and place.
-
-rii_sedentarism_CCAA <- extract_rii_by_group(
+rii_sedentarism_CCAA <- extract_rii_by_group_CCAA(
   model = rii_sedentarism_CCAA,
   ccaa_ref = ccaas,
   outcome_label = "Sedentarismo"
@@ -627,7 +664,7 @@ rii_sedentarism_CCAA <- extract_rii_by_group(
 
 rii_sedentarism_CCAA
 clipr::write_clip(rii_sedentarism_CCAA)
-save(rii_sedentarism_CCAA, file = "Datasets/rii_sedentarism_CCAA.RData")
+save(rii_sedentarism_CCAA, file = "Datasets/clase_tr_2/rii_sedentarism_CCAA.RData")
 
 ## wide table overall
 rii_sedentarism_CCAA_wide <- rii_sedentarism_CCAA %>%
@@ -657,11 +694,14 @@ rii_sedentarism_CCAA_females <- glmmTMB(sedentarismo~clase_tr_2+edad+(1+clase_tr
                                 family="poisson", weights = factor2)
 VarCorr(rii_sedentarism_CCAA_females)
 
-rii_sedentarism_CCAA_females_t <- extract_rii_by_group(
+rii_sedentarism_CCAA_females_t <- extract_rii_by_group_CCAA(
   model = rii_sedentarism_CCAA_females,
   ccaa_ref = ccaas,
   outcome_label = "Sedentarismo"
 )
+rii_sedentarism_CCAA_females_t
+clipr::write_clip(rii_sedentarism_CCAA_females_t)
+save(rii_sedentarism_CCAA_females_t, file = "Datasets/clase_tr_2/rii_sedentarism_CCAA_females.RData")
 
 ## wide table females
 rii_sedentarism_CCAA_females_wide <- rii_sedentarism_CCAA_females_t %>%
@@ -685,6 +725,7 @@ table_ccaa_m <- dt %>%
     .groups = "drop"
   ) %>%
   filter(clase_tr_2 < 15)
+table_ccaa_m
 clipr::write_clip(table_ccaa_m)
 
 rii_sedentarism_CCAA_males <- glmmTMB(sedentarismo~clase_tr_2+edad+(1+clase_tr_2|survey) 
@@ -692,13 +733,14 @@ rii_sedentarism_CCAA_males <- glmmTMB(sedentarismo~clase_tr_2+edad+(1+clase_tr_2
                                         family="poisson", weights = factor2) # generalized linear mixed model
 VarCorr(rii_sedentarism_CCAA_males)
 
-rii_sedentarism_CCAA_males_t <- extract_rii_by_group(
+rii_sedentarism_CCAA_males_t <- extract_rii_by_group_CCAA(
   model = rii_sedentarism_CCAA_males,
   ccaa_ref = ccaas,
   outcome_label = "Sedentarismo"
 )
 rii_sedentarism_CCAA_males_t
 clipr::write_clip(rii_sedentarism_CCAA_males_t)
+save(rii_sedentarism_CCAA_males_t, file = "Datasets/clase_tr_2/rii_sedentarism_CCAA_males.RData")
 
 ## wide table males
 rii_sedentarism_CCAA_males_wide <- rii_sedentarism_CCAA_males_t %>%
@@ -721,11 +763,11 @@ rii_sedentarism_CCAA_combined
 
 rii_sedentarism_CCAA_combined <- rii_sedentarism_CCAA_combined %>%
   mutate(sex = case_when(
-    sex == "Females" ~ "Girls",
-    sex == "Males" ~ "Boys",
+    sex == "Female" ~ "Girls",
+    sex == "Male" ~ "Boys",
     TRUE ~ sex  # keep any other values as they are
   ))
-save(rii_sedentarism_CCAA_combined, file = "Datasets/rii_sedentarism_CCAA_combined.RData")
+save(rii_sedentarism_CCAA_combined, file = "Datasets/clase_tr_2/rii_sedentarism_CCAA_combined.RData")
 
 ## Relative Rate of Change of sedentarism overtime per CCAA
 rii_change <- rii_sedentarism_CCAA_wide %>%
@@ -736,6 +778,7 @@ rii_change <- rii_sedentarism_CCAA_wide %>%
     change_2017_2023 = (RII_2023 - RII_2017)/RII_2017 * 100,
     change_2003_2023 = (RII_2023 - RII_2003)/RII_2003 * 100
   )
+View(rii_change)
 
 rii_change_2003_2023 <- rii_change$change_2003_2023
 rii_change_2003_2023
@@ -789,7 +832,7 @@ fig_CCAA_multilineal <- ggplot(rii_sedentarism_CCAA,
     panel.grid.minor = element_blank()
   )
 fig_CCAA_multilineal
-ggsave("Figures/fig_rii_ccaa.png", width = 4000, height = 2200, dpi=300, units = "px")
+ggsave("Figures/clase_tr_2/fig_rii_ccaa.png", width = 4000, height = 2200, dpi=300, units = "px")
 
 ## new figure of RII by CCAA
 fig_CCAA_multilineal <- ggplot(rii_sedentarism_CCAA, 
@@ -829,7 +872,7 @@ fig_CCAA_multilineal <- ggplot(rii_sedentarism_CCAA,
     plot.title = element_text(face = "bold", size = 13, hjust = 0.5)
   )
 fig_CCAA_multilineal 
-ggsave("Figures/17-12/fig_rii_ccaa.png", width = 4000, height = 2200, dpi=300, units = "px")
+ggsave("Figures/clase_tr_2/fig_rii_ccaa.png", width = 4000, height = 2200, dpi=300, units = "px")
 
 ## Overall, Boys and Girls
 fig_CCAA_combined <- ggplot(
@@ -870,13 +913,13 @@ fig_CCAA_combined <- ggplot(
     plot.title = element_text(size = 13, face = "bold", hjust = 0.5)
   )
 fig_CCAA_combined
-ggsave("Figures/17-12/fig_rii_ccaa_sex.png", width = 4000, height = 2200, dpi=300, units = "px")
+ggsave("Figures/clase_tr_2/fig_rii_ccaa_sex.png", width = 4000, height = 2200, dpi=300, units = "px")
 
 ## CCAA Map ####
 #Comunidades Autónomas Mapa RII Sedentarismo#
 
-ccaa_mainland <- st_read("lineas_limite/SHP_ETRS89/recintos_autonomicas_inspire_peninbal_etrs89/recintos_autonomicas_inspire_peninbal_etrs89.shp") # Leemos los datos de capa
-ccaa_canary <- st_read("lineas_limite/SHP_REGCAN95/recintos_autonomicas_inspire_canarias_regcan95/recintos_autonomicas_inspire_canarias_regcan95.shp") # Leemos los datos de capa
+ccaa_mainland <- st_read("Resources/lineas_limite/SHP_ETRS89/recintos_autonomicas_inspire_peninbal_etrs89/recintos_autonomicas_inspire_peninbal_etrs89.shp") # Leemos los datos de capa
+ccaa_canary <- st_read("Resources/lineas_limite/SHP_REGCAN95/recintos_autonomicas_inspire_canarias_regcan95/recintos_autonomicas_inspire_canarias_regcan95.shp") # Leemos los datos de capa
 ccaa_mainland <- st_transform(ccaa_mainland, 25830)
 st_crs(ccaa_mainland)
 ccaa_canary <- st_transform(ccaa_canary, 25830)
@@ -901,25 +944,27 @@ ccaa_crosswalk <- tibble::tribble(
   "Aragón",                                      "Aragon",
   "Principado de Asturias",                      "Asturias",
   "Illes Balears",                               "Balearic Islands",
+  "País Vasco/Euskadi",                          "Basque Country",
   "Canarias",                                    "Canary Islands",
   "Cantabria",                                   "Cantabria",
   "Castilla y León",                             "Castile and Leon",
   "Castilla-La Mancha",                          "Castilla-La Mancha",
   "Cataluña/Catalunya",                          "Catalonia",
-  "Comunitat Valenciana",                        "Valencian Community",
+  "Ciudad Autónoma de Ceuta",                    "Ceuta and Melilla",
+  "Ciudad Autónoma de Melilla",                  "Ceuta and Melilla",
   "Extremadura",                                 "Extremadura",
   "Galicia",                                     "Galicia",
+  "La Rioja",                                    "La Rioja",
   "Comunidad de Madrid",                         "Madrid",
   "Región de Murcia",                            "Murcia",
   "Comunidad Foral de Navarra",                  "Navarre",
-  "País Vasco/Euskadi",                          "Basque Country",
-  "La Rioja",                                    "La Rioja",
-  "Ciudad Autónoma de Ceuta",                    "Ceuta and Melilla",
-  "Ciudad Autónoma de Melilla",                  "Ceuta and Melilla"
+  "Comunitat Valenciana",                        "Valencian Community"
 )
+ccaa_crosswalk
 
 data_ccaa <- data_ccaa %>%
   left_join(ccaa_crosswalk, by = "NAMEUNIT")
+View(data_ccaa)
 
 data_ccaa %>%
   st_drop_geometry() %>%
@@ -952,18 +997,21 @@ theme_map <- function(bg_color = "white", title_size = 16){
 ggplot(map_ccaa) +
   geom_sf(aes(fill = rii), color = "white", linewidth = 0.2)
 
-rii_map_survey <- ggplot(map_ccaa) +
+rii_map_survey <- ggplot(
+  map_ccaa %>% dplyr::filter(sex == "Boys") # note change to Overall, Girls, Boys for diff maps
+) +
   geom_sf(aes(fill = rii), color = "white", linewidth = 0.2) +
   facet_wrap(~ survey) +
   scale_fill_distiller(palette = "Blues", direction = 1) +
-  labs( title = "Inequalities in Childhood Sedentarism by Autonomous Community per Survey Year",
+  labs( title = "Boys: Inequalities in Childhood Sedentarism by Autonomous Community per Survey Year",
         subtitle = "Unit: Relative Index of Inequality",
-        #caption = "Source: Mis cojones",
         fill = "Relative Index of Inequality") +
   theme_map()
 
+rii_map_survey
+
 ggsave(
-  filename = "Figures/17-12/rii_map_survey.png",
+  filename = "Figures/clase_tr_2/rii_map_survey_males.png",
   plot = rii_map_survey,
   width = 13.3,
   height = 7.3,

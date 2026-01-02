@@ -1543,14 +1543,14 @@ ggsave(
   width = 4000, height = 2500, dpi = 300, units = "px"
 )
 
-#### RII in Sedentarism by CCAA, Survey and Sex (Multi-level) ####
+#### RII in Sedentarism by CCAA, Survey and Sex with clase_tr (numeric based on 6 categories of class) ####
 # This model estimates the association between social class and sedentarism for each year, while:
   # Adjusting for age (edad) and sex (sexo)
   # Accounting for random variation across regions (ccaa)
   # Allowing the effect of social class to vary by region (i.e., random slopes and intercepts)
 
 ## CCAA list
-ccaas <- read_delim("ccaas.csv", delim = ";", 
+ccaas <- read_delim("Resources/ccaas.csv", delim = ";", 
                     escape_double = FALSE, trim_ws = TRUE)
 
 ## New age variable
@@ -1568,7 +1568,7 @@ extract_rii_by_group_CCAA <- function(
     model,
     ccaa_ref,
     outcome_label = "Sedentarism",
-    effect_name = "clase_tr",
+    effect_name = "clase_tr_4",
     random_group = "survey:ccaa"
 ) {
   
@@ -1630,16 +1630,16 @@ extract_rii_by_group_CCAA <- function(
 table_ccaa <- dt %>%
   group_by(survey, ccaa) %>%
   summarise(
-    clase_tr = min(table(clase_tr)),
+    clase_tr_4 = min(table(clase_tr_4)),
     .groups = "drop"
   ) %>%
-  filter(clase_tr < 15)
+  filter(clase_tr_4 < 15)
 table_ccaa
 clipr::write_clip(table_ccaa)
 
-rii_sedentarism_CCAA <- glmmTMB(sedentarismo~clase_tr+edad+sexo+
-                                  (1+clase_tr|survey) + # allows the baseline level of sedentarism and the effect of social class to vary between survey years
-                                  (1+clase_tr|survey:ccaa), # allows the same variations to differ between autonomous communities within each survey year
+rii_sedentarism_CCAA <- glmmTMB(sedentarismo~clase_tr_4+edad+sexo+
+                                  (1+clase_tr_4|survey) + # allows the baseline level of sedentarism and the effect of social class to vary between survey years
+                                  (1+clase_tr_4|survey:ccaa), # allows the same variations to differ between autonomous communities within each survey year
                                 data = dt,
                                  family = "poisson", weights = factor2) # generalized linear mixed model
 VarCorr(rii_sedentarism_CCAA)
@@ -1657,7 +1657,7 @@ VarCorr(rii_sedentarism_CCAA)
 
 # The random slopes say that the relationship between social class and sedentarism is not fixed — it can change by time and place.
 
-rii_sedentarism_CCAA <- extract_rii_by_group(
+rii_sedentarism_CCAA <- extract_rii_by_group_CCAA(
   model = rii_sedentarism_CCAA,
   ccaa_ref = ccaas,
   outcome_label = "Sedentarismo"
@@ -1684,22 +1684,23 @@ table_ccaa_f <- dt %>%
   filter(sexo == "Female") %>% 
   group_by(survey, ccaa) %>%
   summarise(
-    clase_tr = min(table(clase_tr)),
+    clase_tr_4 = min(table(clase_tr_4)),
     .groups = "drop"
   ) %>%
-  filter(clase_tr < 15)
+  filter(clase_tr_4 < 15)
 clipr::write_clip(table_ccaa_f)
 
-rii_sedentarism_CCAA_females <- glmmTMB(sedentarismo~clase_tr+edad+(1+clase_tr|survey) 
-                                        + (1+clase_tr|survey:ccaa),  data = subset(dt, sexo == "Female"),
+rii_sedentarism_CCAA_females <- glmmTMB(sedentarismo~clase_tr_4+edad+(1+clase_tr_4|survey) 
+                                        + (1+clase_tr_4|survey:ccaa),  data = subset(dt, sexo == "Female"),
                                 family="poisson", weights = factor2)
 VarCorr(rii_sedentarism_CCAA_females)
 
-rii_sedentarism_CCAA_females_t <- extract_rii_by_group(
+rii_sedentarism_CCAA_females_t <- extract_rii_by_group_CCAA(
   model = rii_sedentarism_CCAA_females,
   ccaa_ref = ccaas,
   outcome_label = "Sedentarismo"
 )
+rii_sedentarism_CCAA_females_t
 
 ## wide table females
 rii_sedentarism_CCAA_females_wide <- rii_sedentarism_CCAA_females_t %>%
@@ -1804,6 +1805,142 @@ rii_change <- rii_sedentarism_CCAA_males_wide %>%
 rii_change_2003_2023_m <- rii_change$change_2003_2023
 rii_change_2003_2023_m
 clipr::write_clip(rii_change_2003_2023_m)
+
+#### RII in Sedentarism by CCAA, Survey and Sex with clase_tr_4 (numeric based on 3 categories of class) ----
+## Create function to extract values from model (RECALL CHANGE SEXO FOR EACH MODEL OUTPUT)
+extract_rii_by_group_CCAA <- function(
+    model,
+    ccaa_ref,
+    outcome_label = "Sedentarism",
+    effect_name = "clase_tr_4",
+    random_group = "survey:ccaa"
+) {
+  
+  ## Extract fixed-effect estimate and SE
+  fe <- fixef(model)$cond[effect_name]
+  fe_se <- summary(model)$coefficients$cond[effect_name, "Std. Error"]
+  
+  ## Extract random effects 
+  re_list <- ranef(model)$cond
+  
+  if (!random_group %in% names(re_list)) {
+    stop(paste("Random effect", random_group, "not found in model"))
+  }
+  
+  re_df <- as.data.frame(re_list[[random_group]]) %>%
+    tibble::rownames_to_column("group")
+  
+  ## Combine fixed + random effects
+  re_df <- re_df %>%
+    mutate(
+      linear_pred = fe + .data[[effect_name]],
+      rii = exp(linear_pred),
+      rii_infci = exp(linear_pred - 1.96 * fe_se),
+      rii_supci = exp(linear_pred + 1.96 * fe_se)
+    )
+  
+  ## Split survey and NUTS1
+  re_df <- re_df %>%
+    tidyr::separate(
+      group,
+      into = c("survey", "ccaa"),
+      sep = ":",
+      remove = TRUE
+    ) %>%
+    mutate(
+      survey = as.integer(survey),
+      sex = "Overall",
+      Outcome = outcome_label
+    )
+  
+  ## Final tidy output
+  out <- re_df %>%
+    select(
+      survey,
+      ccaa,
+      rii,
+      rii_infci,
+      rii_supci,
+      sex,
+      Outcome
+    ) %>%
+    arrange(survey, ccaa)
+  
+  return(out)
+}
+
+
+# Overall
+table_ccaa <- dt %>%
+  group_by(survey, ccaa) %>%
+  summarise(
+    clase_tr_4 = min(table(clase_tr_4)),
+    .groups = "drop"
+  ) %>%
+  filter(clase_tr_4 < 15)
+table_ccaa
+clipr::write_clip(table_ccaa)
+
+rii_sedentarism_CCAA <- glmmTMB(sedentarismo~clase_tr_4+edad+sexo+
+                                  (1+clase_tr_4|survey) + # allows the baseline level of sedentarism and the effect of social class to vary between survey years
+                                  (1+clase_tr_4|survey:ccaa), # allows the same variations to differ between autonomous communities within each survey year
+                                data = dt,
+                                family = "poisson", weights = factor2) # generalized linear mixed model
+VarCorr(rii_sedentarism_CCAA)
+
+rii_sedentarism_CCAA <- extract_rii_by_group_CCAA(
+  model = rii_sedentarism_CCAA,
+  ccaa_ref = ccaas,
+  outcome_label = "Sedentarismo"
+)
+
+rii_sedentarism_CCAA
+
+## Females
+table_ccaa_f <- dt %>%
+  filter(sexo == "Female") %>% 
+  group_by(survey, ccaa) %>%
+  summarise(
+    clase_tr_4 = min(table(clase_tr_4)),
+    .groups = "drop"
+  ) %>%
+  filter(clase_tr_4 < 15)
+clipr::write_clip(table_ccaa_f)
+
+rii_sedentarism_CCAA_females <- glmmTMB(sedentarismo~clase_tr_4+edad+(1+clase_tr_4|survey) 
+                                        + (1+clase_tr_4|survey:ccaa),  data = subset(dt, sexo == "Female"),
+                                        family="poisson", weights = factor2)
+VarCorr(rii_sedentarism_CCAA_females)
+
+rii_sedentarism_CCAA_females_t <- extract_rii_by_group_CCAA(
+  model = rii_sedentarism_CCAA_females,
+  ccaa_ref = ccaas,
+  outcome_label = "Sedentarismo"
+)
+rii_sedentarism_CCAA_females_t
+
+## Males
+table_ccaa_m <- dt %>%
+  filter(sexo == "Male") %>% 
+  group_by(survey, ccaa) %>%
+  summarise(
+    clase_tr = min(table(clase_tr)),
+    .groups = "drop"
+  ) %>%
+  filter(clase_tr < 15)
+clipr::write_clip(table_ccaa_m)
+
+rii_sedentarism_CCAA_males <- glmmTMB(sedentarismo~clase_tr+edad+(1+clase_tr|survey) 
+                                      + (1+clase_tr|survey:ccaa), data = subset(dt, sexo == "Male"),
+                                      family="poisson", weights = factor2) # generalized linear mixed model
+VarCorr(rii_sedentarism_CCAA_males)
+
+rii_sedentarism_CCAA_males_t <- extract_rii_by_group(
+  model = rii_sedentarism_CCAA_males,
+  ccaa_ref = ccaas,
+  outcome_label = "Sedentarismo"
+)
+rii_sedentarism_CCAA_males_t
 
 #### Visualization RII by CCAA ####
 fig_CCAA_multilineal <- ggplot(rii_sedentarism_CCAA, 
@@ -1913,8 +2050,8 @@ ggsave("Figures/17-12/fig_rii_ccaa_sex.png", width = 4000, height = 2200, dpi=30
 ## CCAA Map ####
 #Comunidades Autónomas Mapa RII Sedentarismo#
 
-ccaa_mainland <- st_read("lineas_limite/SHP_ETRS89/recintos_autonomicas_inspire_peninbal_etrs89/recintos_autonomicas_inspire_peninbal_etrs89.shp") # Leemos los datos de capa
-ccaa_canary <- st_read("lineas_limite/SHP_REGCAN95/recintos_autonomicas_inspire_canarias_regcan95/recintos_autonomicas_inspire_canarias_regcan95.shp") # Leemos los datos de capa
+ccaa_mainland <- st_read("Resources/lineas_limite/SHP_ETRS89/recintos_autonomicas_inspire_peninbal_etrs89/recintos_autonomicas_inspire_peninbal_etrs89.shp") # Leemos los datos de capa
+ccaa_canary <- st_read("Resources/lineas_limite/SHP_REGCAN95/recintos_autonomicas_inspire_canarias_regcan95/recintos_autonomicas_inspire_canarias_regcan95.shp") # Leemos los datos de capa
 ccaa_mainland <- st_transform(ccaa_mainland, 25830)
 st_crs(ccaa_mainland)
 ccaa_canary <- st_transform(ccaa_canary, 25830)
@@ -1962,6 +2099,7 @@ data_ccaa <- data_ccaa %>%
 data_ccaa %>%
   st_drop_geometry() %>%
   count(ccaa_en)
+View(data_ccaa)
 
 data_ccaa <- data_ccaa %>% ## merging ceuta and melilla to one geometry
   group_by(ccaa_en) %>%
@@ -1973,6 +2111,7 @@ data_ccaa <- data_ccaa %>% ## merging ceuta and melilla to one geometry
 map_ccaa <- data_ccaa %>%
   left_join(rii_sedentarism_CCAA_combined,
             by = c("ccaa_en" = "ccaa"))
+View(map_ccaa)
 
 ## plot map
 theme_map <- function(bg_color = "white", title_size = 16){
@@ -1990,18 +2129,21 @@ theme_map <- function(bg_color = "white", title_size = 16){
 ggplot(map_ccaa) +
   geom_sf(aes(fill = rii), color = "white", linewidth = 0.2)
 
-rii_map_survey <- ggplot(map_ccaa) +
+rii_map_survey <- ggplot(
+  map_ccaa %>% dplyr::filter(sex == "Male") # note change to Overall, Female, Male for diff maps
+  ) +
   geom_sf(aes(fill = rii), color = "white", linewidth = 0.2) +
   facet_wrap(~ survey) +
   scale_fill_distiller(palette = "Blues", direction = 1) +
-  labs( title = "Inequalities in Childhood Sedentarism by Autonomous Community per Survey Year",
+  labs( title = "Boys: Inequalities in Childhood Sedentarism by Autonomous Community per Survey Year",
         subtitle = "Unit: Relative Index of Inequality",
-        #caption = "Source: Mis cojones",
         fill = "Relative Index of Inequality") +
   theme_map()
 
+rii_map_survey
+
 ggsave(
-  filename = "Figures/17-12/rii_map_survey.png",
+  filename = "Figures/clase_tr/rii_map_survey_male.png",
   plot = rii_map_survey,
   width = 13.3,
   height = 7.3,
