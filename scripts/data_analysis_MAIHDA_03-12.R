@@ -37,7 +37,7 @@ library(segmented)
 ## Load data ----
 joined_clean <- get(load("joined_clean_6.RData"))
 
-rii_sedentarism_overall_clase <- get(load("rii_sedentarism_overall_clase.RData"))
+rii_sedentarism_overall_clase <- get(load("~/UAH/PhD Documents/INEdatos/Analysis/Datasets/clase_tr/rii_sedentarism_overall_clase.RData"))
 
 ## Inflection Point - Edit Data ----
 ## use segmented package to decide the inflection point in the inequalities of sedentarism
@@ -70,11 +70,13 @@ joined_clean <- joined_clean %>%
 
 # Database MAIHDA ####
 maihda <- joined_clean %>% 
-  select(sexo, edad, edad_cat, edad_cat3, clase, clase_2, clase_3, survey, survey2, sedentarismo, nacionalidad, urb_rur, ccaa)
+  select(factor2, sexo, edad, edad_cat, edad_cat3, clase, clase_2, clase_3, survey, survey2, sedentarismo, nacionalidad, urb_rur, ccaa)
 maihda$survey <- factor(maihda$survey)
 save(maihda, file = "maihda.RData")
 
 View(maihda)
+
+table(maihda$survey2, maihda$sedentarismo)
 
 ## Load data ----
 dt <- get(load("maihda.RData"))
