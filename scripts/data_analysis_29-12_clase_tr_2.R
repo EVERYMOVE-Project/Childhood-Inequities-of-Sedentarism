@@ -6,6 +6,7 @@
 
 ## Load libraries
 library(tidyverse)
+library(MASS)
 library(tidyr)
 library(dplyr)
 library(broom)
@@ -1608,6 +1609,68 @@ ggsave(
   dpi = 300,
   units = "in"
 )
+
+### SEGMENTED AND APC ----
+## Inflection Point - Edit Data ----
+## use segmented package to decide the inflection point in the inequalities of sedentarism
+
+## linear model fitted with survey year as a predictor
+rii_sedentarism_overall_clase$encuesta <- as.numeric(rii_sedentarism_overall_clase$encuesta)
+
+m0 <- lm(rii ~ encuesta, data = rii_sedentarism_overall_clase)
+summary(m0)
+
+## fit segmented model
+seg_m <- segmented(m0, seg.Z = ~encuesta, psi = 2011)
+seg_m
+
+## plot inflection point
+plot(rii ~ encuesta, data = rii_sedentarism_overall_clase)
+plot(seg_m, add = TRUE, col = "red")
+ggsave("Figures/inflection.png", width = 4000, height = 2200, dpi=300, units = "px")
+
+joined_clean <- joined_clean %>% 
+  mutate(survey2 = case_when(
+    survey %in% c("2003", "2006", "2011") ~ "Pre",
+    survey %in% c("2017", "2023") ~ "Post",
+    TRUE ~ NA_character_
+  ),
+  survey2 = factor(survey2, levels = c("Pre", "Post")),
+  urb_rur = as.character(urb_rur),
+  urb_rur = factor(urb_rur)
+  )
+
+apc_dta <- desigualdades_sedentarismo_CCAA %>%
+  filter(
+    fr == "Sedentarismo",
+    exp == "RII Education",
+    sexo == "Overall"
+  ) %>%
+  mutate(
+    year = as.integer(encuesta)
+  )
+
+apc_ccaa <- apc_dta %>%
+  group_by(nombre_notilde, abreviatura) %>%
+  nest() %>%
+  mutate(
+    model = map(data, ~ rlm(log(rii) ~ year, data = .x)),
+    tidy  = map(model, tidy)
+  ) %>%
+  unnest(tidy) %>%
+  filter(term == "year") %>%
+  mutate(
+    APC = (exp(estimate) - 1) * 100,
+    APC_low = (exp(estimate - 1.96 * std.error) - 1) * 100,
+    APC_high = (exp(estimate + 1.96 * std.error) - 1) * 100
+  ) %>%
+  dplyr::select(
+    nombre_notilde,
+    abreviatura,
+    APC,
+    APC_low,
+    APC_high
+  )
 
 #### OLD: RII in Sedentarism by NUTS1, Survey, Autonomous Community and Sex (Multi-level) ####
 extract_rii_multilevel <- function(

@@ -87,7 +87,7 @@ levels(dt$sexo)
 levels(dt$edad_cat3)
 levels(dt$clase_2)
 dt$clase_2 <- factor(dt$clase_2,
-                     levels = c("Manual Workers", "Non-Manual Workers"))
+                     levels = c("Non-Manual Workers", "Manual Workers"))
 levels(dt$clase_3)
 dt$clase_3 <- factor(dt$clase_3,
                    levels = c("Class III", "Class II", "Class I"))
@@ -99,7 +99,7 @@ levels(dt$survey2)
 
 ## sexo:     1 = Male, 2 = Female
 ## edad_cat3:1 = 6-9, 2 = 10-12, 3 = 13-15
-## clase_2:  1 = Manual workers, Non-manual workers
+## clase_2:  1 = Non-manual workers, Manual workers 
 ## clase_3:  1 = Class III, 2 = Class II, 3 = Class I
 ## clase:    1 = Class VI, 2 = Class V, 3 = Class IV, 4 = Class III, 5 = Class II, 6 = Class I
 ## urb_rur:  1 = Rural, 2 = Semi-Urban, 3 = Urban

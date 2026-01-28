@@ -610,9 +610,9 @@ ense2003_rename <- ense2003 %>%
     
     # Urban/rural
     urb_rur = case_when(
-      as.numeric(tamano) %in% c(1, 2) ~ "Rural",
-      as.numeric(tamano) == 3 ~ "Semi-urban",
-      as.numeric(tamano) %in% c(4, 5, 6, 7) ~ "Urban",
+      as.numeric(tamano) %in% c(1, 2) ~ "Rural", # <10,000 habitantes
+      as.numeric(tamano) == 3 ~ "Semi-urban", # <50,000 habitantes
+      as.numeric(tamano) %in% c(4, 5, 6, 7) ~ "Urban", # > 50,000 habitantes a 1,000,000
       TRUE ~ NA_character_
     ),
     
@@ -1144,7 +1144,7 @@ joined <- bind_rows(ense_list) ## 0 to 15 without dropping NAs
 save(joined, file = "joined.RData")
 
 joined_clean <- joined %>% ## 0 to 15 dropping NAs
-  drop_na(edad, sexo, nacionalidad, sedentarismo, clase, ccaa, urb_rur)
+  drop_na(edad, sexo, nacionalidad, sedentarismo, clase, ccaa, urb_rur, survey2)
 save(joined_clean, file = "joined_clean.RData")
 
 joined_6 <- joined %>%  ## 6 to 15 without dropping NAs
@@ -1152,17 +1152,17 @@ joined_6 <- joined %>%  ## 6 to 15 without dropping NAs
 save(joined_6, file = "joined_6.RData")
 
 joined_clean_6 <- joined_6 %>%  ## 6 to 15 dropping NAs
-  drop_na(edad, sexo, nacionalidad, sedentarismo, clase, ccaa, urb_rur)
+  drop_na(edad, sexo, nacionalidad, sedentarismo, clase, ccaa, urb_rur, survey)
 
-# New Social Class Categorization for MAIHDA (0 to 15)
-joined_clean <- joined_clean %>% 
+# New Social Class Categorization for MAIHDA (6 to 15)
+joined_clean_6 <- joined_clean_6 %>% 
   mutate(
     clase_2 = case_when(
       clase %in% c("Class I", "Class II", "Class III") ~ "Non-Manual Workers",
       clase %in% c("Class IV", "Class V", "Class VI") ~ "Manual Workers",
       TRUE ~ NA_character_
     ),
-    clase_2 = factor(clase_2, levels = c("Non-Manual Workers", "Manual Workers"))
+    clase_2 = factor(clase_2, levels = c("Manual Workers", "Non-Manual Workers"))
   )
 
 save(joined_clean, file = "joined_clean.RData")
