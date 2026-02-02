@@ -175,7 +175,7 @@ ense2003 <- ense2003m %>%
 ense2003 <- ense2003 %>% 
   mutate(survey = "2003")
 
-### FINAL DATABASE 2003 AGES 0 to 18
+### FINAL DATABASE 2003 AGES 0 to 15
 save(ense2003, file = "ense2003.Rdata")
 
 ## ENSE 2006 ####
@@ -215,7 +215,7 @@ ense2006 <- ense2006m %>%
 ense2006 <- ense2006 %>% 
   mutate(survey = "2006")
 
-### FINAL DATABASE 2006 AGES 0 to 18
+### FINAL DATABASE 2006 AGES 0 to 15
 save(ense2006, file = "ense2006.Rdata")
 
 ## ENSE 2011 ####
@@ -268,14 +268,14 @@ adultos2011 <- adultos2011 %>% rename( # n = 21,007
   nacionalidad = E2_1b # 9.27% missing n = 562
 )
 
-# join adultos <= 18 and hogar databases
+# join adultos <= 15 and hogar databases
 adultos2011$edad <- as.numeric(adultos2011$edad) # to be able to filter
 ense2011m$edad <- as.numeric(ense2011m$edad) # to match variable type
 
 ense2011a <- adultos2011 %>% 
   filter(edad <= 15)
 
-# merge menores and adultos <= 18 databases
+# merge menores and adultos <= 15 databases
 # check variable names 
 names(ense2011m)
 names(ense2011a)
@@ -285,14 +285,14 @@ ense2011a$n_inf <- as.character(ense2011a$n_inf)
 ense2011m$n_orden_menor <- as.character(ense2011m$n_orden_menor)
 ense2011m$peso <- as.numeric(ense2011m$peso)
 
-# combined menores and adults aged 16-18
+# combined menores and adults aged 0-15
 ense2011 <- bind_rows(ense2011m, ense2011a)
 
 # new survey variable
 ense2011 <- ense2011 %>% 
   mutate(survey = "2011")
 
-### FINAL DATABASE 2011 AGES 0 to 18
+### FINAL DATABASE 2011 AGES 0 to 15
 save(ense2011, file = "ense2011.Rdata")
 
 ## ENSE 2017 ####
@@ -430,7 +430,7 @@ hogar2023 <- hogar2023 %>% rename(n_inf = NORDEN, estrato = ESTRATO, clase = CLA
 ense2023m <- ense2023m %>%
   left_join(hogar2023 %>% select(id, n_inf, estrato, clase), join_by("id", "n_inf"))
 
-# join adultos <= 18 and hogar databases
+# join adultos <= 15 and hogar databases
 ense2023a <- adultos2023 %>% 
   filter(edad <= 15) %>% 
   left_join(hogar2023 %>% 
@@ -450,7 +450,7 @@ ense2023 <- bind_rows(ense2023m, ense2023a)
 ense2023 <- ense2023 %>% 
   mutate(survey = "2023")
 
-### FINAL DATABASE 2023 AGES 0 to 18
+### FINAL DATABASE 2023 AGES 0 to 15
 save(ense2023, file = "ense2023.Rdata")
 # Homogenize variables ####
 
@@ -1153,6 +1153,9 @@ save(joined_6, file = "joined_6.RData")
 
 joined_clean_6 <- joined_6 %>%  ## 6 to 15 dropping NAs
   drop_na(edad, sexo, nacionalidad, sedentarismo, clase, ccaa, urb_rur, survey)
+
+joined_clean_6 <- joined_6 %>%  ## 6 to 15 dropping NAs
+  drop_na(edad, sexo, sedentarismo, clase, urb_rur, survey)
 
 # New Social Class Categorization for MAIHDA (6 to 15)
 joined_clean_6 <- joined_clean_6 %>% 

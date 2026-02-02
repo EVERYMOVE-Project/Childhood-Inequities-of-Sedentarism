@@ -14,7 +14,6 @@ library(glmmTMB)
 library(sandwich)
 library(emmeans)
 
-library(dplyr)
 library(broom)
 library(gtsummary)
 library(janitor)
@@ -33,6 +32,10 @@ library(lmtest)
 library(tibble)
 library(ggrepel)
 library(segmented)
+library(extrafont)
+
+font_import(prompt = FALSE)   # run once (can take a few minutes)
+loadfonts(device = "win") 
 
 ## Load data ----
 joined_clean <- get(load("joined_clean_6.RData"))
@@ -63,7 +66,7 @@ joined_clean <- joined_clean %>%
     survey %in% c("2017", "2023") ~ "Post",
     TRUE ~ NA_character_
     ),
-    survey2 = factor(survey2, levels = c("Pre", "Post")),
+    survey2 = factor(survey2, levels = c("Post", "Pre")),
     urb_rur = as.character(urb_rur),
     urb_rur = factor(urb_rur)
   )
@@ -74,12 +77,18 @@ maihda <- joined_clean %>%
 maihda$survey <- factor(maihda$survey)
 save(maihda, file = "maihda.RData")
 
+## Restricted maihda database
+maihda <- joined_clean %>% 
+  select(factor2, sexo, edad_cat3, clase_2, survey, survey2, sedentarismo, urb_rur)
+maihda$survey <- factor(maihda$survey)
+save(maihda, file = "maihda2.RData")
+
 View(maihda)
 
 table(maihda$survey2, maihda$sedentarismo)
 
 ## Load data ----
-dt <- get(load("maihda.RData"))
+dt <- get(load("maihda2.RData"))
 summary(dt)
 
 ## Generate stratum ID
@@ -100,14 +109,11 @@ levels(dt$survey2)
 ## sexo:     1 = Male, 2 = Female
 ## edad_cat3:1 = 6-9, 2 = 10-12, 3 = 13-15
 ## clase_2:  1 = Non-manual workers, Manual workers 
-## clase_3:  1 = Class III, 2 = Class II, 3 = Class I
-## clase:    1 = Class VI, 2 = Class V, 3 = Class IV, 4 = Class III, 5 = Class II, 6 = Class I
 ## urb_rur:  1 = Rural, 2 = Semi-Urban, 3 = Urban
-## survey:   1 = 2003, 2 = 2006, 3 = 2011, 4 = 2017, 5 = 2023
-## survey:   1 = Pre, 2 = Post
+## survey2:   1 = Post, 2 = Pre
 
 ## NEW MAIHDA DATASET
-save(maihda, file = "maihda.RData")
+save(maihda, file = "maihda2.RData")
 
 ## Need numeric type to create stratum ID
 dt <- dt %>%
@@ -115,13 +121,10 @@ dt <- dt %>%
     sexo_num = as.numeric(sexo),
     edad_cat3_num = as.numeric(edad_cat3),
     clase_2_num = as.numeric(clase_2),
-    clase_3_num = as.numeric(clase_3),
-    clase_num = as.numeric(clase),
     urb_rur_num = as.numeric(urb_rur),
     survey_num = as.numeric(survey),
     survey2_num = as.numeric(survey2),
-    sedentarismo2 = as.numeric(sedentarismo), # 1 and 2, not 0 and 1
-    nacionalidad_num = as.numeric(nacionalidad)
+    sedentarismo2 = as.numeric(sedentarismo) # 1 and 2, not 0 and 1
     )
 
 # Convert 1/2 to 0/1
@@ -140,6 +143,9 @@ dt0 <- dt %>%
 dt0$stratum <- as.factor(dt0$stratum)
 summary(dt0$stratum)
 
+## maihda database with stratum variable
+save(dt0, file = "maihda2.RData")
+
 # Prevalence of sedentarism per strata
 tab <- prop.table(table(dt0$stratum, dt0$sedentarismo), 1)*100
 tab_round <- round(tab, 1)
@@ -147,7 +153,7 @@ tab_round
 clipr::write_clip(tab_round)
 
 ## Sort data by stratum
-dt0 <- dt0[order(dt1$stratum),]
+dt0 <- dt0[order(dt0$stratum),]
 
 ## Generate a new variable which records stratum size
 dt0 <- dt0 %>%
@@ -156,7 +162,7 @@ dt0 <- dt0 %>%
 
 summary(dt0$strataN) # minimum 62 counts in a group
 
-## fit null model
+## fit null model ----
 model0 <- glmmTMB(sedentarismo ~ (1|stratum), data = dt0, family = "binomial")
 
 ## Modeling the log of the expected prevalence as a function of a fixed intercept
@@ -165,7 +171,7 @@ model0 <- glmmTMB(sedentarismo ~ (1|stratum), data = dt0, family = "binomial")
 ## This is the null model use to estimate VPC (how much variance is between vs
 ## within strata) and serves as baseline for later main-effects models
 summary(model0)
-exp(-1.97733) 
+exp(-1.97749) 
 ## log odds converted to a probability
 # The baseline risk of sedentarism is 12% averaged across all strata
 tab_model(model0, show.se=T)
@@ -174,8 +180,14 @@ tab_model(model0, show.se=T)
 
 ## Calculate the VPC
 ## approximated as the variance(stratum)/variance(stratum + 3.29)
-tau2 <- as.numeric(VarCorr(model0)$cond$stratum[1,1])
-VPC0 <- tau2 / (tau2 + (pi^2 / 3))
+tau2 <- as.numeric(VarCorr(model0)$cond$stratum[1,1]) ## the between-stratum variance
+tau2 ## how much sedentarism risk differs across intersectional strata, and normal for
+     ## for this to be much larger because model0 does not consider fixed effects therefore 
+     ## appears to have greater intersectional inequalities
+VPC0 <- tau2 / (tau2 + (pi^2 / 3)) ## in linear models, could do between-stratum variance/total variance
+     ## but in logistic models, the individual-level residual variance is not estimated directly
+     ## the work around is an assumption that the individual-level residual variance is pi^2/3
+
 VPC0
 VPC0_percent <- VPC0*100
 VPC0_percent
@@ -183,15 +195,15 @@ VPC0_percent
 ## between intersectional strata, while the remaining 92.4% is at the individual level
 ## this is the discriminatory accuracy of the strata predicting sedentarism
 
-## Fit two-level logistic regression with covariates
+## Fit two-level logistic regression with covariates ----
 model1 <- glmer(sedentarismo ~ sexo + edad_cat3 + clase_2 + urb_rur + survey2 +
                        (1|stratum), data = dt0, family = "binomial")
 summary(model1)
 tab_model(model1, show.se=T)
 
 ## Calculate the VPC
-tau2 <- as.numeric(VarCorr(model1)$stratum[1,1])
-tau2
+tau2 <- as.numeric(VarCorr(model1)$stratum[1,1]) ## the between-stratum variance
+tau2 
 VPC1 <- tau2 / (tau2 + (pi^2 / 3))
 VPC1
 VPC1_percent <- VPC1*100
@@ -206,7 +218,8 @@ var_adj # after adjusting for predictors, there is very little variance remainin
 # effects of these predictors
 
 PCV <- (var_null - var_adj) / var_null * 100
-PCV
+PCV ## answes how much of the between-stratum inequality is explained by additive effects
+    ## HIGH PCV means inequalities seen are largely additive
 
 ## Following Evans Tutorial Steps to create tables and figures
 ## Extract and prepare model predictions and random effects for interpretation
@@ -278,12 +291,12 @@ m1pb_prob <- mutate(m1pb_prob, id=row_number())
 # predict the fitted linear predictor, on the **probability scale** for the fixed portion of the model only
 dt0$m1wgm_prob <- predict(model1, type = "response", re.form=NA) ## m2Bxb
 ## Back-transforms the fixed-effects-only predictions to probability scale where
-## each observation's value = predicted diabetes probability from the additive
+## each observation's value = predicted sedentarism probability from the additive
 ## main effects ONLY (ignoring stratum residuals)
 
 # predict the stratum random effects and associated standard errors
 m1SE <- REsim(model1) ## m2BU
-m1SE
+m1SE ## mean, median and standard deviation
 ## REsim simulates random intercepts (stratum effects) and associated uncertainty
 ## which represents residual intersectional effects, the part of stratum-specific
 ## risk not explained by additive main effects
@@ -304,8 +317,8 @@ summary(dt2)
 dt2 <- dt2 %>%
   rename(
     m1pbfit=fit,
+    m1pblwr=lwr,
     m1pbupr= upr,
-    m1pblwr=lwr
   )
 
 # merge in m1pb_prob
@@ -315,16 +328,16 @@ dt2 <- merge(dt2, m1pb_prob, by="id")
 dt2 <- dt2 %>%
   rename(
     m1pb_probfit=fit,
-    m1pb_probupr= upr,
-    m1pb_problwr=lwr
+    m1pb_problwr=lwr,
+    m1pb_probupr= upr
   )
 
 # collapse the data down to a stratum-level dataset
 stratum_level <- aggregate(
   x = dt2[c("sedentarismo2")],
   by = dt2[c("sexo", "edad_cat3", "clase_2", "urb_rur", "survey2",
-             "stratum", "strataN", "m1pbfit", "m1pbupr", "m1pblwr",
-             "m1pb_probfit", "m1pb_probupr", "m1pb_problwr", "m1wgm", "m1wgm_prob")],
+             "stratum", "strataN", "m1pbfit", "m1pblwr", "m1pbupr", 
+             "m1pb_probfit", "m1pb_problwr", "m1pb_probupr",  "m1wgm", "m1wgm_prob")],
   FUN = mean
 ) ## we are aggregating means and proportions to one row per stratum, so for each stratum,
 ## we compute the mean observed outcomes and average predictions/CI
@@ -335,14 +348,16 @@ stratum_level
 ## convert the outcome from a proportion to a percentage
 stratum_level$sedentarismo2_p <- stratum_level$sedentarismo2*100
 
+save(stratum_level, file = "stratum_level.RData")
+stratum_level <- get(load("stratum_level.RData"))
 
 ## Table 1 ----
 # Tabulate each individual characteristics
-table(dt0$sexo)
-table(dt0$edad_cat3)
-table(dt0$urb_rur)
-table(dt0$clase_2)
-table(dt0$survey2)
+table(dt0$sexo, dt0$sedentarismo)
+table(dt0$edad_cat3, dt0$sedentarismo)
+table(dt0$clase_2, dt0$sedentarismo)
+table(dt0$urb_rur, dt0$sedentarismo)
+table(dt0$survey2, dt0$sedentarismo)
 table(dt0$sedentarismo)
 
 # adapt category names before tables
@@ -363,7 +378,7 @@ table1 <- dt %>%
     label = list(
       sexo ~ "Sex",
       edad_cat3 ~ "Age Group",
-      urb_rur ~ "Urbanicity",
+      urb_rur ~ "Municipality Type",
       clase_2 ~ "Occupational Social Class",
       survey2 ~ "Pre-Post Inequality Inflection Point",
       sedentarismo ~ "Sedentarism"
@@ -386,6 +401,7 @@ table1
 # Generate binary indicators for whether each stratum has more than X 
 # individuals
 summary(stratum_level$strataN)
+stratum_level$n200plus <- ifelse(stratum_level$strataN>=200, 1,0)
 stratum_level$n100plus <- ifelse(stratum_level$strataN>=100, 1,0)
 stratum_level$n50plus <- ifelse(stratum_level$strataN>=50, 1,0)
 stratum_level$n30plus <- ifelse(stratum_level$strataN>=30, 1,0)
@@ -394,6 +410,7 @@ stratum_level$n10plus <- ifelse(stratum_level$strataN>=10, 1,0)
 stratum_level$nlessthan10 <- ifelse(stratum_level$strataN<10, 1,0)
 
 # tabulate the binary indicators
+table(stratum_level$n200plus)
 table(stratum_level$n100plus)
 table(stratum_level$n50plus)
 table(stratum_level$n30plus)
@@ -403,8 +420,9 @@ table(stratum_level$nlessthan10)
 summary(dt0$stratum)
 ## all are greater than 100 counts except 6 strata
 
-# summarise the observed stratum means
-prop.table(table(dt0$stratum, dt0$sedentarismo), 1)*100
+# summarise the observed stratum means/prevalence of sedentarism per group
+proptable <- prop.table(table(dt0$stratum, dt0$sedentarismo), 1)*100
+clipr::write_clip(proptable)
 
 # Observed stratum-level means (prevalence)
 observed_table <- dt0 %>%
@@ -419,6 +437,7 @@ observed_table <- dt0 %>%
 observed_table
 clipr::write_clip(observed_table)
 
+## Code not part of tutorial
 # Model-based predicted probabilities
 model_basedsex <- emmeans(model1, ~ sexo, type = "response")
 model_basedage <- emmeans(model1, ~ edad_cat3, type = "response")
@@ -432,50 +451,53 @@ model_basedclass
 model_basedurb
 model_basedsurv
 
-stratum_level_predictedprob <- dt2 %>%
+## *100
+stratum_level_predictedprob_percent <- dt2 %>%
   group_by(
     sexo, edad_cat3, urb_rur, clase_2, survey2,
     stratum, strataN
   ) %>%
   summarise(
-    observed_prevalence = mean(sedentarismo2, na.rm = TRUE),
+    observed_prevalence = mean(sedentarismo2, na.rm = TRUE)*100,
     
-    m1pb_probfit = mean(m1pb_probfit, na.rm = TRUE),
-    m1pb_probupr = mean(m1pb_probupr, na.rm = TRUE),
-    m1pb_problwr = mean(m1pb_problwr, na.rm = TRUE),
+    m1pb_probfit = mean(m1pb_probfit, na.rm = TRUE)*100,
+    m1pb_problwr = mean(m1pb_problwr, na.rm = TRUE)*100,
+    m1pb_probupr = mean(m1pb_probupr, na.rm = TRUE)*100,
+    
     
     m1pbfit      = mean(m1pbfit, na.rm = TRUE),
-    m1pbupr      = mean(m1pbupr, na.rm = TRUE),
     m1pblwr      = mean(m1pblwr, na.rm = TRUE),
+    m1pbupr      = mean(m1pbupr, na.rm = TRUE),
     
     m1wgm        = mean(m1wgm, na.rm = TRUE),
-    m1wgm_prob     = mean(m1wgm_prob, na.rm = TRUE),
+    m1wgm_prob     = mean(m1wgm_prob, na.rm = TRUE)*100,
     
     .groups = "drop"
   )
 
-stratum_level_predictedprob
-clipr::write_clip(stratum_level_predictedprob)
+stratum_level_predictedprob_percent
+clipr::write_clip(stratum_level_predictedprob_percent)
 
 ## to calculate the confidence interval of the fixed-effect predicted probabilities
 library(glmmTMB)
 library(MuMIn)
 
 # Model with fixed and random effects
-model1 <- glmmTMB(sedentarismo ~ sexo + edad_cat3 + urb_rur + clase_2 + (1|stratum),
-                  data = dt2, family = binomial)
+# model1 <- glmmTMB(sedentarismo ~ sexo + edad_cat3 + urb_rur + clase_2 + (1|stratum),
+#                   data = dt2, family = binomial)
+# model1
 
 # Fixed effects only predictions with CI
-fx_pred <- predict(model1, 
-                   dt2,
-                   type = "response",
-                   se.fit = TRUE,
-                   re.form = NA)   # <--- this removes random effects
-
-# Calculate CI on probability scale ### EXTRA
-dt2$fixed_prob <- fx_pred$fit
-dt2$fixed_low  <- plogis(qlogis(fx_pred$fit) - 1.96 * fx_pred$se.fit)
-dt2$fixed_high <- plogis(qlogis(fx_pred$fit) + 1.96 * fx_pred$se.fit)
+# fx_pred <- predict(model1, 
+#                    dt2,
+#                    type = "response",
+#                    se.fit = TRUE,
+#                    re.form = NA)   # <--- this removes random effects
+# 
+# # Calculate CI on probability scale ### EXTRA
+# dt2$fixed_prob <- fx_pred$fit
+# dt2$fixed_low  <- plogis(qlogis(fx_pred$fit) - 1.96 * fx_pred$se.fit)
+# dt2$fixed_high <- plogis(qlogis(fx_pred$fit) + 1.96 * fx_pred$se.fit)
 
 # Table 3. ----
 # Create a table that includes all model estimates, including the Variance 
@@ -507,11 +529,20 @@ AUC1
 AUC1f <- auc(dt0$sedentarismo2, dt0$m1wgm_prob)
 AUC1f
 
+
+
 # Figures ----
-## Figure 1. 
-# Rank the predicted stratum probabilities
+## Figure 2. ---- 
 stratum_level <- stratum_level %>%
   mutate(rank2=rank(m1pb_probfit))
+
+# Generate list of 6 highest and 6 lowest predicted stratum means (for Table 4)
+stratum_level <- stratum_level[order(stratum_level$rank2),]
+lowest <- head(stratum_level)
+lowest
+clipr::write_clip(lowest)
+highest <- tail(stratum_level)
+clipr::write_clip(highest)
 
 # convert probabilities to percentages
 stratum_level$m1pb_probfit <- stratum_level$m1pb_probfit * 100
@@ -534,9 +565,8 @@ ggplot(stratum_level, aes(y=m1pb_probfit, x=rank2)) +
 ggplot(stratum_level, aes(x = rank2, y = m1pb_probfit)) +
   geom_pointrange(aes(ymin = m1pb_problwr, ymax = m1pb_probupr), size = 0.5) +
   geom_text(
-    aes(label = stratum),            
-    hjust = -2,       
-    vjust = 0,       
+    aes(x = rank2, y = top, label = stratum),            
+    vjust = -0.15,
     size = 3,
     angle = 90,
     max.overlaps = Inf,
@@ -549,12 +579,20 @@ ggplot(stratum_level, aes(x = rank2, y = m1pb_probfit)) +
   ) +
   theme_bw()
 
+## new graph
+top <- max(stratum_level$m1pb_probupr) + 1.5
 ggplot(stratum_level, aes(x = rank2, y = m1pb_probfit)) +
-  
+  geom_vline(
+    xintercept = seq(min(stratumsim2$rank),
+                     max(stratumsim2$rank),
+                     by = 1),
+    color = "grey90",
+    linewidth = 0.3
+  ) +
   # Confidence intervals
   geom_pointrange(
     aes(ymin = m1pb_problwr, ymax = m1pb_probupr),
-    color = "grey40",
+    color = "grey20",
     size = 0.4
   ) +
   
@@ -565,9 +603,8 @@ ggplot(stratum_level, aes(x = rank2, y = m1pb_probfit)) +
   ) +
   
   geom_text(
-    aes(label = stratum),            
-    hjust = -1.8,       
-    vjust = 0,       
+    aes(x = rank2, y = top, label = stratum),            
+    vjust = -0.15,
     size = 3,
     angle = 90,
     max.overlaps = Inf,
@@ -576,31 +613,40 @@ ggplot(stratum_level, aes(x = rank2, y = m1pb_probfit)) +
   
   labs(
     title = "Predicted Probability of Sedentarism by Intersectional Stratum",
-    x = "Intersectional Stratum (ranked from lowest to highest risk)",
-    y = "Predicted probability of sedentarism",
-    caption = "Points represent stratum-level predicted probabilities; bars indicate 95% confidence intervals"
+    x = "Intersectional Stratum (lowest to highest risk)",
+    y = "Predicted probability of sedentarism (%)",
+    caption = "Stratum-level predicted probabilities; 95% confidence intervals"
   ) +
   
   theme_minimal(base_size = 12) +
   theme(
+    text = element_text(family = "Times New Roman"),
     panel.grid.major.y = element_blank(),
     panel.grid.minor = element_blank(),
     axis.title = element_text(face = "bold"),
     plot.title = element_text(face = "bold", size = 14),
     plot.subtitle = element_text(size = 11),
     plot.caption = element_text(size = 9, hjust = 0),
-    axis.text.x = element_text(size = 9)
+    axis.text.x = element_text(size = 9),
+    plot.background  = element_rect(fill = "white", color = NA),
+    panel.background = element_rect(fill = "white", color = NA)
   )
+
 ggsave("Figures/MAIHDA/caterpillarplot_predictedprob.png", width = 4000, height = 2200, dpi=300, units = "px")
 
-# Generate list of 6 highest and 6 lowest predicted stratum means (for Table 4)
-stratum_level <- stratum_level[order(stratum_level$rank2),]
-lowest <- head(stratum_level)
-clipr::write_clip(lowest)
-highest <- tail(stratum_level)
-clipr::write_clip(highest)
+# Figure 3. on log-scale ----
+## After accounting for all additive effects (sex, age, social class, municipality type, period), do any
+## intersectional strata STILL have unusually high or low sedentarism risk that CANNOT be explained by 
+## those factors alone? 
+## where, if a stratum lies clearly above or below zero, it means that group has MORE or LESS sedentarism 
+## THAN EXPECTED even after adjusting for all additive characteristics
+## If most strata overlap zero, means intersectionality matters mainly through ADDITIVE pathways, NOT THROUGH
 
-# Figure 3. on log-scale
+## Recall m1pb = is the full prediction, overall average risk, additive effects, and stratum's own random effect
+## Recall m1wgm = additive only prediction 
+## THUS the difference between thse two is the intersectional excess
+
+## unique stratum-specific effects
 plotREsim(m1SE)
 ## recall REsim estimates the stratum-level random effects and their uncertainty
 
@@ -610,6 +656,11 @@ plotREsim(m1SE)
 # calculating the limits of the approximate 95% confidence intervals of our 
 # predictions. This involves simulating 1000 values for each predicted value.
 
+## WHY DO WE SIMULATE 1000 TIMES
+## Repeatedly recalculate what each stratum's predicted risk could plausibly be, given the uncertainty of the model 
+## Where each stratum is copied 1000 times, and small random noise is added based on how uncertain its estimate is
+## Creating a distribution of plausible values rather than a single number
+
 # Approximate as the model assumes no sampling covariability between the 
 # regression coefficients and the stratum random effect
 
@@ -617,13 +668,19 @@ plotREsim(m1SE)
 stratumsim <- rbind(stratum_level, 
                     stratum_level[rep(1:nrow(stratum_level),999),])
 
+## TRY OTHER  CODE TO MAINTAIN SOCIODEMO VARIABLES
+stratumsim <- stratum_level[rep(1:nrow(stratum_level), each = 1000), ]
+
+# check
+head(stratumsim)
+
 ## Creates 1000 simulated copies of each stratum (allows Monte Carlo simulation
 ## of prediction uncertainty)
 
 # Generate the approximate standard error for the linear prediction on the
 # logit scale. We do this based on the difference between one estimated
 # confidence interval and the estimated fit, on the logit scale
-stratumsim$m2Bmse <- (stratumsim$m2BmfitL - stratumsim$m2BmlwrL)/1.96
+stratumsim$m1pbSE <- (stratumsim$m1pbfit - stratumsim$m1pblwr)/1.96
 
 ## Uses CI from model to estimate the SE on logit scale, capturing the uncertainty
 ## in predicted logit for each stratum
@@ -631,27 +688,36 @@ stratumsim$m2Bmse <- (stratumsim$m2BmfitL - stratumsim$m2BmlwrL)/1.96
 # specify initial value of the random-number seed (for replication purposes)
 set.seed(354612)
 
+## Convert everything to percentages: from log-odds to percentages of sedentary children
+## easier to interpret, and differences are now X % points higher or lower than expected
+
 # Generate the predicted stratum percentages based on the regression 
 # coefficients and the predicted stratum random effect and factoring in 
 # prediction uncertainty
-stratumsim$m2Bpsim <- 100*invlogit(stratumsim$m2BmfitL + 
-                                     rnorm(384000, mean=0, sd=stratumsim$m2Bmse))
+stratumsim$m1pbpred <- 100*invlogit(stratumsim$m1pbfit + 
+                                     rnorm(72000, mean=0, sd=stratumsim$m1pbSE))
 
-## Simulate predicted probabilities with random noise, adds normal noise to each 
-## linear predictor based on its SE, transforming it to probability scale using
-## invlogit(), and multiplies by 100 to have predicted percent diabetic for each
+# Simulate predicted probabilities with random noise, adds normal noise to each 
+# linear predictor based on its SE, transforming it to probability scale using
+# invlogit(), and multiplies by 100 to have predicted percent sedentarism for each
 ## simulated stratum
 
 # Generate the predicted stratum percentages ignoring the predicted stratum 
 # effect
-stratumsim$m2BpAsim <- 100*invlogit(stratumsim$m2BmF)
+stratumsim$m1pbpred2 <- 100*invlogit(stratumsim$m1wgm)
 
-## here, uses fixed-effects-only prediction, which shows expected diabetes %
+## here, uses fixed-effects-only prediction, which shows expected sedentarism %
 ## based on main effects only, ignoring residual stratum deviation
+
+## For every simulated version of every stratum:
+## Calculate the observed predicted risk - expected risk under additive effects
+## Where a positive value is more sedentarism than expected 
+## negative value is less sedentarism than expected
+## zero is exactly what additive effects predict
 
 # Generate the difference in the predicted stratum percentages due to the 
 # predicted stratum effect
-stratumsim$m2BpBsim <- stratumsim$m2Bpsim - stratumsim$m2BpAsim
+stratumsim$m1pb_diff <- stratumsim$m1pbpred - stratumsim$m1pbpred2
 
 ## Calculate residual/intersectional effect, which is the difference between the 
 ## full prediction and fixed-effects-only prediction: how much the stratum's 
@@ -661,19 +727,25 @@ stratumsim$m2BpBsim <- stratumsim$m2Bpsim - stratumsim$m2BpAsim
 # sort the data by strata
 stratumsim <- stratumsim[order(stratumsim$stratum),]
 
+
+## Summarise this uncertainty per stratum:
+## compute the average residual effect, the spread of that effect with the SD 
+## and a 95% interval --> to tell if this stratum is consistently above or below what additive effects predict
+
 # collapse the data down to stratum level, generate mean and SE variables,
 # then use these to generate rank and lower and upper limits of the approximate
 # 95% confidence intervals of the difference in predicted stratum percentages 
 # due to interaction variables.
 stratumsim2 <- stratumsim %>%
   group_by(stratum) %>%
-  summarise(mean=mean(m2BpBsim), std=sd(m2BpBsim)) %>%
-  mutate(rank=rank(mean)) %>%
+  summarise(mean=mean(m1pb_diff), std=sd(m1pb_diff)) %>%
+  arrange(mean) %>%
+  mutate(rank = row_number()) %>% 
   mutate(hi=(mean + 1.96*std)) %>%
-  mutate(lo=(mean - 1.96*std))
+  mutate(lo=(mean - 1.96*std)) 
 
-## compute mean residual effect and standard deviation for each stratum
-## rank stata by mean residual effect - for ordered plotting
+# compute mean residual effect and standard deviation for each stratum
+# rank stata by mean residual effect - for ordered plotting
 
 # plot the caterpillar plot of the predicted stratum percentage differences
 ggplot(stratumsim2, aes(x=rank, y=mean)) +
@@ -681,19 +753,25 @@ ggplot(stratumsim2, aes(x=rank, y=mean)) +
   geom_point(size=3) +
   geom_pointrange(aes(ymin=lo, ymax=hi)) + 
   xlab("Stratum Rank") +
-  ylab("Difference in predicted percent diabetic due to interactions") +
+  ylab("Difference in predicted percent sedentarism due to interactions") +
   theme_bw()
 
-## x-axis is the stratum rank, ordered by residual effect
-## y-axis is the predicted % deviation due to residual intersesctional effect
-## red line at 0 means there is no residual effect, the stratum matches additive
-## prediction
+# x-axis is the stratum rank, ordered by residual effect
+# y-axis is the predicted % deviation due to residual intersectional effect
+# red line at 0 means there is no residual effect, the stratum matches additive
+# prediction
+
+## THIS IS KEY: the filter selects strata whose entire uncertainty intervals lie above or below zero
+## Have no significant strata because once additive effects are accounted for, no 
+## stratum shows a statistically detectable residual deviation from the expected risk 
+## thus the differences that exist between strata are fully explained by additive effects
+## no evidence of strong, unique intersectional mechanisms over and above those factors
 
 # Filter only significant strata
 sig_strata <- stratumsim2 %>%
-  filter(lo > 0 | hi < 0) %>%
-  arrange(mean) %>%            # optional: order by mean
-  mutate(rank = row_number())  # re-rank for plotting
+  filter(lo > 0 | hi < 0) %>% ## stratums significant ONLY if the zero is completely excluded from the uncertainty level
+  arrange(mean) %>%            
+  mutate(rank = row_number())  
 
 # Caterpillar plot for significant strata only
 ggplot(sig_strata, aes(x=rank, y=mean, label=stratum)) +
@@ -702,6 +780,79 @@ ggplot(sig_strata, aes(x=rank, y=mean, label=stratum)) +
   geom_hline(yintercept=0, color="red", linewidth=1) +
   geom_text(hjust=0, vjust=1.5, size=3) +  # adjust label position
   xlab("Stratum Rank") +
-  ylab("Difference in predicted % diabetic due to interactions") +
+  ylab("Difference in predicted % sedentarism due to interactions") +
   theme_bw()
-## just 22114
+
+## NO STRATUM WITHOUT 0 IN UNCERTAINTY LEVEL
+
+### Updated Figure 3
+top_y <- max(stratumsim2$hi) + 0.5
+ggplot(stratumsim2, aes(x = rank, y = mean)) +
+  geom_text(
+    aes(
+      x = rank, y = top_y, label = stratum),
+    vjust = -0.15,
+    size = 3,
+    angle = 90
+  ) +
+  geom_vline(
+    xintercept = seq(min(stratumsim2$rank),
+                     max(stratumsim2$rank),
+                     by = 1),
+    color = "grey90",
+    linewidth = 0.3
+  ) +
+  
+  # Zero reference line (no residual intersectional effect)
+  geom_hline(
+    yintercept = 0,
+    color = "firebrick",
+    linewidth = 0.9,
+    linetype = "solid"
+  ) +
+  
+  # Confidence intervals
+  geom_pointrange(
+    aes(ymin = lo, ymax = hi),
+    color = "grey20",
+    linewidth = 0.4
+  ) +
+  
+  # Point estimates
+  geom_point(
+    color = "#1F78B4",
+    size = 2.3
+  ) +
+  
+  labs(
+    title = "Residual Intersectional Effects on Sedentarism",
+    subtitle = "How much each stratum deviates from what would be expected based on additive effects alone.",
+    x = "Intersectional strata (ranked by residual effect)",
+    y = "Difference in predicted percentage points",
+    caption = "Stratum-level residual effects; 95% confidence intervals.\nRed line indicates no residual intersectional effect."
+  ) +
+  
+  theme_minimal(base_size = 12) +
+  theme(
+    text = element_text(family = "Times New Roman"),
+    panel.grid.minor = element_blank(),
+    panel.grid.major.y = element_blank(),
+    axis.title = element_text(face = "bold"),
+    plot.title = element_text(face = "bold", size = 14),
+    plot.subtitle = element_text(size = 12),
+    plot.caption = element_text(size = 10, hjust = 0),
+    axis.text.x = element_text(size = 10),
+    plot.background  = element_rect(fill = "white", color = NA),
+    panel.background = element_rect(fill = "white", color = NA)
+  )
+
+ggsave("Figures/MAIHDA/caterpillarplot_residualeffects.png", width = 4000, height = 2200, dpi=300, units = "px")
+
+
+lowest <- head(stratumsim2)
+lowest
+clipr::write_clip(lowest)
+highest <- tail(stratumsim2)
+highest
+clipr::write_clip(highest)
+clipr::write_clip(stratumsim2)

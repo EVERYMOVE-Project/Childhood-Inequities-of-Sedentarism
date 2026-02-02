@@ -17,7 +17,7 @@ dt <- get(load("joined.RData")) ## 0 to 15 without dropping NAs
 dt2 <- get(load("joined_clean.RData")) ## 0 to 15 dropping NAs
 dt6 <- get(load("joined_6.RData")) ## 6 to 15 without dropping NAs
 dt_clean <- get(load("joined_clean_6.RData")) ## 6 to 15 dropping NAs 
-maihda <- get(load("maihda.RData")) # maihda data for descriptive
+maihda <- get(load("maihda2.RData")) # maihda data for descriptive
 
 #### Baseline Characteristics without Survey Weights ####
 ## with NAs 0 to 15
@@ -136,14 +136,14 @@ tbl_summary(
 tbl_summary(
   maihda,
   by = sedentarismo,
-  include = all_of(c("edad_cat3", "sexo", 
+  include = all_of(c("sexo", "edad_cat3", 
                      "clase_2", "urb_rur", "survey2")),
   label = list(
-    edad_cat3 ~ "Child's Age (years)",
-    sexo ~ "Child's Sex",
-    clase_2 ~ "Household Social Class",
-    urb_rur ~ "Urbanicity",
-    survey2 ~ "Inflection Point of Sedentarism Inequality"
+    sexo ~ "Sex",
+    edad_cat3 ~ "Age (years)",
+    clase_2 ~ "Occupational Social Class",
+    urb_rur ~ "Municipality Type",
+    survey2 ~ "Inflection Point in Sedentarism Inequality"
   ),
   statistic = list(
     all_categorical() ~ "{n} ({p}%)", 
@@ -156,7 +156,7 @@ tbl_summary(
   bold_labels() %>%
   modify_caption("**Baseline Characteristics by Sedentarism (Unweighted)**<br>**Ages 6 to 15**") %>%
   modify_header(all_stat_cols() ~ "**{level}**<br>N = {n} ({style_percent(p)}%)") %>%
-  modify_footnote(~ "Values are presented as Median (IQR) for continuous variables and n (%) for categorical variables.")
+  modify_footnote(~ "N (%) for categorical variables.")
 
 
 #### Baseline Characteristics with Survey Weights ####
@@ -220,14 +220,14 @@ valid_vars <- intersect(names(my_labels), names(dt_clean))
 ## labels for MAIHDA
 my_labels <- set_names(
   list(
-    "Age (years)",
     "Sex",
+    "Age (years)",
     "Sedentarism",
-    "Household Social Class",
-    "Urbanicity",
+    "Occupational Social Class",
+    "Municipality Type",
     "Inflection Point of Sedentarism Inequality"
   ),
-  c("edad_cat3", "sexo", "sedentarismo", "clase_2",
+  c("sexo", "edad_cat3", "sedentarismo", "clase_2",
     "urb_rur", "survey2")
 )
 valid_vars <- intersect(names(my_labels), names(maihda))
