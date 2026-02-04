@@ -38,7 +38,7 @@ font_import(prompt = FALSE)   # run once (can take a few minutes)
 loadfonts(device = "win") 
 
 ## Load data ----
-joined_clean <- get(load("joined_clean_6.RData"))
+dt <- get(load("joined_clean_maihda.RData"))
 
 rii_sedentarism_overall_clase <- get(load("~/UAH/PhD Documents/INEdatos/Analysis/Datasets/clase_tr/rii_sedentarism_overall_clase.RData"))
 
@@ -60,7 +60,7 @@ plot(rii ~ encuesta, data = rii_sedentarism_overall_clase)
 plot(seg_m, add = TRUE, col = "red")
 ggsave("Figures/inflection.png", width = 4000, height = 2200, dpi=300, units = "px")
 
-joined_clean <- joined_clean %>% 
+dt <- dt %>% 
   mutate(survey2 = case_when(
     survey %in% c("2003", "2006", "2011") ~ "Pre",
     survey %in% c("2017", "2023") ~ "Post",
@@ -72,20 +72,10 @@ joined_clean <- joined_clean %>%
   )
 
 # Database MAIHDA ####
-maihda <- joined_clean %>% 
-  select(factor2, sexo, edad, edad_cat, edad_cat3, clase, clase_2, clase_3, survey, survey2, sedentarismo, nacionalidad, urb_rur, ccaa)
-maihda$survey <- factor(maihda$survey)
-save(maihda, file = "maihda.RData")
-
-## Restricted maihda database
-maihda <- joined_clean %>% 
+maihda <- dt %>% 
   select(factor2, sexo, edad_cat3, clase_2, survey, survey2, sedentarismo, urb_rur)
 maihda$survey <- factor(maihda$survey)
-save(maihda, file = "maihda2.RData")
-
-View(maihda)
-
-table(maihda$survey2, maihda$sedentarismo)
+save(maihda, file = "maihda.RData")
 
 ## Load data ----
 dt <- get(load("maihda2.RData"))
@@ -95,14 +85,6 @@ summary(dt)
 levels(dt$sexo)
 levels(dt$edad_cat3)
 levels(dt$clase_2)
-dt$clase_2 <- factor(dt$clase_2,
-                     levels = c("Non-Manual Workers", "Manual Workers"))
-levels(dt$clase_3)
-dt$clase_3 <- factor(dt$clase_3,
-                   levels = c("Class III", "Class II", "Class I"))
-levels(dt$clase)
-dt$clase <- factor(dt$clase,
-                    levels = c("Class VI", "Class V", "Class IV", "Class III", "Class II", "Class I"))
 levels(dt$urb_rur)
 levels(dt$survey2)
 
@@ -111,9 +93,6 @@ levels(dt$survey2)
 ## clase_2:  1 = Non-manual workers, Manual workers 
 ## urb_rur:  1 = Rural, 2 = Semi-Urban, 3 = Urban
 ## survey2:   1 = Post, 2 = Pre
-
-## NEW MAIHDA DATASET
-save(maihda, file = "maihda2.RData")
 
 ## Need numeric type to create stratum ID
 dt <- dt %>%
@@ -136,34 +115,34 @@ prop.table(table(dt$sedentarismo, dt$sexo), 1)*100 # where the 1 gives me row pr
 
 ## create new database with variables needed to construct stratum
 ### sex, age group, social class, urban/semi/rural, survey year
-dt0 <- dt %>% 
+dt <- dt %>% 
   mutate(
     stratum = 10000*sexo_num + 1000*edad_cat3_num + 100*clase_2_num + 10*urb_rur_num + survey2_num
   )
-dt0$stratum <- as.factor(dt0$stratum)
-summary(dt0$stratum)
+dt$stratum <- as.factor(dt$stratum)
+summary(dt$stratum)
 
 ## maihda database with stratum variable
-save(dt0, file = "maihda2.RData")
+save(dt, file = "maihda_stratum.RData")
 
 # Prevalence of sedentarism per strata
-tab <- prop.table(table(dt0$stratum, dt0$sedentarismo), 1)*100
+tab <- prop.table(table(dt$stratum, dt$sedentarismo), 1)*100
 tab_round <- round(tab, 1)
 tab_round
 clipr::write_clip(tab_round)
 
 ## Sort data by stratum
-dt0 <- dt0[order(dt0$stratum),]
+dt <- dt[order(dt$stratum),]
 
 ## Generate a new variable which records stratum size
-dt0 <- dt0 %>%
+dt <- dt %>%
   group_by(stratum) %>%
   mutate(strataN = n())
 
-summary(dt0$strataN) # minimum 62 counts in a group
+summary(dt$strataN) # minimum 62 counts in a group
 
 ## fit null model ----
-model0 <- glmmTMB(sedentarismo ~ (1|stratum), data = dt0, family = "binomial")
+model0 <- glmmTMB(sedentarismo ~ (1|stratum), data = dt, family = "binomial")
 
 ## Modeling the log of the expected prevalence as a function of a fixed intercept
 ## which is the overall log mean prevalence and a random intercept for each stratum
@@ -197,7 +176,7 @@ VPC0_percent
 
 ## Fit two-level logistic regression with covariates ----
 model1 <- glmer(sedentarismo ~ sexo + edad_cat3 + clase_2 + urb_rur + survey2 +
-                       (1|stratum), data = dt0, family = "binomial")
+                       (1|stratum), data = dt, family = "binomial")
 summary(model1)
 tab_model(model1, show.se=T)
 
@@ -249,7 +228,7 @@ PCV ## answes how much of the between-stratum inequality is explained by additiv
 # → Rank strata after adjustment
 
 # predict the fitted linear predictor on the **probability scale**
-dt0$m0pb <- predict(model0, type="response") ## m2Axbu
+dt$m0pb <- predict(model0, type="response") ## m2Axbu
 ## type="response" tells R to convert the log-odds into probabilities using the logistic function
 ## using the logistic function, convert the linear predictor log-odds to predicted probability
 ## so each m0pb value is the predicted probability of being sedentary for that observation,
@@ -263,7 +242,7 @@ dt0$m0pb <- predict(model0, type="response") ## m2Axbu
 
 # predict the linear predictor for the fixed portion of the model only on the **probability scale**
 # (only the intercept, so this is just the weighted grand mean probability)
-dt0$m0wgm <- predict(model0, type ="response", re.form=NA) ## m2Axb
+dt$m0wgm <- predict(model0, type ="response", re.form=NA) ## m2Axb
 ## re.form=NA ignores the random effects, therefore predicting probability
 ## based only on the fixed portion of the model - meaning m0wgm is the overall
 ## probability of sedentarism across all observations, ignoring stratum differences
@@ -280,7 +259,7 @@ m1pb <- predictInterval(model1, level=0.95, include.resid.var=FALSE) ## m2Bm
 m1pb <- mutate(m1pb, id=row_number())
 
 # on the logit scale, predict the linear predictor for the fixed portion of the model only in the **log-scale**
-dt0$m1wgm <- predict(model1, re.form=NA) ## m2BmF
+dt$m1wgm <- predict(model1, re.form=NA) ## m2BmF
 
 # predict the fitted linear predictor, and confidence intervals, on the **probability scale**
 m1pb_prob <- predictInterval(model1, level=0.95, include.resid.var=FALSE, type="probability") ## m2Bm_prob
@@ -289,7 +268,7 @@ m1pb_prob <- predictInterval(model1, level=0.95, include.resid.var=FALSE, type="
 m1pb_prob <- mutate(m1pb_prob, id=row_number())
 
 # predict the fitted linear predictor, on the **probability scale** for the fixed portion of the model only
-dt0$m1wgm_prob <- predict(model1, type = "response", re.form=NA) ## m2Bxb
+dt$m1wgm_prob <- predict(model1, type = "response", re.form=NA) ## m2Bxb
 ## Back-transforms the fixed-effects-only predictions to probability scale where
 ## each observation's value = predicted sedentarism probability from the additive
 ## main effects ONLY (ignoring stratum residuals)
@@ -307,10 +286,10 @@ m1SE ## mean, median and standard deviation
 
 ## merge predictions with original data
 # create an id variable for merging in the dt0 dataframe
-dt0$id <- seq.int(nrow(dt0))
+dt$id <- seq.int(nrow(dt))
 
-# create a new dataframe, dt2, that merges dt0 and m1pb
-dt2 <- merge(dt0, m1pb, by = "id")
+# create a new dataframe, dt2, that merges dt and m1pb
+dt2 <- merge(dt, m1pb, by = "id")
 summary(dt2)
 
 # rename the variables from m1pb
@@ -353,12 +332,12 @@ stratum_level <- get(load("stratum_level.RData"))
 
 ## Table 1 ----
 # Tabulate each individual characteristics
-table(dt0$sexo, dt0$sedentarismo)
-table(dt0$edad_cat3, dt0$sedentarismo)
-table(dt0$clase_2, dt0$sedentarismo)
-table(dt0$urb_rur, dt0$sedentarismo)
-table(dt0$survey2, dt0$sedentarismo)
-table(dt0$sedentarismo)
+table(dt$sexo, dt$sedentarismo)
+table(dt$edad_cat3, dt$sedentarismo)
+table(dt$clase_2, dt$sedentarismo)
+table(dt$urb_rur, dt$sedentarismo)
+table(dt$survey2, dt$sedentarismo)
+table(dt$sedentarismo)
 
 # adapt category names before tables
 dt <- dt %>%
@@ -372,7 +351,7 @@ dt <- dt %>%
                       "Girls" = "Female")
   )
 
-table1 <- dt %>%
+table1 <- maihda %>%
   select(sexo, edad_cat3, urb_rur, clase_2, survey2, sedentarismo) %>%
   tbl_summary(
     label = list(
@@ -417,15 +396,16 @@ table(stratum_level$n30plus)
 table(stratum_level$n20plus)
 table(stratum_level$n10plus)
 table(stratum_level$nlessthan10)
-summary(dt0$stratum)
+summary(dt$stratum)
 ## all are greater than 100 counts except 6 strata
 
 # summarise the observed stratum means/prevalence of sedentarism per group
-proptable <- prop.table(table(dt0$stratum, dt0$sedentarismo), 1)*100
+proptable <- prop.table(table(dt$stratum, dt$sedentarismo), 1)*100
+proptable
 clipr::write_clip(proptable)
 
 # Observed stratum-level means (prevalence)
-observed_table <- dt0 %>%
+observed_table <- dt %>%
   group_by(stratum) %>% 
   summarise(
     n = n(),
@@ -436,20 +416,6 @@ observed_table <- dt0 %>%
 
 observed_table
 clipr::write_clip(observed_table)
-
-## Code not part of tutorial
-# Model-based predicted probabilities
-model_basedsex <- emmeans(model1, ~ sexo, type = "response")
-model_basedage <- emmeans(model1, ~ edad_cat3, type = "response")
-model_basedclass <- emmeans(model1, ~ clase_2, type = "response")
-model_basedurb <- emmeans(model1, ~ urb_rur, type = "response")
-model_basedsurv <- emmeans(model1, ~ survey2, type = "response")
-
-model_basedsex
-model_basedage
-model_basedclass
-model_basedurb
-model_basedsurv
 
 ## *100
 stratum_level_predictedprob_percent <- dt2 %>%
@@ -473,7 +439,8 @@ stratum_level_predictedprob_percent <- dt2 %>%
     m1wgm_prob     = mean(m1wgm_prob, na.rm = TRUE)*100,
     
     .groups = "drop"
-  )
+  ) %>% 
+  arrange(m1pb_probfit)
 
 stratum_level_predictedprob_percent
 clipr::write_clip(stratum_level_predictedprob_percent)
@@ -529,8 +496,6 @@ AUC1
 AUC1f <- auc(dt0$sedentarismo2, dt0$m1wgm_prob)
 AUC1f
 
-
-
 # Figures ----
 ## Figure 2. ---- 
 stratum_level <- stratum_level %>%
@@ -543,6 +508,7 @@ lowest
 clipr::write_clip(lowest)
 highest <- tail(stratum_level)
 clipr::write_clip(highest)
+highest
 
 # convert probabilities to percentages
 stratum_level$m1pb_probfit <- stratum_level$m1pb_probfit * 100
