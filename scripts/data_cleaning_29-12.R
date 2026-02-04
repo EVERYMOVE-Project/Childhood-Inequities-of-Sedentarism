@@ -2,7 +2,7 @@
 ## Proyect: Childhood Inequities of Sedentarism
 ## Script: Data Cleaning INE Datasets
 ## Finalized: 28th of July 2025
-## Edited: 29th of December 2025
+## Edited: 4th of February 2026
 
 ## Load libraries
 library(tidyverse)
@@ -1143,35 +1143,30 @@ ense_list <- list(ense2003_rename, ense2006_rename, ense2011_rename, ense2017_re
 joined <- bind_rows(ense_list) ## 0 to 15 without dropping NAs
 save(joined, file = "joined.RData")
 
-joined_clean <- joined %>% ## 0 to 15 dropping NAs
-  drop_na(edad, sexo, nacionalidad, sedentarismo, clase, ccaa, urb_rur, survey2)
-save(joined_clean, file = "joined_clean.RData")
-
 joined_6 <- joined %>%  ## 6 to 15 without dropping NAs
   filter(edad >= 6)
 save(joined_6, file = "joined_6.RData")
 
-joined_clean_6 <- joined_6 %>%  ## 6 to 15 dropping NAs
-  drop_na(edad, sexo, nacionalidad, sedentarismo, clase, ccaa, urb_rur, survey)
+joined_clean_rii <- joined_6 %>% ## 6 to 15 dropping NAs
+  drop_na(edad, sexo, sedentarismo, clase, ccaa, urb_rur, survey)
+save(joined_clean_rii, file = "joined_clean_rii.RData") # FINAL CLEAN DATABASE FOR RII
 
-joined_clean_6 <- joined_6 %>%  ## 6 to 15 dropping NAs
+joined_clean_maihda <- joined_6 %>% 
   drop_na(edad, sexo, sedentarismo, clase, urb_rur, survey)
 
 # New Social Class Categorization for MAIHDA (6 to 15)
-joined_clean_6 <- joined_clean_6 %>% 
+joined_clean_maihda <- joined_clean_maihda %>% 
   mutate(
     clase_2 = case_when(
       clase %in% c("Class I", "Class II", "Class III") ~ "Non-Manual Workers",
       clase %in% c("Class IV", "Class V", "Class VI") ~ "Manual Workers",
       TRUE ~ NA_character_
     ),
-    clase_2 = factor(clase_2, levels = c("Manual Workers", "Non-Manual Workers"))
+    clase_2 = factor(clase_2, levels = c("Non-Manual Workers", "Manual Workers"))
   )
 
-save(joined_clean, file = "joined_clean.RData")
-
-# New Age Categorization for MAIHDA (6 to 15)
-joined_clean_6 <- joined_clean_6 %>% 
+# New Age Categorization for MAIHDA
+joined_clean_maihda <- joined_clean_maihda %>% 
   mutate(
     edad_cat = case_when(
     edad >= 6 & edad <= 11 ~ "6-11",
@@ -1185,16 +1180,4 @@ joined_clean_6 <- joined_clean_6 %>%
     edad_cat = factor(edad_cat, levels = c("6-11", "12-15")),
     edad_cat3 = factor(edad_cat3, levels = c("6-9", "10-12", "13-15"))
   )
-
-# New Social Class Categorization for MAIHDA (6 to 15)
-joined_clean_6 <- joined_clean_6 %>% 
-  mutate(
-    clase_2 = case_when(
-      clase %in% c("Class I", "Class II", "Class III") ~ "Non-Manual Workers",
-      clase %in% c("Class IV", "Class V", "Class VI") ~ "Manual Workers",
-      TRUE ~ NA_character_
-    ),
-    clase_2 = factor(clase_2, levels = c("Non-Manual Workers", "Manual Workers"))
-  )
-
-save(joined_clean_6, file = "joined_clean_6.RData") ## FINAL CLEAN DATABASE FOR RII and MAIHDA AGES 6 to 15
+save(joined_clean_maihda, file = "joined_clean_maihda.RData") ## FINAL CLEAN DATABASE FOR MAIHDA
