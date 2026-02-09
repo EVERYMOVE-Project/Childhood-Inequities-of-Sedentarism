@@ -1,8 +1,8 @@
 ## Author: Diana Juanita Mora
-## Proyect: Childhood Inequities of Sedentarism
+## Project: Childhood Inequities of Sedentarism
 ## Script: Data Analysis - RII and SII (clase_tr_2)
 ## Finalized: 28th of July 2025
-## Edited: 29th of December 2025
+## Edited: 9th of February of 2026
 
 ## Load libraries ----
 library(tidyverse)
@@ -26,6 +26,10 @@ library(lmtest)
 library(tibble)
 library(ggrepel)
 library(sf) #map
+library(extrafont)
+
+font_import(prompt = FALSE)   # run once (can take a few minutes)
+loadfonts(device = "win") 
 
 ## read joined data
 dt <- get(load("joined_clean_rii.RData"))
@@ -45,29 +49,42 @@ dt <- get(load("joined_clean_rii.RData"))
 
 ## RIDIT Score 
 # The cumulative proportion of the population below the midpoint of that category
+# clase_tr_2, clase_tr_2_f, clase_tr_2_m
 
 dt <- dt %>%
   mutate(sedentarismo = ifelse(sedentarismo == "Yes", 1, 0))
 
-# RII Overall
+# RII Overall robust standard errors
 rii_sedentarism_overall_clase <- dt %>%
   group_by(survey) %>%
   group_split() %>%
   map_dfr(~ {
-    fit <- glm(sedentarismo ~ clase_tr_2 + edad + sexo, data = .x, family = "poisson")
-    coef <- tidy(fit) %>% filter(term == "clase_tr_2")
+    
+    # Fit Poisson model
+    fit <- glm(sedentarismo ~ clase_tr_2 + edad + sexo,
+               data = .x, family = poisson(link = "log"))  # log link for RII
+    
+    # Robust (sandwich) variance-covariance matrix
+    robust_se <- sqrt(diag(sandwich::vcovHC(fit, type = "HC0")))
+    
+    # Extract coefficient of interest
+    coef_est <- coef(fit)["clase_tr_2"]
+    coef_se  <- robust_se["clase_tr_2"]
+    
+    # Build RII and robust CIs
     tibble(
-      encuesta = unique(.x$survey),
-      rii = exp(coef$estimate),
-      rii_infci = exp(coef$estimate - 1.96 * coef$std.error),
-      rii_supci = exp(coef$estimate + 1.96 * coef$std.error),
+      encuesta    = unique(.x$survey),
+      rii         = exp(coef_est),
+      rii_infci   = exp(coef_est - 1.96 * coef_se),
+      rii_supci   = exp(coef_est + 1.96 * coef_se),
       risk_factor = "Sedentarism",
-      sexo = "Overall"
+      sexo        = "Overall"
     )
   })
+
 rii_sedentarism_overall_clase
 clipr::write_clip(rii_sedentarism_overall_clase)
-save(rii_sedentarism_overall_clase, file = "Datasets/clase_tr_2/rii_sedentarism_overall_clase.RData")
+save(rii_sedentarism_overall_clase, file = "Datasets/clase_tr_2/new/rii_sedentarism_overall_clase.RData")
 
 # RII Females
 dt_females <- subset(dt, sexo == "Female")
@@ -75,20 +92,31 @@ rii_sedentarism_f_clase <- dt_females %>%
   group_by(survey) %>%
   group_split() %>%
   map_dfr(~ {
-    fit <- glm(sedentarismo ~ clase_tr_2_f + edad, data = .x, family = "poisson")
-    coef <- tidy(fit) %>% filter(term == "clase_tr_2_f")
+    
+    # Fit Poisson model
+    fit <- glm(sedentarismo ~ clase_tr_2_f + edad,
+               data = .x, family = poisson(link = "log"))  # log link for RII
+    
+    # Robust (sandwich) variance-covariance matrix
+    robust_se <- sqrt(diag(sandwich::vcovHC(fit, type = "HC0")))
+    
+    # Extract coefficient of interest
+    coef_est <- coef(fit)["clase_tr_2_f"]
+    coef_se  <- robust_se["clase_tr_2_f"]
+    
+    # Build RII and robust CIs
     tibble(
-      encuesta = unique(.x$survey),
-      rii = exp(coef$estimate),
-      rii_infci = exp(coef$estimate - 1.96 * coef$std.error),
-      rii_supci = exp(coef$estimate + 1.96 * coef$std.error),
+      encuesta    = unique(.x$survey),
+      rii         = exp(coef_est),
+      rii_infci   = exp(coef_est - 1.96 * coef_se),
+      rii_supci   = exp(coef_est + 1.96 * coef_se),
       risk_factor = "Sedentarism",
-      sexo = "Girls"
+      sexo        = "Girls"
     )
   })
 rii_sedentarism_f_clase
 clipr::write_clip(rii_sedentarism_f_clase)
-save(rii_sedentarism_f_clase, file = "Datasets/clase_tr_2/rii_sedentarism_overall_clase_f_2.RData")
+save(rii_sedentarism_f_clase, file = "Datasets/clase_tr_2/new/rii_sedentarism_overall_clase_f.RData")
 
 # RII Males
 dt_males <- subset(dt, sexo == "Male")
@@ -96,19 +124,31 @@ rii_sedentarism_m_clase <- dt_males %>%
   group_by(survey) %>%
   group_split() %>%
   map_dfr(~ {
-    fit <- glm(sedentarismo ~ clase_tr_2_m + edad, data = .x, family = "poisson")
-    coef <- tidy(fit) %>% filter(term == "clase_tr_2_m")
+    
+    # Fit Poisson model
+    fit <- glm(sedentarismo ~ clase_tr_2_m + edad,
+               data = .x, family = poisson(link = "log"))  # log link for RII
+    
+    # Robust (sandwich) variance-covariance matrix
+    robust_se <- sqrt(diag(sandwich::vcovHC(fit, type = "HC0")))
+    
+    # Extract coefficient of interest
+    coef_est <- coef(fit)["clase_tr_2_m"]
+    coef_se  <- robust_se["clase_tr_2_m"]
+    
+    # Build RII and robust CIs
     tibble(
-      encuesta = unique(.x$survey),
-      rii = exp(coef$estimate),
-      rii_infci = exp(coef$estimate - 1.96 * coef$std.error),
-      rii_supci = exp(coef$estimate + 1.96 * coef$std.error),
+      encuesta    = unique(.x$survey),
+      rii         = exp(coef_est),
+      rii_infci   = exp(coef_est - 1.96 * coef_se),
+      rii_supci   = exp(coef_est + 1.96 * coef_se),
       risk_factor = "Sedentarism",
-      sexo = "Boys"
+      sexo        = "Boys"
     )
   })
+rii_sedentarism_m_clase
 clipr::write_clip(rii_sedentarism_m_clase)
-save(rii_sedentarism_m_clase, file = "Datasets/clase_tr_2/rii_sedentarism_overall_clase_m_2.RData")
+save(rii_sedentarism_m_clase, file = "Datasets/clase_tr_2/new/rii_sedentarism_overall_clase_m.RData")
 
 ## Database for RII data by social class
 rii_sedentarism_clase <- rii_sedentarism_overall_clase %>%
@@ -116,7 +156,7 @@ rii_sedentarism_clase <- rii_sedentarism_overall_clase %>%
   rbind(rii_sedentarism_m_clase) %>% 
   mutate(exp="RII Social Class") %>% 
   rename(est = rii, infci=rii_infci, supci=rii_supci, strata=sexo)
-save(rii_sedentarism_clase, file = "Datasets/clase_tr_2/rii_sedentarism.RData")
+save(rii_sedentarism_clase, file = "Datasets/clase_tr_2/new/rii_sedentarism.RData")
 
 #### Slope Index of Inequality (SII) ####
 # Tells us the absolute difference in prevalence of sedentarism between the
@@ -126,86 +166,104 @@ save(rii_sedentarism_clase, file = "Datasets/clase_tr_2/rii_sedentarism.RData")
 # i.e., how many more people per 100 are sedentary in the lowest social class 
 # group compared to the highest?
 
+## SII Overall
 sii_sedentarism_overall_clase <- dt %>%
   group_by(survey) %>%
   group_split() %>%
-  map_dfr(~{
-    # Fit model with identity link
-    fit <- glm(
-      sedentarismo ~ clase_tr_2 + edad + sexo,
-      data = .x,
-      family = poisson(link = "identity"),
-      start = c(1, 0, 0, 0)  # helps convergence
-    )
+  map_dfr(~ {
     
-    coef <- broom::tidy(fit) %>% filter(term == "clase_tr_2")
+    # Fit Poisson model
+    fit <- glm(sedentarismo ~ clase_tr_2 + edad + sexo,
+               data = .x, family = poisson(link = "identity"),
+               start = c(1, 0, 0, 0))
     
+    # Robust SE
+    robust_vcov <- sandwich::vcovHC(fit, type = "HC0")
+    robust_se   <- sqrt(diag(robust_vcov))
+    
+    # Extract coefficient of interest
+    coef_est <- coef(fit)["clase_tr_2"]
+    coef_se  <- robust_se["clase_tr_2"]
+    
+    # Build SII and robust CIs
     tibble(
-      encuesta = unique(.x$survey),
-      sii = coef$estimate * 100,
-      sii_infci = (coef$estimate - 1.96 * coef$std.error) * 100,
-      sii_supci = (coef$estimate + 1.96 * coef$std.error) * 100,
+      encuesta    = unique(.x$survey),
+      sii         = (coef_est)*100,
+      sii_infci   = (coef_est - 1.96 * coef_se)*100,
+      sii_supci   = (coef_est + 1.96 * coef_se)*100,
       risk_factor = "Sedentarism",
-      sexo = "Overall"
+      sexo        = "Overall"
     )
   })
 sii_sedentarism_overall_clase
-save(sii_sedentarism_overall_clase, file = "Datasets/clase_tr_2/sii_sedentarism.RData")
 clipr::write_clip(sii_sedentarism_overall_clase)
+save(sii_sedentarism_overall_clase, file = "Datasets/clase_tr_2/new/sii_sedentarism_overall_clase.RData")
 
 # SII Females
-sii_sedentarism_f_clase <- dt_females %>%
+sii_sedentarism_f_clase <- dt %>%
   group_by(survey) %>%
   group_split() %>%
-  map_dfr(~{
-    # Fit model with identity link
-    fit <- glm(
-      sedentarismo ~ clase_tr_2 + edad,
-      data = .x,
-      family = poisson(link = "identity"),
-      start = c(1, 0, 0) 
-    )
+  map_dfr(~ {
     
-    coef <- broom::tidy(fit) %>% filter(term == "clase_tr_2")
+    # Fit Poisson model
+    fit <- glm(sedentarismo ~ clase_tr_2_f + edad,
+               data = .x, family = poisson(link = "identity"),
+               start = c(1, 0, 0))
     
+    # Robust SE
+    robust_vcov <- sandwich::vcovHC(fit, type = "HC0")
+    robust_se   <- sqrt(diag(robust_vcov))
+    
+    # Extract coefficient of interest
+    coef_est <- coef(fit)["clase_tr_2_f"]
+    coef_se  <- robust_se["clase_tr_2_f"]
+    
+    # Build SII and robust CIs
     tibble(
-      encuesta = unique(.x$survey),
-      sii = coef$estimate * 100,
-      sii_infci = (coef$estimate - 1.96 * coef$std.error) * 100,
-      sii_supci = (coef$estimate + 1.96 * coef$std.error) * 100,
+      encuesta    = unique(.x$survey),
+      sii         = (coef_est)*100,   # NO exp()
+      sii_infci   = (coef_est - 1.96 * coef_se)*100,
+      sii_supci   = (coef_est + 1.96 * coef_se)*100,
       risk_factor = "Sedentarism",
-      sexo = "Girls"
+      sexo        = "Girls"
     )
   })
-save(sii_sedentarism_f_clase, file = "Datasets/clase_tr_2/sii_sedentarism_f_clase.RData")
+sii_sedentarism_f_clase
 clipr::write_clip(sii_sedentarism_f_clase)
+save(sii_sedentarism_f_clase, file = "Datasets/clase_tr_2/new/sii_sedentarism_f_clase.RData")
 
 # SII Males
-sii_sedentarism_m_clase <- dt_males %>%
+sii_sedentarism_m_clase <- dt %>%
   group_by(survey) %>%
   group_split() %>%
-  map_dfr(~{
-    # Fit model with identity link
-    fit <- glm(
-      sedentarismo ~ clase_tr_2 + edad,
-      data = .x,
-      family = poisson(link = "identity"),
-      start = c(1, 0, 0) 
-    )
+  map_dfr(~ {
     
-    coef <- broom::tidy(fit) %>% filter(term == "clase_tr_2")
+    # Fit Poisson model
+    fit <- glm(sedentarismo ~ clase_tr_2_m + edad,
+               data = .x, family = poisson(link = "identity"),
+               start = c(1, 0, 0))
     
+    # Robust SE
+    robust_vcov <- sandwich::vcovHC(fit, type = "HC0")
+    robust_se   <- sqrt(diag(robust_vcov))
+    
+    # Extract coefficient of interest
+    coef_est <- coef(fit)["clase_tr_2_m"]
+    coef_se  <- robust_se["clase_tr_2_m"]
+    
+    # Build SII and robust CIs
     tibble(
-      encuesta = unique(.x$survey),
-      sii = coef$estimate * 100,
-      sii_infci = (coef$estimate - 1.96 * coef$std.error) * 100,
-      sii_supci = (coef$estimate + 1.96 * coef$std.error) * 100,
+      encuesta    = unique(.x$survey),
+      sii         = (coef_est)*100,
+      sii_infci   = (coef_est - 1.96 * coef_se)*100,
+      sii_supci   = (coef_est + 1.96 * coef_se)*100,
       risk_factor = "Sedentarism",
-      sexo = "Boys"
+      sexo        = "Boys"
     )
   })
-save(sii_sedentarism_m_clase, file = "Datasets/clase_tr_2/sii_sedentarism_m_clase.RData")
+sii_sedentarism_m_clase
 clipr::write_clip(sii_sedentarism_m_clase)
+save(sii_sedentarism_m_clase, file = "Datasets/clase_tr_2/new/sii_sedentarism_m_clase.RData")
 
 # Database for SII by social class
 sii_sedentarism_clase <- sii_sedentarism_overall_clase %>%
@@ -214,7 +272,7 @@ sii_sedentarism_clase <- sii_sedentarism_overall_clase %>%
   mutate(exp="SII Social Class") %>% 
   rename(est = sii, infci = sii_infci, supci = sii_supci, strata = sexo)
 sii_sedentarism_clase
-save(sii_sedentarism_clase, file = "Datasets/clase_tr_2/sii_sedentarism_clase.RData")
+save(sii_sedentarism_clase, file = "Datasets/clase_tr_2/new/sii_sedentarism_clase.RData")
 
 #### Databases of RII, SII ####
 inequalities_sedentarism <- bind_rows(
@@ -223,10 +281,10 @@ inequalities_sedentarism <- bind_rows(
 print(inequalities_sedentarism, n = 30)
   
 ## database of all regression
-save(inequalities_sedentarism, file = "Datasets/clase_tr_2/inequalities_sedentarism.RData")
+save(inequalities_sedentarism, file = "Datasets/clase_tr_2/new/inequalities_sedentarism.RData")
 
 #### Visualization of RII in Sedentarism ####
-load("Datasets/clase_tr_2/inequalities_sedentarism.RData")
+load("Datasets/clase_tr_2/new/inequalities_sedentarism.RData")
 
 # Define theme()
 theme_inequalities <- function() {
@@ -324,10 +382,11 @@ fig_rii_class_sex <- inequalities_sedentarism %>%
   facet_grid(cols = vars(strata), scales = "free_y") +
   geom_text(
     aes(label = round(est, 2)),
-    vjust = -1.35,                # vertical adjustment (move slightly above points)
-    nudge_x = 1,
-    size = 3,
-    fontface = "bold",
+    vjust = -1.5,
+    # nudge_x = 1,
+    size = 4,
+    # fontface = "bold",
+    family = "Times New Roman",
     show.legend = FALSE
   ) +
   labs(
@@ -345,10 +404,23 @@ fig_rii_class_sex <- inequalities_sedentarism %>%
   scale_x_continuous(
     breaks = c(2003, 2006, 2011, 2017, 2023)
   ) + 
-  scale_color_brewer(palette = "Set2") +
-  scale_fill_brewer(palette = "Set2") +
+  scale_color_manual(
+    values = c(
+      "Overall" = "#4BAE48",
+      "Girls"   = "#317AB6",
+      "Boys"    = "#E41E20"
+    )
+  ) +
+  scale_fill_manual(
+    values = c(
+      "Overall" = "#4BAE48",
+      "Girls"   = "#317AB6",
+      "Boys"    = "#E41E20"
+    )
+  ) +
   theme_inequalities() +
   theme(
+    text = element_text(family = "Times New Roman"),
     legend.position = "top",
     legend.title = element_text(size = 14),
     legend.text = element_text(size = 12),
@@ -409,10 +481,11 @@ fig_sii_class_sex <- inequalities_sedentarism %>%
   facet_grid(cols = vars(strata), scales = "free_y") +
   geom_text(
     aes(label = round(est, 2)),
-    vjust = -1.35,                # vertical adjustment (move slightly above points)
-    size = 3,
-    fontface = "bold",
-    show.legend = FALSE
+    vjust = -1.5,                # vertical adjustment (move slightly above points)
+    size = 4,
+    # fontface = "bold",
+    show.legend = FALSE,
+    family = "Times New Roman"
   ) +
   labs(
     title = "Slope Index of Inequality by Sex and Overall",
@@ -428,10 +501,23 @@ fig_sii_class_sex <- inequalities_sedentarism %>%
   scale_x_continuous(
     breaks = c(2003, 2006, 2011, 2017, 2023)
   ) + 
-  scale_color_brewer(palette = "Set2") +
-  scale_fill_brewer(palette = "Set2") +
+  scale_color_manual(
+    values = c(
+      "Overall" = "#4BAE48",
+      "Girls"   = "#317AB6",
+      "Boys"    = "#E41E20"
+    )
+  ) +
+  scale_fill_manual(
+    values = c(
+      "Overall" = "#4BAE48",
+      "Girls"   = "#317AB6",
+      "Boys"    = "#E41E20"
+    )
+  ) +
   theme_inequalities() +
   theme(
+    text = element_text(family = "Times New Roman"),
     legend.position = "top",
     legend.title = element_text(size = 14),
     legend.text = element_text(size = 12),
@@ -487,9 +573,10 @@ fig_sii_rii <- inequalities_sedentarism %>%
   geom_line(aes(color = strata), linewidth = 1.2) +
   geom_text(
     aes(label = round(est, 2)),
-    vjust = -1.35,                # vertical adjustment (move slightly above points)
-    size = 3,
-    fontface = "bold",
+    vjust = -1.35,              
+    size = 4,
+    # fontface = "bold",
+    family = "Times New Roman",
     show.legend = FALSE
   ) +
   facet_grid(cols = vars(strata), rows = vars(exp), scales = "free_y") +
@@ -499,10 +586,25 @@ fig_sii_rii <- inequalities_sedentarism %>%
   labs(
     x = NULL,
     y = "Inequality (95% CI)",
-  title = "RII and SII by Sex") +
-  scale_color_brewer(palette = "Set2") +
-  scale_fill_brewer(palette = "Set2") +
-  theme_inequalities()
+  title = "RII and SII by Sex") + 
+  scale_color_manual(
+    values = c(
+      "Overall" = "#4BAE48",
+      "Girls"   = "#317AB6",
+      "Boys"    = "#E41E20"
+    )
+  ) +
+  scale_fill_manual(
+    values = c(
+      "Overall" = "#4BAE48",
+      "Girls"   = "#317AB6",
+      "Boys"    = "#E41E20"
+    )
+  ) +
+  theme_inequalities()+
+  theme(
+    text = element_text(family = "Times New Roman")
+  )
 fig_sii_rii
 ggsave("Figures/clase_tr_2/fig_sii_rii.png", width = 4000, height = 2200, dpi=300, units = "px")
 
@@ -526,74 +628,13 @@ dt <- dt %>%
 dt <- dt %>% 
   mutate(edad = scale(edad, center = T, scale = F))
 
-## Create function to extract values from model (RECALL CHANGE SEXO FOR EACH MODEL OUTPUT)
-extract_rii_by_group_CCAA <- function(
-    model,
-    ccaa_ref,
-    outcome_label = "Sedentarism",
-    effect_name = "clase_tr_2",
-    random_group = "survey:ccaa"
-) {
-  
-  ## Extract fixed-effect estimate and SE
-  fe <- fixef(model)$cond[effect_name]
-  fe_se <- summary(model)$coefficients$cond[effect_name, "Std. Error"]
-  
-  ## Extract random effects 
-  re_list <- ranef(model)$cond
-  
-  if (!random_group %in% names(re_list)) {
-    stop(paste("Random effect", random_group, "not found in model"))
-  }
-  
-  re_df <- as.data.frame(re_list[[random_group]]) %>%
-    tibble::rownames_to_column("group")
-  
-  ## Combine fixed + random effects
-  re_df <- re_df %>%
-    mutate(
-      linear_pred = fe + .data[[effect_name]],
-      rii = exp(linear_pred),
-      rii_infci = exp(linear_pred - 1.96 * fe_se),
-      rii_supci = exp(linear_pred + 1.96 * fe_se)
-    )
-  
-  ## Split survey and NUTS1
-  re_df <- re_df %>%
-    tidyr::separate(
-      group,
-      into = c("survey", "ccaa"),
-      sep = ":",
-      remove = TRUE
-    ) %>%
-    mutate(
-      survey = as.integer(survey),
-      sex = "Overall",
-      Outcome = outcome_label
-    )
-  
-  ## Final tidy output
-  out <- re_df %>%
-    select(
-      survey,
-      ccaa,
-      rii,
-      rii_infci,
-      rii_supci,
-      sex,
-      Outcome
-    ) %>%
-    arrange(survey, ccaa)
-  
-  return(out)
-}
-
-## NEW FUNCTION THAT WORKS WITH clase_tr_2
+## RECALL NEED TO CHANGE VARIABLES TO DO EXTRACTION PER SEX
+## FUNCTION THAT WORKS WITH clase_tr_2
 extract_rii_by_group_CCAA <- function(
     model,
     ccaa_ref,
     outcome_label = "Sedentarismo",
-    effect_name = "clase_tr_2",
+    effect_name = "clase_tr_2_m",
     random_group = "survey:ccaa"
 ) {
   
@@ -626,7 +667,7 @@ extract_rii_by_group_CCAA <- function(
     tidyr::separate(group, into = c("survey", "ccaa"), sep = ":", remove = TRUE) %>%
     mutate(
       survey = as.integer(survey),
-      sex = "Female",
+      sex = "Male",
       Outcome = outcome_label
     )
   
@@ -666,7 +707,7 @@ rii_sedentarism_CCAA <- extract_rii_by_group_CCAA(
 
 rii_sedentarism_CCAA
 clipr::write_clip(rii_sedentarism_CCAA)
-save(rii_sedentarism_CCAA, file = "Datasets/clase_tr_2/rii_sedentarism_CCAA.RData")
+save(rii_sedentarism_CCAA, file = "Datasets/clase_tr_2/new/rii_sedentarism_CCAA.RData")
 
 ## wide table overall
 rii_sedentarism_CCAA_wide <- rii_sedentarism_CCAA %>%
@@ -685,16 +726,17 @@ table_ccaa_f <- dt %>%
   filter(sexo == "Female") %>% 
   group_by(survey, ccaa) %>%
   summarise(
-    clase_tr_2 = min(table(clase_tr_2)),
+    clase_tr_2_f = min(table(clase_tr_2_f)),
     .groups = "drop"
   ) %>%
-  filter(clase_tr_2 < 15)
+  filter(clase_tr_2_f < 15)
 clipr::write_clip(table_ccaa_f)
 table_ccaa_f
 
-rii_sedentarism_CCAA_females <- glmmTMB(sedentarismo~clase_tr_2+edad+(1+clase_tr_2|survey) 
-                                        + (1+clase_tr_2|survey:ccaa),  data = subset(dt, sexo == "Female"),
+rii_sedentarism_CCAA_females <- glmmTMB(sedentarismo~clase_tr_2_f+edad+(1+clase_tr_2_f|survey) 
+                                        + (1+clase_tr_2_f|survey:ccaa),  data = subset(dt, sexo == "Female"),
                                 family="poisson", weights = factor2)
+rii_sedentarism_CCAA_females
 VarCorr(rii_sedentarism_CCAA_females)
 
 rii_sedentarism_CCAA_females_t <- extract_rii_by_group_CCAA(
@@ -704,7 +746,7 @@ rii_sedentarism_CCAA_females_t <- extract_rii_by_group_CCAA(
 )
 rii_sedentarism_CCAA_females_t
 clipr::write_clip(rii_sedentarism_CCAA_females_t)
-save(rii_sedentarism_CCAA_females_t, file = "Datasets/clase_tr_2/rii_sedentarism_CCAA_females.RData")
+save(rii_sedentarism_CCAA_females_t, file = "Datasets/clase_tr_2/new/rii_sedentarism_CCAA_females.RData")
 
 ## wide table females
 rii_sedentarism_CCAA_females_wide <- rii_sedentarism_CCAA_females_t %>%
@@ -724,15 +766,16 @@ table_ccaa_m <- dt %>%
   filter(sexo == "Male") %>% 
   group_by(survey, ccaa) %>%
   summarise(
-    clase_tr_2 = min(table(clase_tr_2)),
+    clase_tr_2_m = min(table(clase_tr_2_m)),
     .groups = "drop"
   ) %>%
-  filter(clase_tr_2 < 15)
+  filter(clase_tr_2_m < 15)
 table_ccaa_m
+
 clipr::write_clip(table_ccaa_m)
 
-rii_sedentarism_CCAA_males <- glmmTMB(sedentarismo~clase_tr_2+edad+(1+clase_tr_2|survey) 
-                                      + (1+clase_tr_2|survey:ccaa), data = subset(dt, sexo == "Male"),
+rii_sedentarism_CCAA_males <- glmmTMB(sedentarismo~clase_tr_2_m+edad+(1+clase_tr_2_m|survey) 
+                                      + (1+clase_tr_2_m|survey:ccaa), data = subset(dt, sexo == "Male"),
                                         family="poisson", weights = factor2) # generalized linear mixed model
 VarCorr(rii_sedentarism_CCAA_males)
 
@@ -770,7 +813,7 @@ rii_sedentarism_CCAA_combined <- rii_sedentarism_CCAA_combined %>%
     sex == "Male" ~ "Boys",
     TRUE ~ sex  # keep any other values as they are
   ))
-save(rii_sedentarism_CCAA_combined, file = "Datasets/clase_tr_2/rii_sedentarism_CCAA_combined.RData")
+save(rii_sedentarism_CCAA_combined, file = "Datasets/clase_tr_2/new/rii_sedentarism_CCAA_combined.RData")
 
 ## Relative Rate of Change of sedentarism overtime per CCAA
 rii_change <- rii_sedentarism_CCAA_wide %>%
@@ -846,8 +889,9 @@ fig_CCAA_multilineal <- ggplot(rii_sedentarism_CCAA,
   geom_point(size = 2.2) +
   geom_text(
     aes(label = sprintf("%.2f", rii)),
+    family = "Times New Roman",
     vjust = 1.5,
-    size = 3,
+    size = 4,
     color = "black"
   ) +
   facet_wrap(vars(ccaa), ncol = 3, scales = "free_y") +
@@ -865,6 +909,7 @@ fig_CCAA_multilineal <- ggplot(rii_sedentarism_CCAA,
   ) +
   theme_bw(base_size = 12) +
   theme(
+    text = element_text(family = "Times New Roman"),
     legend.position = "none",
     axis.text.x = element_text(color = "black", size = 9),
     axis.text.y = element_text(color = "black", size = 9),
@@ -889,7 +934,7 @@ fig_CCAA_combined <- ggplot(
   geom_point(size = 2) +
   # Add RII text labels
   geom_text_repel(aes(label = sprintf("%.2f", rii)),
-                  size = 3, show.legend = FALSE, max.overlaps = 10) +
+                  size = 4, show.legend = FALSE, max.overlaps = 10, family = "Times New Roman", color = "black") +
   facet_wrap(~ccaa, ncol = 3, scales = "free_y") +
   scale_y_continuous(
     trans = "log",
@@ -900,11 +945,12 @@ fig_CCAA_combined <- ggplot(
   scale_fill_brewer(palette = "Set2") +
   labs(
     x = "",
-    y = "RII (95% CI, log scale)",
+    y = "RII (95% CI)",
     title = "Relative Index of Inequality (RII) in Sedentarism by CCAA, Sex, and Survey Year"
   ) +
   theme_bw() +
   theme(
+    text = element_text(family = "Times New Roman"),
     legend.position = "top",
     legend.title = element_blank(),
     axis.text.x = element_text(color = "black", size = 10, angle = 45, hjust = 1),
@@ -918,11 +964,12 @@ fig_CCAA_combined <- ggplot(
 fig_CCAA_combined
 ggsave("Figures/clase_tr_2/fig_rii_ccaa_sex.png", width = 4000, height = 2200, dpi=300, units = "px")
 
-## CCAA Map ####
+## RII CCAA Map ####
 #Comunidades Autónomas Mapa RII Sedentarismo#
 
 ccaa_mainland <- st_read("Resources/lineas_limite/SHP_ETRS89/recintos_autonomicas_inspire_peninbal_etrs89/recintos_autonomicas_inspire_peninbal_etrs89.shp") # Leemos los datos de capa
 ccaa_canary <- st_read("Resources/lineas_limite/SHP_REGCAN95/recintos_autonomicas_inspire_canarias_regcan95/recintos_autonomicas_inspire_canarias_regcan95.shp") # Leemos los datos de capa
+
 ccaa_mainland <- st_transform(ccaa_mainland, 25830)
 st_crs(ccaa_mainland)
 ccaa_canary <- st_transform(ccaa_canary, 25830)
@@ -999,7 +1046,7 @@ ggplot(map_ccaa) +
   geom_sf(aes(fill = rii), color = "white", linewidth = 0.2)
 
 rii_map_survey <- ggplot(
-  map_ccaa %>% dplyr::filter(sex == "Overall") # note change to Overall, Female, Male for diff maps
+  map_ccaa %>% dplyr::filter(sex == "Overall") 
 ) +
   geom_sf(aes(fill = rii), color = "white", linewidth = 0.2) +
   facet_wrap(~ survey) +
@@ -1007,12 +1054,57 @@ rii_map_survey <- ggplot(
   labs( title = "Inequalities in Childhood Sedentarism by Autonomous Community per Survey Year",
         subtitle = "Unit: Relative Index of Inequality",
         fill = "Relative Index of Inequality") +
-  theme_map()
+  theme_map()+
+  theme(text = element_text(family = "Times New Roman"))
 rii_map_survey
 
 ggsave(
   filename = "Figures/clase_tr_2/rii_map_survey.png",
   plot = rii_map_survey,
+  width = 13.3,
+  height = 7.3,
+  dpi = 300,
+  units = "in"
+)
+
+rii_map_survey_f <- ggplot(
+  map_ccaa %>% dplyr::filter(sex == "Girls") 
+) +
+  geom_sf(aes(fill = rii), color = "white", linewidth = 0.2) +
+  facet_wrap(~ survey) +
+  scale_fill_distiller(palette = "Blues", direction = 1) +
+  labs( title = "Girls: Inequalities in Childhood Sedentarism by Autonomous Community per Survey Year",
+        subtitle = "Unit: Relative Index of Inequality",
+        fill = "Relative Index of Inequality") +
+  theme_map()+
+  theme(text = element_text(family = "Times New Roman"))
+rii_map_survey_f
+
+ggsave(
+  filename = "Figures/clase_tr_2/rii_map_survey_girls.png",
+  plot = rii_map_survey_f,
+  width = 13.3,
+  height = 7.3,
+  dpi = 300,
+  units = "in"
+)
+
+rii_map_survey_m <- ggplot(
+  map_ccaa %>% dplyr::filter(sex == "Boys") 
+) +
+  geom_sf(aes(fill = rii), color = "white", linewidth = 0.2) +
+  facet_wrap(~ survey) +
+  scale_fill_distiller(palette = "Reds", direction = 1) +
+  labs( title = "Boys: Inequalities in Childhood Sedentarism by Autonomous Community per Survey Year",
+        subtitle = "Unit: Relative Index of Inequality",
+        fill = "Relative Index of Inequality") +
+  theme_map()+
+  theme(text = element_text(family = "Times New Roman"))
+rii_map_survey_m
+
+ggsave(
+  filename = "Figures/clase_tr_2/rii_map_survey_boys.png",
+  plot = rii_map_survey_m,
   width = 13.3,
   height = 7.3,
   dpi = 300,
@@ -1055,44 +1147,6 @@ ccaa_survey_table_m <- dt_males %>%
   )
 clipr::write_clip(ccaa_survey_table_m)
 print(ccaa_survey_table_m, n=90)
-
-## NUTS1
-NUTS1_survey_table <- dt %>%
-  group_by(NUTS1, survey) %>%
-  summarise(
-    n = n(),
-    median_clase = median(clase_tr_2, na.rm = TRUE),
-    p25_clase = quantile(clase_tr_2, 0.25, na.rm = TRUE),
-    p75_clase = quantile(clase_tr_2, 0.75, na.rm = TRUE),
-    .groups = "drop"
-  )
-NUTS1_survey_table
-clipr::write_clip(NUTS1_survey_table)
-
-dt_males <- subset(dt, sexo == "Female")
-NUTS1_survey_table_f <- dt_females %>%
-  group_by(NUTS1, survey) %>%
-  summarise(
-    n = n(),
-    median_clase = median(clase_tr_2, na.rm = TRUE),
-    p25_clase = quantile(clase_tr_2, 0.25, na.rm = TRUE),
-    p75_clase = quantile(clase_tr_2, 0.75, na.rm = TRUE),
-    .groups = "drop"
-  )
-clipr::write_clip(NUTS1_survey_table_f)
-
-dt_males <- subset(dt, sexo == "Male")
-NUTS1_survey_table_m <- dt_males %>%
-  group_by(NUTS1, survey) %>%
-  summarise(
-    n = n(),
-    median_clase = median(clase_tr_2, na.rm = TRUE),
-    p25_clase = quantile(clase_tr_2, 0.25, na.rm = TRUE),
-    p75_clase = quantile(clase_tr_2, 0.75, na.rm = TRUE),
-    .groups = "drop"
-  )
-clipr::write_clip(NUTS1_survey_table_m)
-print(NUTS1_survey_table_m, n=90)
 
 # flagging small cell counts
 table(dt$survey, dt$ccaa, dt$sexo)
@@ -1166,11 +1220,12 @@ dt <- dt %>%
     NUTS1 = factor(NUTS1)
   )
 
+## FUNCTION NEED TO CHANGE VARIABLE CLASE WHEN DOING BY SEX
 extract_rii_by_group_NUTS1 <- function(
     model,
     NUTS1_ref,
     outcome_label = "Sedentarism",
-    effect_name = "clase_tr_2",
+    effect_name = "clase_tr_2_m",
     random_group = "survey:NUTS1"
 ) {
   
@@ -1207,7 +1262,7 @@ extract_rii_by_group_NUTS1 <- function(
     ) %>%
     mutate(
       survey = as.integer(survey),
-      sex = "Males",
+      sex = "Male",
       Outcome = outcome_label
     )
   
@@ -1254,7 +1309,7 @@ rii_sedentarism_NUTS1 <- extract_rii_by_group_NUTS1(
 
 rii_sedentarism_NUTS1
 clipr::write_clip(rii_sedentarism_NUTS1)
-save(rii_sedentarism_NUTS1, file = "Datasets/clase_tr_2/rii_sedentarism_NUTS1.RData")
+save(rii_sedentarism_NUTS1, file = "Datasets/clase_tr_2/new/rii_sedentarism_NUTS1.RData")
 
 ## wide table overall
 rii_sedentarism_NUTS1_wide <- rii_sedentarism_NUTS1 %>%
@@ -1272,16 +1327,16 @@ table_NUTS_f <- dt %>%
   filter(sexo == "Female") %>%
   group_by(survey, NUTS1) %>%
   summarise(
-    clase_tr_2 = min(table(clase_tr_2)),
+    clase_tr_2_f = min(table(clase_tr_2_f)),
     .groups = "drop"
   ) %>%
-  filter(clase_tr_2 < 15)
+  filter(clase_tr_2_f < 15)
 table_NUTS_f
 clipr::write_clip(table_NUTS_f)
 
-rii_sedentarism_NUTS1_females <- glmmTMB(sedentarismo~clase_tr_2+edad+
-                                           (1+clase_tr_2|survey) 
-                                        + (1+clase_tr_2|survey:NUTS1),  
+rii_sedentarism_NUTS1_females <- glmmTMB(sedentarismo~clase_tr_2_f+edad+
+                                           (1+clase_tr_2_f|survey) 
+                                        + (1+clase_tr_2_f|survey:NUTS1),  
                                         data = subset(dt, sexo == "Female"),
                                         family="poisson", weights = factor2)
 VarCorr(rii_sedentarism_NUTS1_females)
@@ -1312,16 +1367,16 @@ table_NUTS_m <- dt %>%
   filter(sexo == "Male") %>% 
   group_by(survey, NUTS1) %>%
   summarise(
-    clase_tr_2 = min(table(clase_tr_2)),
+    clase_tr_2_m = min(table(clase_tr_2_m)),
     .groups = "drop"
   ) %>%
-  filter(clase_tr_2 < 15)
+  filter(clase_tr_2_m < 15)
 table_NUTS_m
 clipr::write_clip(table_NUTS_m)
 
-rii_sedentarism_NUTS1_males <- glmmTMB(sedentarismo~clase_tr_2+edad+
-                                         (1+clase_tr_2|survey) 
-                                       + (1+clase_tr_2|survey:NUTS1), 
+rii_sedentarism_NUTS1_males <- glmmTMB(sedentarismo~clase_tr_2_m+edad+
+                                         (1+clase_tr_2_m|survey) 
+                                       + (1+clase_tr_2_m|survey:NUTS1), 
                                        data = subset(dt, sexo == "Male"),
                                       family="poisson", weights = factor2) 
 VarCorr(rii_sedentarism_NUTS1_males)
@@ -1356,11 +1411,11 @@ rii_sedentarism_NUTS1_combined
 
 rii_sedentarism_NUTS1_combined <- rii_sedentarism_NUTS1_combined %>%
   mutate(sex = case_when(
-    sex == "Females" ~ "Girls",
-    sex == "Males" ~ "Boys",
+    sex == "Female" ~ "Girls",
+    sex == "Male" ~ "Boys",
     TRUE ~ sex  # keep any other values as they are
   ))
-save(rii_sedentarism_NUTS1_combined, file = "Datasets/clase_tr_2/rii_sedentarism_NUTS1_combined.RData")
+save(rii_sedentarism_NUTS1_combined, file = "Datasets/clase_tr_2/new/rii_sedentarism_NUTS1_combined.RData")
 
 ## Relative Rate of Change of sedentarism overtime per CCAA
 rii_change <- rii_sedentarism_NUTS1_wide %>%
@@ -1401,6 +1456,44 @@ rii_change_2003_2023_m
 clipr::write_clip(rii_change_2003_2023_m)
 
 #### Visualization RII by NUTS1 ####
+## NUTS1
+NUTS1_survey_table <- dt %>%
+  group_by(NUTS1, survey) %>%
+  summarise(
+    n = n(),
+    median_clase = median(clase_tr_2, na.rm = TRUE),
+    p25_clase = quantile(clase_tr_2, 0.25, na.rm = TRUE),
+    p75_clase = quantile(clase_tr_2, 0.75, na.rm = TRUE),
+    .groups = "drop"
+  )
+NUTS1_survey_table
+clipr::write_clip(NUTS1_survey_table)
+
+dt_males <- subset(dt, sexo == "Female")
+NUTS1_survey_table_f <- dt_females %>%
+  group_by(NUTS1, survey) %>%
+  summarise(
+    n = n(),
+    median_clase = median(clase_tr_2_f, na.rm = TRUE),
+    p25_clase = quantile(clase_tr_2_f, 0.25, na.rm = TRUE),
+    p75_clase = quantile(clase_tr_2_f, 0.75, na.rm = TRUE),
+    .groups = "drop"
+  )
+clipr::write_clip(NUTS1_survey_table_f)
+
+dt_males <- subset(dt, sexo == "Male")
+NUTS1_survey_table_m <- dt_males %>%
+  group_by(NUTS1, survey) %>%
+  summarise(
+    n = n(),
+    median_clase = median(clase_tr_2_m, na.rm = TRUE),
+    p25_clase = quantile(clase_tr_2_m, 0.25, na.rm = TRUE),
+    p75_clase = quantile(clase_tr_2_m, 0.75, na.rm = TRUE),
+    .groups = "drop"
+  )
+clipr::write_clip(NUTS1_survey_table_m)
+print(NUTS1_survey_table_m, n=90)
+
 fig_NUTS1_multilineal <- ggplot(rii_sedentarism_NUTS1, 
                                aes(x = survey, y = rii, ymin = rii_infci, ymax = rii_supci, group = NUTS1)) +
   geom_hline(yintercept = 1, lty = 2) +
@@ -1432,9 +1525,10 @@ fig_NUTS1_multilineal <- ggplot(rii_sedentarism_NUTS1,
   geom_line(linewidth = 1) +
   geom_point(size = 2.2) +
   geom_text(
+    family = "Times New Roman",
     aes(label = sprintf("%.2f", rii)),
     vjust = 1.5,
-    size = 3,
+    size = 4,
     color = "black"
   ) +
   facet_wrap(vars(NUTS1), ncol = 2, scales = "free_y") +
@@ -1453,6 +1547,7 @@ fig_NUTS1_multilineal <- ggplot(rii_sedentarism_NUTS1,
   ) +
   theme_bw(base_size = 12) +
   theme(
+    text = element_text(family = "Times New Roman"),
     legend.position = "none",
     axis.text.x = element_text(color = "black", size = 9),
     axis.text.y = element_text(color = "black", size = 9),
@@ -1511,6 +1606,7 @@ fig_NUTS1_combined <- ggplot(
     strip.background = element_rect(fill = "gray95", color = NA)
   ) +
   theme(
+    text = element_text(family = "Times New Roman"),
     plot.title = element_text(size = 14, face = "bold", hjust = 0.5),
     plot.subtitle = element_text(size = 11, hjust = 0.5),
     plot.caption = element_text(size = 9, hjust = 0),
@@ -1536,7 +1632,7 @@ fig_NUTS1_combined <- ggplot(
 fig_NUTS1_combined
 ggsave("Figures/clase_tr_2/fig_rii_NUTS1_sex.png", width = 4000, height = 2200, dpi=300, units = "px")
 
-## NUTS1 Map ####
+## RII NUTS1 Map ####
 
 NUTS1 <- st_read("Resources/NUTS1_ES_20M_2024_3035.shp") # Leemos los datos de capa
 
@@ -1588,7 +1684,7 @@ ggplot(map_NUTS1) +
   geom_sf(aes(fill = rii), color = "white", linewidth = 0.2)
 
 rii_map_survey <- ggplot(
-  map_NUTS1 %>% dplyr::filter(sex == "Overall") # note change to Overall, Girls, Boys for diff maps
+  map_NUTS1 %>% dplyr::filter(sex == "Overall") 
 ) +
   geom_sf(aes(fill = rii), color = "white", linewidth = 0.2) +
   facet_wrap(~ survey) +
@@ -1610,10 +1706,54 @@ ggsave(
   units = "in"
 )
 
-### SEGMENTED AND APC ----
-## Inflection Point - Edit Data ----
-## use segmented package to decide the inflection point in the inequalities of sedentarism
+rii_map_survey_NUTS_f <- ggplot(
+  map_NUTS1 %>% dplyr::filter(sex == "Girls") 
+) +
+  geom_sf(aes(fill = rii), color = "white", linewidth = 0.2) +
+  facet_wrap(~ survey) +
+  scale_fill_distiller(palette = "Blues", direction = 1) +
+  labs( title = "Girls: Inequalities in Childhood Sedentarism by NUTS per Survey Year",
+        subtitle = "Unit: Relative Index of Inequality",
+        caption = "Nomenclature of Territorial Units for Statistics (NUTS) Regions",
+        fill = "Relative Index of Inequality") +
+  theme_map()
 
+rii_map_survey_NUTS_f
+
+ggsave(
+  filename = "Figures/clase_tr_2/rii_map_NUTS_survey_girls.png",
+  plot = rii_map_survey_NUTS_f,
+  width = 13.3,
+  height = 7.3,
+  dpi = 300,
+  units = "in"
+)
+
+rii_map_survey_NUTS_m <- ggplot(
+  map_NUTS1 %>% dplyr::filter(sex == "Boys") 
+) +
+  geom_sf(aes(fill = rii), color = "white", linewidth = 0.2) +
+  facet_wrap(~ survey) +
+  scale_fill_distiller(palette = "Reds", direction = 1) +
+  labs( title = "Boys: Inequalities in Childhood Sedentarism by NUTS per Survey Year",
+        subtitle = "Unit: Relative Index of Inequality",
+        caption = "Nomenclature of Territorial Units for Statistics (NUTS) Regions",
+        fill = "Relative Index of Inequality") +
+  theme_map()
+
+rii_map_survey_NUTS_m
+
+ggsave(
+  filename = "Figures/clase_tr_2/rii_map_NUTS_survey_boys.png",
+  plot = rii_map_survey_NUTS_m,
+  width = 13.3,
+  height = 7.3,
+  dpi = 300,
+  units = "in"
+)
+
+## Inflection Point ----
+## Segmented package to decide the inflection point in the inequalities of sedentarism
 ## linear model fitted with survey year as a predictor
 rii_sedentarism_overall_clase$encuesta <- as.numeric(rii_sedentarism_overall_clase$encuesta)
 
@@ -1622,210 +1762,261 @@ summary(m0)
 
 ## fit segmented model
 seg_m <- segmented(m0, seg.Z = ~encuesta, psi = 2011)
-seg_m
+seg_m ## 2014 inflection point
 
 ## plot inflection point
 plot(rii ~ encuesta, data = rii_sedentarism_overall_clase)
 plot(seg_m, add = TRUE, col = "red")
 ggsave("Figures/inflection.png", width = 4000, height = 2200, dpi=300, units = "px")
-
-joined_clean <- joined_clean %>% 
-  mutate(survey2 = case_when(
-    survey %in% c("2003", "2006", "2011") ~ "Pre",
-    survey %in% c("2017", "2023") ~ "Post",
-    TRUE ~ NA_character_
-  ),
-  survey2 = factor(survey2, levels = c("Pre", "Post")),
-  urb_rur = as.character(urb_rur),
-  urb_rur = factor(urb_rur)
-  )
-
-apc_dta <- desigualdades_sedentarismo_CCAA %>%
+## Annual Percent Change ----
+apc_dta <- rii_sedentarism_CCAA_combined %>%
   filter(
-    fr == "Sedentarismo",
-    exp == "RII Education",
-    sexo == "Overall"
+    Outcome == "Sedentarismo",
+    sex == "Boys" # change to Girls or Boys
   ) %>%
   mutate(
-    year = as.integer(encuesta)
+    survey = as.integer(survey)
   )
 
 apc_ccaa <- apc_dta %>%
-  group_by(nombre_notilde, abreviatura) %>%
+  group_by(ccaa) %>%
   nest() %>%
   mutate(
-    model = map(data, ~ rlm(log(rii) ~ year, data = .x)),
+    model = map(data, ~ rlm(log(rii) ~ survey, data = .x)),
     tidy  = map(model, tidy)
   ) %>%
   unnest(tidy) %>%
-  filter(term == "year") %>%
+  filter(term == "survey") %>%
   mutate(
     APC = (exp(estimate) - 1) * 100,
     APC_low = (exp(estimate - 1.96 * std.error) - 1) * 100,
     APC_high = (exp(estimate + 1.96 * std.error) - 1) * 100
   ) %>%
   dplyr::select(
-    nombre_notilde,
-    abreviatura,
+    ccaa,
     APC,
     APC_low,
     APC_high
   )
+clipr::write_clip(apc_ccaa)
 
-#### OLD: RII in Sedentarism by NUTS1, Survey, Autonomous Community and Sex (Multi-level) ####
-extract_rii_multilevel <- function(
-    model,
-    outcome_label = "Sedentarism",
-    effect_name = "clase_tr_2"
-) {
-  
-  ## 1. Fixed effect
-  fe <- fixef(model)$cond[effect_name]
-  fe_se <- summary(model)$coefficients$cond[effect_name, "Std. Error"]
-  
-  ## 2. Random effects
-  re <- ranef(model)$cond
-  
-  ## Survey level
-  re_survey <- as.data.frame(re$survey) |>
-    tibble::rownames_to_column("survey") |>
-    dplyr::select(survey, slope_survey = !!effect_name)
-  
-  ## Survey:NUTS1 level
-  re_nuts1 <- as.data.frame(re$`survey:NUTS1`) |>
-    tibble::rownames_to_column("survey_NUTS1") |>
-    tidyr::separate(survey_NUTS1, into = c("survey", "NUTS1"), sep = ":") |>
-    dplyr::select(survey, NUTS1, slope_nuts1 = !!effect_name)
-  
-  ## Survey:NUTS1:CCAA level
-  re_ccaa <- as.data.frame(re$`survey:NUTS1:ccaa`) |>
-    tibble::rownames_to_column("survey_NUTS1_ccaa") |>
-    tidyr::separate(
-      survey_NUTS1_ccaa,
-      into = c("survey", "NUTS1", "ccaa"),
-      sep = ":"
-    ) |>
-    dplyr::select(survey, NUTS1, ccaa, slope_ccaa = !!effect_name)
-  
-  ## 3. Combine all slope components
-  out <- re_ccaa |>
-    dplyr::left_join(re_nuts1, by = c("survey", "NUTS1")) |>
-    dplyr::left_join(re_survey, by = "survey") |>
-    dplyr::mutate(
-      linear_pred =
-        fe +
-        slope_survey +
-        slope_nuts1 +
-        slope_ccaa,
-      rii = exp(linear_pred),
-      rii_infci = exp(linear_pred - 1.96 * fe_se),
-      rii_supci = exp(linear_pred + 1.96 * fe_se),
-      Outcome = outcome_label,
-      sex = "Female",
-      survey = as.integer(survey)
-    ) |>
-    dplyr::select(
-      survey, NUTS1, ccaa,
-      rii, rii_infci, rii_supci,
-      sex, Outcome
-    ) |>
-    dplyr::arrange(survey, NUTS1, ccaa)
-  
-  return(out)
+apc_dta2 <- rii_sedentarism_NUTS1_combined %>%
+  filter(
+    Outcome == "Sedentarismo",
+    sex == "Boys"
+  ) %>%
+  mutate(
+    survey = as.integer(survey)
+  )
+
+apc_nuts <- apc_dta2 %>%
+  group_by(NUTS1) %>%
+  nest() %>%
+  mutate(
+    model = map(data, ~ rlm(log(rii) ~ survey, data = .x)),
+    tidy  = map(model, tidy)
+  ) %>%
+  unnest(tidy) %>%
+  filter(term == "survey") %>%
+  mutate(
+    APC = (exp(estimate) - 1) * 100,
+    APC_low = (exp(estimate - 1.96 * std.error) - 1) * 100,
+    APC_high = (exp(estimate + 1.96 * std.error) - 1) * 100
+  ) %>%
+  dplyr::select(
+    NUTS1,
+    APC,
+    APC_low,
+    APC_high
+  )
+clipr::write_clip(apc_nuts)
+
+## Prevalence Map CCAA ----
+## join prevalence database and shapefile
+map_ccaa_prevalence <- data_ccaa %>%
+  left_join(prevalence_by_ccaa,
+            by = c("ccaa_en" = "ccaa"))
+
+## plot map
+theme_map <- function(bg_color = "white", title_size = 16){
+  theme(
+    panel.background = element_rect(fill = bg_color),
+    panel.grid = element_blank(),
+    axis.text = element_blank(),
+    axis.title = element_blank(),
+    axis.ticks = element_blank(),
+    plot.title = element_text(size = title_size, face = "bold"),
+    plot.subtitle = element_text(size = 12)
+  )
 }
 
-rii_sedentarism_NUTS1_ccaa <- glmmTMB(
-  sedentarismo ~ clase_tr_2 + edad + sexo +
-    (1 + clase_tr_2 | survey) +
-    (1 + clase_tr_2 | survey:NUTS1) +
-    (1 + clase_tr_2 | survey:NUTS1:ccaa),
-  data = dt,
-  family = poisson,
-  weights = factor2
+prev_map_survey <- ggplot(data = map_ccaa_prevalence) +
+  geom_sf(aes(fill = prevalence), color = "white", linewidth = 0.2) +
+  facet_wrap(~ survey) +
+  scale_fill_distiller(palette = "Greens", direction = 1) +
+  labs( title = "Childhood Sedentarism Prevalence by Autonomous Community per Survey Year",
+        # subtitle = "Unit: Relative Index of Inequality",
+        fill = "Prevalence") +
+  theme_map()+
+  theme(text = element_text(family = "Times New Roman"))
+prev_map_survey
+
+ggsave(
+  filename = "Figures/clase_tr_2/prevalence_map_survey.png",
+  plot = prev_map_survey,
+  width = 13.3,
+  height = 7.3,
+  dpi = 300,
+  units = "in"
 )
 
-rii_sedentarism_NUTS1_ccaa
+map_ccaa_prevalence_f <- data_ccaa %>%
+  left_join(prevalence_by_ccaa_f,
+            by = c("ccaa_en" = "ccaa"))
 
-rii_sedentarism_NUTS1_ccaa <- extract_rii_multilevel(
-  model = rii_sedentarism_NUTS1_ccaa,
-  outcome_label = "Sedentarismo"
+prev_map_survey_f <- ggplot(data = map_ccaa_prevalence_f) +
+  geom_sf(aes(fill = prevalence), color = "white", linewidth = 0.2) +
+  facet_wrap(~ survey) +
+  scale_fill_distiller(palette = "Blues", direction = 1) +
+  labs( title = "Childhood Sedentarism Prevalence in Girls by Autonomous Community per Survey Year",
+        # subtitle = "Unit: Relative Index of Inequality",
+        fill = "Prevalence") +
+  theme_map()+
+  theme(text = element_text(family = "Times New Roman"))
+prev_map_survey_f
+
+ggsave(
+  filename = "Figures/clase_tr_2/prevalence_map_survey_f.png",
+  plot = prev_map_survey_f,
+  width = 13.3,
+  height = 7.3,
+  dpi = 300,
+  units = "in"
 )
 
-rii_sedentarism_NUTS1_ccaa
-clipr::write_clip(rii_sedentarism_NUTS1_ccaa)
+map_ccaa_prevalence_m <- data_ccaa %>%
+  left_join(prevalence_by_ccaa_m,
+            by = c("ccaa_en" = "ccaa"))
 
-VarCorr(rii_sedentarism_NUTS1_ccaa)
+prev_map_survey_m <- ggplot(data = map_ccaa_prevalence_m) +
+  geom_sf(aes(fill = prevalence), color = "white", linewidth = 0.2) +
+  facet_wrap(~ survey) +
+  scale_fill_distiller(palette = "Reds", direction = 1) +
+  labs( title = "Childhood Sedentarism Prevalence in Boys by Autonomous Community per Survey Year",
+        # subtitle = "Unit: Relative Index of Inequality",
+        fill = "Prevalence") +
+  theme_map()+
+  theme(text = element_text(family = "Times New Roman"))
+prev_map_survey_m
 
-## Girls
-rii_sedentarism_NUTS1_ccaa_f <- glmmTMB(
-  sedentarismo ~ clase_tr_2 + edad +
-    (1 + clase_tr_2 | survey) +
-    (1 + clase_tr_2 | survey:NUTS1) +
-    (1 + clase_tr_2 | survey:NUTS1:ccaa),
-  data = subset(dt, sexo == "Female"),
-  family = poisson,
-  weights = factor2
+ggsave(
+  filename = "Figures/clase_tr_2/prevalence_map_survey_m.png",
+  plot = prev_map_survey_m,
+  width = 13.3,
+  height = 7.3,
+  dpi = 300,
+  units = "in"
+)
+## Prevalence Map NUTS ----
+## join prevalence database and shapefile
+map_nuts_prevalence <- NUTS1_join %>%
+  left_join(prevalence_by_nuts,
+            by = c("NUTS1_ENG" = "NUTS1"))
+
+prev_map_nuts_survey <- ggplot(data = map_nuts_prevalence) +
+  geom_sf(aes(fill = prevalence), color = "white", linewidth = 0.2) +
+  facet_wrap(~ survey) +
+  scale_fill_distiller(palette = "Greens", direction = 1) +
+  labs( title = "Childhood Sedentarism Prevalence by NUTS region per Survey Year",
+        # subtitle = "Unit: Relative Index of Inequality",
+        fill = "Prevalence",
+        caption = paste(
+          "Nomenclature of Territorial Units for Statistics (NUTS) Regions",
+          "\nCanary Islands: Canary Islands;",
+          "\nCentre: Castile and Leon, Castilla-La Mancha, Extremadura;",
+          "\nEast: Catalonia, Valencian Community, Balearic Islands;",
+          "\nMadrid: Madrid;",
+          "\nNorth-East: Basque Country, Navarre, La Rioja, Aragon;",
+          "\nNorth-West: Galicia, Asturias, Cantabria;",
+          "\nSouth: Andalusia, Murcia, Ceuta and Melilla."
+        )) +
+  theme_map()+
+  theme(text = element_text(family = "Times New Roman"))
+prev_map_nuts_survey
+
+ggsave(
+  filename = "Figures/clase_tr_2/prevalence_map_nuts_survey.png",
+  plot = prev_map_nuts_survey,
+  width = 13.3,
+  height = 7.3,
+  dpi = 300,
+  units = "in"
 )
 
-rii_sedentarism_NUTS1_ccaa_f
+map_nuts_prevalence_f <- NUTS1_join %>%
+  left_join(prevalence_by_nuts_f,
+            by = c("NUTS1_ENG" = "NUTS1"))
 
-rii_sedentarism_NUTS1_ccaa_f <- extract_rii_multilevel(
-  model = rii_sedentarism_NUTS1_ccaa_f,
-  outcome_label = "Sedentarismo"
+prev_map_nuts_survey_f <- ggplot(data = map_nuts_prevalence_f) +
+  geom_sf(aes(fill = prevalence), color = "white", linewidth = 0.2) +
+  facet_wrap(~ survey) +
+  scale_fill_distiller(palette = "Blues", direction = 1) +
+  labs( title = "Childhood Sedentarism Prevalence in Girls by NUTS region per Survey Year",
+        # subtitle = "Unit: Relative Index of Inequality",
+        fill = "Prevalence",
+        caption = paste(
+          "Nomenclature of Territorial Units for Statistics (NUTS) Regions",
+          "\nCanary Islands: Canary Islands;",
+          "\nCentre: Castile and Leon, Castilla-La Mancha, Extremadura;",
+          "\nEast: Catalonia, Valencian Community, Balearic Islands;",
+          "\nMadrid: Madrid;",
+          "\nNorth-East: Basque Country, Navarre, La Rioja, Aragon;",
+          "\nNorth-West: Galicia, Asturias, Cantabria;",
+          "\nSouth: Andalusia, Murcia, Ceuta and Melilla."
+        )) +
+  theme_map()+
+  theme(text = element_text(family = "Times New Roman"))
+prev_map_nuts_survey_f
+
+ggsave(
+  filename = "Figures/clase_tr_2/prevalence_map_nuts_survey_f.png",
+  plot = prev_map_nuts_survey_f,
+  width = 13.3,
+  height = 7.3,
+  dpi = 300,
+  units = "in"
 )
 
-rii_sedentarism_NUTS1_ccaa_f
-clipr::write_clip(rii_sedentarism_NUTS1_ccaa_f)
+map_nuts_prevalence_m <- NUTS1_join %>%
+  left_join(prevalence_by_nuts_m,
+            by = c("NUTS1_ENG" = "NUTS1"))
 
-summary(rii_sedentarism_NUTS1_ccaa_f)
-summary(rii_sedentarism_NUTS1_ccaa_f)$coefficients$cond
+prev_map_nuts_survey_m <- ggplot(data = map_nuts_prevalence_m) +
+  geom_sf(aes(fill = prevalence), color = "white", linewidth = 0.2) +
+  facet_wrap(~ survey) +
+  scale_fill_distiller(palette = "Reds", direction = 1) +
+  labs( title = "Childhood Sedentarism Prevalence in Boys by NUTS region per Survey Year",
+        # subtitle = "Unit: Relative Index of Inequality",
+        fill = "Prevalence",
+        caption = paste(
+          "Nomenclature of Territorial Units for Statistics (NUTS) Regions",
+          "\nCanary Islands: Canary Islands;",
+          "\nCentre: Castile and Leon, Castilla-La Mancha, Extremadura;",
+          "\nEast: Catalonia, Valencian Community, Balearic Islands;",
+          "\nMadrid: Madrid;",
+          "\nNorth-East: Basque Country, Navarre, La Rioja, Aragon;",
+          "\nNorth-West: Galicia, Asturias, Cantabria;",
+          "\nSouth: Andalusia, Murcia, Ceuta and Melilla."
+        )) +
+  theme_map()+
+  theme(text = element_text(family = "Times New Roman"))
+prev_map_nuts_survey_m
 
-dt %>%
-  filter(sexo == "Female") %>%
-  group_by(survey, NUTS1, ccaa) %>%
-  summarise(
-    n_classes = n_distinct(clase_tr_2),
-    min_n = min(table(clase_tr_2)),
-    .groups = "drop"
-  ) %>%
-  filter(n_classes < 3 | min_n < 5) %>% 
-  print(n = 33)
-
-fixef(rii_sedentarism_NUTS1_ccaa_f)$cond
-VarCorr(rii_sedentarism_NUTS1_ccaa_f)
-
-## Boys
-rii_sedentarism_NUTS1_ccaa_m <- glmmTMB(
-  sedentarismo ~ clase_tr_2 + edad +
-    (1 + clase_tr_2 | survey) +
-    (1 + clase_tr_2 | survey:NUTS1) +
-    (1 + clase_tr_2 | survey:NUTS1:ccaa),
-  data = subset(dt, sexo == "Male"),
-  family = poisson,
-  weights = factor2
+ggsave(
+  filename = "Figures/clase_tr_2/prevalence_map_nuts_survey_m.png",
+  plot = prev_map_nuts_survey_m,
+  width = 13.3,
+  height = 7.3,
+  dpi = 300,
+  units = "in"
 )
-
-summary(rii_sedentarism_NUTS1_ccaa_m)$coefficients$cond
-
-rii_sedentarism_NUTS1_ccaa_m
-
-rii_sedentarism_NUTS1_ccaa_m <- extract_rii_multilevel(
-  model = rii_sedentarism_NUTS1_ccaa_m,
-  outcome_label = "Sedentarismo"
-)
-
-rii_sedentarism_NUTS1_ccaa_m
-clipr::write_clip(rii_sedentarism_NUTS1_ccaa_m)
-
-dt %>%
-  filter(sexo == "Male") %>%
-  group_by(survey, NUTS1, ccaa) %>%
-  summarise(
-    n_classes = n_distinct(clase_tr_2),
-    min_n = min(table(clase_tr_2)),
-    .groups = "drop"
-  ) %>%
-  filter(n_classes < 3 | min_n < 5) %>% 
-  print(n = 33)
-
-VarCorr(rii_sedentarism_NUTS1_ccaa_m)

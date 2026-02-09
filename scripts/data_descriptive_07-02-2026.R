@@ -1,8 +1,8 @@
 # Data Descriptive INE
-# Finalized 24th of July 2025
-# Adapted 2nd of December 2025
+# Finalized: 24th of July 2025
+# Edited: 7th of February 2026
 
-## Load libraries
+## Load libraries ----
 library(tidyverse)
 library(gtsummary)
 library(gt)
@@ -12,88 +12,29 @@ library(scales)
 library(purrr)
 library(ggrepel)
 
-## read joined data
-dt <- get(load("joined.RData")) ## 0 to 15 without dropping NAs
-dt2 <- get(load("joined_clean.RData")) ## 0 to 15 dropping NAs
-dt6 <- get(load("joined_6.RData")) ## 6 to 15 without dropping NAs
-dt_clean <- get(load("joined_clean_6.RData")) ## 6 to 15 dropping NAs 
-maihda <- get(load("maihda2.RData")) # maihda data for descriptive
+## Load data ----
+dt <- get(load("joined_6.RData")) ## 6 to 15 without dropping NAs
+dt_clean <- get(load("joined_clean_rii.RData")) ## 6 to 15 dropping NAs 
+maihda <- get(load("joined_clean_maihda.RData")) # maihda data for descriptive
 
 #### Baseline Characteristics without Survey Weights ####
-## with NAs 0 to 15
+## 6 to 15 with NAs
 tbl_summary(
   dt,
   by = survey,  # or ~survey if you prefer formula style
-  include = all_of(c("edad", "sexo", "nacionalidad", "sedentarismo",
+  include = all_of(c("edad_cat3", "sexo", "sedentarismo", "nacionalidad",
                      "clase", "urb_rur", "ccaa")),
   label = list(
-    edad ~ "Child's Age (years)",
+    edad_cat3 ~ "Child's Age (years)",
     sexo ~ "Child's Sex",
-    nacionalidad ~ "Child's Nationality",
+    nacionalidad ~ "Nationality",
     sedentarismo ~ "Sedentarism",
-    clase ~ "Household Social Class",
-    urb_rur ~ "Urban/Rural",
+    clase ~ "Occupational Social Class",
+    urb_rur ~ "Municipality Type",
     ccaa ~ "Autonomous Community"
   ),
   statistic = list(
-    all_categorical() ~ "{n} ({p}%)", 
-    all_continuous() ~ "{median} ({p25}, {p75})"
-  ),
-  digits = list(all_continuous() ~ 1),
-  missing = "always"
-) %>%
-  add_n() %>%
-  bold_labels() %>%
-  modify_caption("**Baseline Characteristics by Survey Year (Unweighted)**<br>**Ages 0 to 15**") %>%
-  modify_header(all_stat_cols() ~ "**{level}**<br>N = {n} ({style_percent(p)}%)") %>%
-  modify_footnote(~ "Values are presented as Median (IQR) for continuous variables and n (%) for categorical variables.")
-
-## 0 to 15 dropping NAs
-tbl_summary(
-  dt2,
-  by = survey,  # or ~survey if you prefer formula style
-  include = all_of(c("edad", "sexo", "nacionalidad", "sedentarismo",
-                     "clase", "urb_rur", "ccaa")),
-  label = list(
-    edad ~ "Child's Age (years)",
-    sexo ~ "Child's Sex",
-    nacionalidad ~ "Child's Nationality",
-    sedentarismo ~ "Sedentarism",
-    clase ~ "Household Social Class",
-    urb_rur ~ "Urban/Rural",
-    ccaa ~ "Autonomous Community"
-  ),
-  statistic = list(
-    all_categorical() ~ "{n} ({p}%)", 
-    all_continuous() ~ "{median} ({p25}, {p75})"
-  ),
-  digits = list(all_continuous() ~ 1),
-  missing = "always"
-) %>%
-  add_n() %>%
-  bold_labels() %>%
-  modify_caption("**Baseline Characteristics by Survey Year (Unweighted)**<br>**Ages 0 to 15**") %>%
-  modify_header(all_stat_cols() ~ "**{level}**<br>N = {n} ({style_percent(p)}%)") %>%
-  modify_footnote(~ "Values are presented as Median (IQR) for continuous variables and n (%) for categorical variables.")
-
-## 6 to 15 with NAs
-tbl_summary(
-  dt6,
-  by = survey,  # or ~survey if you prefer formula style
-  include = all_of(c("edad", "sexo", "nacionalidad", "sedentarismo",
-                     "clase", "urb_rur", "ccaa")),
-  label = list(
-    edad ~ "Child's Age (years)",
-    sexo ~ "Child's Sex",
-    nacionalidad ~ "Child's Nationality",
-    sedentarismo ~ "Sedentarism",
-    clase ~ "Household Social Class",
-    urb_rur ~ "Urban/Rural",
-    ccaa ~ "Autonomous Community"
-  ),
-  statistic = list(
-    all_categorical() ~ "{n} ({p}%)", 
-    all_continuous() ~ "{median} ({p25}, {p75})"
+    all_categorical() ~ "{n} ({p}%)"
   ),
   digits = list(all_continuous() ~ 1),
   missing = "always"
@@ -102,35 +43,33 @@ tbl_summary(
   bold_labels() %>%
   modify_caption("**Baseline Characteristics by Survey Year (Unweighted)**<br>**Ages 6 to 15**") %>%
   modify_header(all_stat_cols() ~ "**{level}**<br>N = {n} ({style_percent(p)}%)") %>%
-  modify_footnote(~ "Values are presented as Median (IQR) for continuous variables and n (%) for categorical variables.")
+  modify_footnote(~ "Values are presented as n (%).")
 
 ## 6 to 15 without NAs
 tbl_summary(
   dt_clean,
   by = survey,  # or ~survey if you prefer formula style
-  include = all_of(c("edad", "sexo", "nacionalidad", "sedentarismo",
+  include = all_of(c("edad_cat3", "sexo", "sedentarismo", "nacionalidad",
                      "clase", "urb_rur", "ccaa")),
   label = list(
-    edad ~ "Child's Age (years)",
+    edad_cat3 ~ "Child's Age (years)",
     sexo ~ "Child's Sex",
-    nacionalidad ~ "Child's Nationality",
+    nacionalidad ~ "Nationality",
     sedentarismo ~ "Sedentarism",
-    clase ~ "Household Social Class",
-    urb_rur ~ "Urban/Rural",
+    clase ~ "Occupational Social Class",
+    urb_rur ~ "Municipality Type",
     ccaa ~ "Autonomous Community"
   ),
   statistic = list(
-    all_categorical() ~ "{n} ({p}%)", 
-    all_continuous() ~ "{median} ({p25}, {p75})"
+    all_categorical() ~ "{n} ({p}%)"
   ),
-  digits = list(all_continuous() ~ 1),
-  missing = "always"
+  digits = list(all_continuous() ~ 1)
 ) %>%
   add_n() %>%
   bold_labels() %>%
   modify_caption("**Baseline Characteristics by Survey Year (Unweighted)**<br>**Ages 6 to 15**") %>%
   modify_header(all_stat_cols() ~ "**{level}**<br>N = {n} ({style_percent(p)}%)") %>%
-  modify_footnote(~ "Values are presented as Median (IQR) for continuous variables and n (%) for categorical variables.")
+  modify_footnote(~ "Values are as n (%).")
 
 ## maihda
 tbl_summary(
@@ -158,7 +97,6 @@ tbl_summary(
   modify_header(all_stat_cols() ~ "**{level}**<br>N = {n} ({style_percent(p)}%)") %>%
   modify_footnote(~ "N (%) for categorical variables.")
 
-
 #### Baseline Characteristics with Survey Weights ####
 my_labels <- set_names(
   list(
@@ -166,55 +104,14 @@ my_labels <- set_names(
     "Sex",
     "Nationality",
     "Sedentarism",
-    "Household Social Class",
-    "Urban/Rural",
+    "Occupational Social Class",
+    "Municipality Type",
     "Autonomous Community"
   ),
   c("edad_cat3", "sexo", "nacionalidad", "sedentarismo", "clase",
     "urb_rur", "ccaa")
 )
 
-tbl_summary(
-  dt,
-  by = survey,  # or ~survey if you prefer formula style
-  include = all_of(c("edad", "sexo", "nacionalidad", "sedentarismo",
-                     "clase", "urb_rur", "ccaa")),
-  label = list(
-    edad ~ "Child's Age (years)",
-    sexo ~ "Child's Sex",
-    nacionalidad ~ "Child's Nationality",
-    sedentarismo ~ "Sedentarism",
-    clase ~ "Household Social Class",
-    urb_rur ~ "Urban/Rural",
-    ccaa ~ "Autonomous Community"
-  ),
-  statistic = list(
-    all_categorical() ~ "{n} ({p}%)", 
-    all_continuous() ~ "{median} ({p25}, {p75})"
-  ),
-  digits = list(all_continuous() ~ 1),
-  missing = "always"
-) %>%
-  add_n() %>%
-  bold_labels() %>%
-  modify_caption("**Baseline Characteristics by Survey Year (Unweighted)**<br>**Ages 6 to 15**") %>%
-  modify_header(all_stat_cols() ~ "**{level}**<br>N = {n} ({style_percent(p)}%)") %>%
-  modify_footnote(~ "Values are presented as Median (IQR) for continuous variables and n (%) for categorical variables.")
-
-#### Baseline Characteristics with Survey Weights ####
-my_labels <- set_names(
-  list(
-    "Age (years)",
-    "Sex",
-    "Nationality",
-    "Sedentarism",
-    "Household Social Class",
-    "Urban/Rural",
-    "Autonomous Community"
-  ),
-  c("edad_cat3", "sexo", "nacionalidad", "sedentarismo", "clase_2",
-    "urb_rur", "ccaa")
-)
 valid_vars <- intersect(names(my_labels), names(dt_clean))
 
 ## labels for MAIHDA
@@ -239,11 +136,12 @@ tbl_unweighted <- tbl_summary(
   by = survey,
   include = all_of(valid_vars),
   label = my_labels,
-  statistic = list(all_categorical() ~ "{n}", all_continuous() ~ "{median} ({p25}, {p75})"),
+  statistic = list(all_categorical() ~ "{n}"),
   digits = list(all_continuous() ~ 1)) %>% 
   add_n()
 
 tbl_unweighted
+
 # Create weighted table (percentages only)
 baseline <- svydesign(ids = ~1, weights = ~factor2, data = dt_clean)
 # I am telling R that "each obs in my data represents factor2 people in the population"
@@ -257,7 +155,7 @@ tbl_weighted <- tbl_svysummary(
   by = survey,
   include = all_of(valid_vars),
   label = my_labels,
-  statistic = list(all_categorical() ~ "{p}%", all_continuous() ~ "{median} ({p25}, {p75})"),
+  statistic = list(all_categorical() ~ "{p}%"),
   digits = list(all_categorical() ~ 1)
 )
 
@@ -275,7 +173,7 @@ tbl_final
 
 # Create descriptive table stratified by sedentarism
 table_sedentary <- dt_clean %>%
-  select(edad_cat3, sexo, nacionalidad, sedentarismo, clase_2, urb_rur, ccaa) %>%
+  select(edad_cat3, sexo, nacionalidad, sedentarismo, clase, urb_rur, ccaa) %>%
   tbl_summary(
     by = sedentarismo,                   
     type = list(edad_cat3 ~ "categorical"),
@@ -294,12 +192,11 @@ table_sedentary
 ## Descriptive Unweighted + Weighted Table by Sedentarism ----
 tbl_unweighted <- tbl_summary(
   data = dt_clean,
-  by = sedentarismo,                     # stratify by survey year or sedentarism
+  by = sedentarismo,                    
   include = all_of(valid_vars),
   label = my_labels,
   statistic = list(
-    all_categorical() ~ "{n}",     # counts only
-    all_continuous() ~ "{median} ({p25}, {p75})"
+    all_categorical() ~ "{n}"
   ),
   digits = list(all_continuous() ~ 1)
 ) %>% 
@@ -307,12 +204,11 @@ tbl_unweighted <- tbl_summary(
 
 tbl_weighted <- tbl_svysummary(
   baseline,
-  by = sedentarismo,                       # stratify by survey year or sedentarism
+  by = sedentarismo,                      
   include = all_of(valid_vars),
   label = my_labels,
   statistic = list(
-    all_categorical() ~ "{p}%",     # weighted percentages
-    all_continuous() ~ "{median} ({p25}, {p75})"
+    all_categorical() ~ "{p}%"
   ),
   digits = list(all_categorical() ~ 1)
 )
@@ -610,9 +506,38 @@ prevalence_by_ccaa <- dt_clean %>%
   as_survey_design(weights = factor2) %>%
   group_by(survey, ccaa) %>%
   summarize(
-    prevalence = survey_mean(sedentarismo, vartype = "ci")
+    prevalence = survey_mean(sedentarismo, vartype = "ci")*100
   ) %>%
   ungroup()
+
+prevalence_by_ccaa
+save(prevalence_by_ccaa, file = "Datasets/clase_tr_2/new/prevalence_by_ccaa.RData")
+
+prevalence_by_ccaa_m <- dt_clean %>%
+  filter(sexo == "Male") %>%
+  as_survey_design(weights = factor2) %>%
+  group_by(survey, ccaa) %>%
+  summarize(
+    prevalence = survey_mean(sedentarismo, vartype = "ci")*100
+  ) %>%
+  ungroup()
+
+prevalence_by_ccaa_m
+clipr::write_clip(prevalence_by_ccaa_m)
+save(prevalence_by_ccaa_m, file = "Datasets/clase_tr_2/new/prevalence_by_ccaa_m.RData")
+
+prevalence_by_ccaa_f <- dt_clean %>%
+  filter(sexo == "Female") %>%
+  as_survey_design(weights = factor2) %>%
+  group_by(survey, ccaa) %>%
+  summarize(
+    prevalence = survey_mean(sedentarismo, vartype = "ci")*100
+  ) %>%
+  ungroup()
+
+prevalence_by_ccaa_f
+clipr::write_clip(prevalence_by_ccaa_f)
+save(prevalence_by_ccaa_f, file = "Datasets/clase_tr_2/new/prevalence_by_ccaa_f.RData")
 
 ## prevalence and CI as strings
 prevalence_ccaa_str <- prevalence_by_ccaa %>%
@@ -652,6 +577,45 @@ clipr::write_clip(prevalence_ccaa_wide)
 ## test
 table(dt_clean$survey[dt_clean$ccaa == "Extremadura"], 
       dt_clean$sedentarismo[dt_clean$ccaa == "Extremadura"])
+
+#### Descriptive by NUTS1 Survey Weights ####
+prevalence_by_nuts <- dt_clean %>%
+  as_survey_design(weights = factor2) %>%
+  group_by(survey, NUTS1) %>%
+  summarize(
+    prevalence = survey_mean(sedentarismo, vartype = "ci")*100
+  ) %>%
+  ungroup()
+
+prevalence_by_nuts
+clipr::write_clip(prevalence_by_nuts)
+save(prevalence_by_nuts, file = "Datasets/clase_tr_2/new/prevalence_by_nuts.RData")
+
+prevalence_by_nuts_f <- dt_clean %>%
+  filter(sexo == "Female") %>% 
+  as_survey_design(weights = factor2) %>%
+  group_by(survey, NUTS1) %>%
+  summarize(
+    prevalence = survey_mean(sedentarismo, vartype = "ci")*100
+  ) %>%
+  ungroup()
+
+prevalence_by_nuts_f
+clipr::write_clip(prevalence_by_nuts_f)
+save(prevalence_by_nuts, file = "Datasets/clase_tr_2/new/prevalence_by_nuts_f.RData")
+
+prevalence_by_nuts_m <- dt_clean %>%
+  filter(sexo == "Male") %>% 
+  as_survey_design(weights = factor2) %>%
+  group_by(survey, NUTS1) %>%
+  summarize(
+    prevalence = survey_mean(sedentarismo, vartype = "ci")*100
+  ) %>%
+  ungroup()
+
+prevalence_by_nuts_m
+clipr::write_clip(prevalence_by_nuts_m)
+save(prevalence_by_nuts_m, file = "Datasets/clase_tr_2/new/prevalence_by_nuts_m.RData")
 
 #### Descriptive by Nationality Survey Weights ####
 # Spanish prevalence summary
@@ -751,10 +715,11 @@ prev_joined_urb
 prevalences_spain_overall <- dt_clean %>%
   as_survey_design(weights = c(factor2)) %>%
   group_by(survey) %>%
-  summarize(sedentarismo = survey_mean(sedentarismo, na.rm = T, vartype = "ci"),
+  summarize(sedentarismo = survey_mean(sedentarismo, na.rm = T, vartype = "ci")*100,
   ) %>%
   mutate(sexo="Overall")
 prevalences_spain_overall
+save(prevalences_spain_overall, file = "Datasets/clase_tr_2/new/prevalences_spain_overall.RData")
 
 ## wide table overall
 prevalences_spain_overall_wide <- prevalences_spain_overall %>%
@@ -802,7 +767,7 @@ View(prevalences_spain)
 
 prevalences_spain <- prevalences_spain %>%
   mutate(survey = as.numeric(survey))
-save(prevalences_spain, file = "prevalences_spain.RData")
+save(prevalences_spain, file = "Datasets/clase_tr_2/new/prevalences_spain.RData")
 
 # Prevalence by social class and year combined boys and girls
 prevalence_class_overall <- dt_clean %>%

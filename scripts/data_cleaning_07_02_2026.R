@@ -1,5 +1,5 @@
 ## Author: Diana Juanita Mora
-## Proyect: Childhood Inequities of Sedentarism
+## Project: Childhood Inequities of Sedentarism
 ## Script: Data Cleaning INE Datasets
 ## Finalized: 28th of July 2025
 ## Edited: 7th of February 2026
@@ -633,47 +633,48 @@ ense2003_rename <- ense2003 %>%
       sedentarismo == 1 ~ "Yes",
       sedentarismo == 2 ~ "No"
     ),
-    sedentarismo = factor(sedentarismo, levels = c("No", "Yes"))
+    sedentarismo = factor(sedentarismo, levels = c("No", "Yes")),
+    row_id = row_number()
   )
 
-# ense2003_rename_f <- ense2003_rename %>% 
-#   filter(sexo == "Female") %>% 
-#   mutate(
-#     clase_tr_2_f = {
-#       class_counts <- as.numeric(table(clase))
-#       class_props <- class_counts / sum(class_counts)
-#       cum_props <- cumsum(class_props) 
-#       cum_props[as.numeric(clase)] - class_props[as.numeric(clase)]/2 
-#     }
-#   ) %>%
-#   mutate(
-#     ident = row_number()
-#   ) %>% 
-#   select(ident, clase_tr_2_f)
-# 
-# ense2003_rename <- ense2003_rename %>%
-#   left_join(
-#     ense2003_rename_f %>% select(ident, clase_tr_2_f),
-#     by = "ident"
-#   )
-# 
-# ense2003_rename_m <- ense2003_rename %>% 
-#   filter(sexo == "Male") %>% 
-#   mutate(
-#     clase_tr_2_m = {
-#       class_counts <- as.numeric(table(clase))
-#       class_props <- class_counts / sum(class_counts)
-#       cum_props <- cumsum(class_props) 
-#       cum_props[as.numeric(clase)] - class_props[as.numeric(clase)]/2 
-#     }
-#   ) %>%
-#   select(id, clase_tr_2_m)
-# 
-# ense2003_rename <- ense2003_rename %>%
-#   left_join(
-#     ense2003_rename_m %>% select(id, clase_tr_2_m),
-#     by = "id"
-#   )
+ense2003_rename_f <- ense2003_rename %>%
+  filter(sexo == "Female") %>%
+  mutate(
+    clase_tr_2_f = {
+      class_counts <- as.numeric(table(clase))
+      class_props <- class_counts / sum(class_counts)
+      cum_props <- cumsum(class_props)
+      cum_props[as.numeric(clase)] - class_props[as.numeric(clase)]/2
+    }
+  ) %>%
+  mutate(
+    ident = row_number()
+  ) %>%
+  select(row_id, clase_tr_2_f)
+
+ense2003_rename <- ense2003_rename %>%
+  left_join(
+    ense2003_rename_f %>% select(row_id, clase_tr_2_f),
+    by = "row_id"
+  )
+
+ense2003_rename_m <- ense2003_rename %>%
+  filter(sexo == "Male") %>%
+  mutate(
+    clase_tr_2_m = {
+      class_counts <- as.numeric(table(clase))
+      class_props <- class_counts / sum(class_counts)
+      cum_props <- cumsum(class_props)
+      cum_props[as.numeric(clase)] - class_props[as.numeric(clase)]/2
+    }
+  ) %>%
+  select(row_id, clase_tr_2_m)
+
+ense2003_rename <- ense2003_rename %>%
+  left_join(
+    ense2003_rename_m %>% select(row_id, clase_tr_2_m),
+    by = "row_id"
+  )
 
 ## ENSE 2006 ####
 ense2006_rename <- ense2006 %>% 
@@ -792,7 +793,8 @@ ense2006_rename <- ense2006 %>%
       sedentarismo == 1 ~ "Yes", # sedentary
       sedentarismo == 2 | sedentarismo == 3 | sedentarismo == 4 ~ "No" # not sedentary
     ),
-    sedentarismo = factor(sedentarismo, levels = c("No", "Yes"))
+    sedentarismo = factor(sedentarismo, levels = c("No", "Yes")),
+    row_id = row_number()
   )
 
 ense2006_rename_f <- ense2006_rename %>% 
@@ -805,12 +807,12 @@ ense2006_rename_f <- ense2006_rename %>%
       cum_props[as.numeric(clase)] - class_props[as.numeric(clase)]/2 
     }
   ) %>%
-  select(id, clase_tr_2_f)
+  select(row_id, clase_tr_2_f)
 
 ense2006_rename <- ense2006_rename %>%
   left_join(
-    ense2006_rename_f %>% select(id, clase_tr_2_f),
-    by = "id"
+    ense2006_rename_f %>% select(row_id, clase_tr_2_f),
+    by = "row_id"
   )
 
 ense2006_rename_m <- ense2006_rename %>% 
@@ -823,12 +825,12 @@ ense2006_rename_m <- ense2006_rename %>%
       cum_props[as.numeric(clase)] - class_props[as.numeric(clase)]/2 
     }
   ) %>%
-  select(id, clase_tr_2_m)
+  select(row_id, clase_tr_2_m)
 
 ense2006_rename <- ense2006_rename %>%
   left_join(
-    ense2006_rename_m %>% select(id, clase_tr_2_m),
-    by = "id"
+    ense2006_rename_m %>% select(row_id, clase_tr_2_m),
+    by = "row_id"
   )
 
 ## ENSE 2011 ####
@@ -934,7 +936,8 @@ ense2011_rename <- ense2011 %>%
     ),
     sedentarismo = factor(sedentarismo, levels = c("No", "Yes")),
     
-    n_orden_menor = as.numeric(n_orden_menor)
+    n_orden_menor = as.numeric(n_orden_menor),
+    row_id = row_number()
   )
 
 ense2011_rename_f <- ense2011_rename %>% 
@@ -947,12 +950,12 @@ ense2011_rename_f <- ense2011_rename %>%
       cum_props[as.numeric(clase)] - class_props[as.numeric(clase)]/2 
     }
   ) %>%
-  select(id, clase_tr_2_f)
+  select(row_id, clase_tr_2_f)
 
 ense2011_rename <- ense2011_rename %>%
   left_join(
-    ense2011_rename_f %>% select(id, clase_tr_2_f),
-    by = "id"
+    ense2011_rename_f %>% select(row_id, clase_tr_2_f),
+    by = "row_id"
   )
 
 ense2011_rename_m <- ense2011_rename %>% 
@@ -965,12 +968,12 @@ ense2011_rename_m <- ense2011_rename %>%
       cum_props[as.numeric(clase)] - class_props[as.numeric(clase)]/2 
     }
   ) %>%
-  select(id, clase_tr_2_m)
+  select(row_id, clase_tr_2_m)
 
 ense2011_rename <- ense2011_rename %>%
   left_join(
-    ense2011_rename_m %>% select(id, clase_tr_2_m),
-    by = "id"
+    ense2011_rename_m %>% select(row_id, clase_tr_2_m),
+    by = "row_id"
   )
 
 ## ENSE 2017 ####
@@ -1084,7 +1087,8 @@ ense2017_rename <- ense2017 %>%
     ),
     sedentarismo = factor(sedentarismo, levels = c("No", "Yes")),
     
-    n_orden_menor = as.numeric(n_orden_menor)
+    n_orden_menor = as.numeric(n_orden_menor),
+    row_id = row_number()
   )
 
 ense2017_rename_f <- ense2017_rename %>% 
@@ -1097,12 +1101,12 @@ ense2017_rename_f <- ense2017_rename %>%
       cum_props[as.numeric(clase)] - class_props[as.numeric(clase)]/2 
     }
   ) %>%
-  select(id, clase_tr_2_f)
+  select(row_id, clase_tr_2_f)
 
 ense2017_rename <- ense2017_rename %>%
   left_join(
-    ense2017_rename_f %>% select(id, clase_tr_2_f),
-    by = "id"
+    ense2017_rename_f %>% select(row_id, clase_tr_2_f),
+    by = "row_id"
   )
 
 ense2017_rename_m <- ense2017_rename %>% 
@@ -1115,12 +1119,12 @@ ense2017_rename_m <- ense2017_rename %>%
       cum_props[as.numeric(clase)] - class_props[as.numeric(clase)]/2 
     }
   ) %>%
-  select(id, clase_tr_2_m)
+  select(row_id, clase_tr_2_m)
 
 ense2017_rename <- ense2017_rename %>%
   left_join(
-    ense2017_rename_m %>% select(id, clase_tr_2_m),
-    by = "id"
+    ense2017_rename_m %>% select(row_id, clase_tr_2_m),
+    by = "row_id"
   )
 
 ## ENSE 2023 ####
@@ -1243,7 +1247,8 @@ ense2023_rename <- ense2023 %>%
     ),
     sedentarismo = factor(sedentarismo, levels = c("No", "Yes")),
     
-    n_orden_menor = as.numeric(n_orden_menor)
+    n_orden_menor = as.numeric(n_orden_menor),
+    row_id = row_number()
   )
 
 ense2023_rename_f <- ense2023_rename %>% 
@@ -1256,12 +1261,12 @@ ense2023_rename_f <- ense2023_rename %>%
       cum_props[as.numeric(clase)] - class_props[as.numeric(clase)]/2 
     }
   ) %>%
-  select(id, clase_tr_2_f)
+  select(row_id, clase_tr_2_f)
 
 ense2023_rename <- ense2023_rename %>%
   left_join(
-    ense2023_rename_f %>% select(id, clase_tr_2_f),
-    by = "id"
+    ense2023_rename_f %>% select(row_id, clase_tr_2_f),
+    by = "row_id"
   )
 
 ense2023_rename_m <- ense2023_rename %>% 
@@ -1274,12 +1279,12 @@ ense2023_rename_m <- ense2023_rename %>%
       cum_props[as.numeric(clase)] - class_props[as.numeric(clase)]/2 
     }
   ) %>%
-  select(id, clase_tr_2_m)
+  select(row_id, clase_tr_2_m)
 
 ense2023_rename <- ense2023_rename %>%
   left_join(
-    ense2023_rename_m %>% select(id, clase_tr_2_m),
-    by = "id"
+    ense2023_rename_m %>% select(row_id, clase_tr_2_m),
+    by = "row_id"
   )
 
 # Check missingness prior to joining ####
@@ -1341,6 +1346,27 @@ joined <- joined %>%
     edad_cat3 = factor(edad_cat3, levels = c("6-9", "10-12", "13-15"))
   )
 
+joined <- joined %>%
+  mutate(
+    NUTS1 = case_when(
+      # Noroeste
+      ccaa %in% c("Galicia", "Asturias", "Cantabria") ~ "North-West",
+      # Noreste
+      ccaa %in% c("Basque Country", "Navarre", "La Rioja", "Aragon") ~ "North-East",
+      # Madrid
+      ccaa == "Madrid" ~ "Madrid",
+      # Centre
+      ccaa %in% c("Castile and Leon", "Castilla-La Mancha", "Extremadura") ~ "Centre",
+      # East
+      ccaa %in% c("Catalonia", "Valencian Community", "Balearic Islands") ~ "East",
+      # South
+      ccaa %in% c("Andalusia", "Murcia", "Ceuta and Melilla") ~ "South",
+      # Canary Islands
+      ccaa == "Canary Islands" ~ "Canary Islands",
+      TRUE ~ NA_character_
+    ),
+    NUTS1 = factor(NUTS1)
+  )
 save(joined, file = "joined.RData")
 
 joined_6 <- joined %>%  ## 6 to 15 without dropping NAs
