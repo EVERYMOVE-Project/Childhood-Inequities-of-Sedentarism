@@ -1635,6 +1635,7 @@ ggsave("Figures/clase_tr_2/fig_rii_NUTS1_sex.png", width = 4000, height = 2200, 
 ## RII NUTS1 Map ####
 
 NUTS1 <- st_read("Resources/NUTS1_ES_20M_2024_3035.shp") # Leemos los datos de capa
+load("Datasets/clase_tr_2/new/rii_sedentarism_NUTS1_combined.RData")
 
 ## explore shapefile data
 names(NUTS1)
@@ -1680,9 +1681,6 @@ theme_map <- function(bg_color = "white", title_size = 16){
   )
 }
 
-ggplot(map_NUTS1) +
-  geom_sf(aes(fill = rii), color = "white", linewidth = 0.2)
-
 rii_map_survey <- ggplot(
   map_NUTS1 %>% dplyr::filter(sex == "Overall") 
 ) +
@@ -1693,7 +1691,8 @@ rii_map_survey <- ggplot(
         subtitle = "Unit: Relative Index of Inequality",
         caption = "Nomenclature of Territorial Units for Statistics (NUTS) Regions",
         fill = "Relative Index of Inequality") +
-  theme_map()
+  theme_map()+
+  theme(text = element_text(family = "Times New Roman"))
 
 rii_map_survey
 
@@ -1716,7 +1715,8 @@ rii_map_survey_NUTS_f <- ggplot(
         subtitle = "Unit: Relative Index of Inequality",
         caption = "Nomenclature of Territorial Units for Statistics (NUTS) Regions",
         fill = "Relative Index of Inequality") +
-  theme_map()
+  theme_map()+
+  theme(text = element_text(family = "Times New Roman"))
 
 rii_map_survey_NUTS_f
 
@@ -1739,7 +1739,8 @@ rii_map_survey_NUTS_m <- ggplot(
         subtitle = "Unit: Relative Index of Inequality",
         caption = "Nomenclature of Territorial Units for Statistics (NUTS) Regions",
         fill = "Relative Index of Inequality") +
-  theme_map()
+  theme_map()+
+  theme(text = element_text(family = "Times New Roman"))
 
 rii_map_survey_NUTS_m
 

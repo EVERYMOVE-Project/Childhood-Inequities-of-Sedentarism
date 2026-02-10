@@ -11,6 +11,11 @@ library(survey)
 library(scales)
 library(purrr)
 library(ggrepel)
+library(extrafont)
+
+font_import(prompt = FALSE)   # run once (can take a few minutes)
+loadfonts(device = "win") 
+
 
 ## Load data ----
 dt <- get(load("joined_6.RData")) ## 6 to 15 without dropping NAs
@@ -734,7 +739,7 @@ clipr::write_clip(prevalences_spain_overall_wide)
 prevalences_spain_sexo <- dt_clean %>%
   as_survey_design(weights = c(factor2)) %>%
   group_by(sexo, survey) %>%
-  summarize(sedentarismo = survey_mean(sedentarismo, na.rm = T, vartype = "ci"),
+  summarize(sedentarismo = survey_mean(sedentarismo, na.rm = T, vartype = "ci")*100,
   ) %>%
   mutate(sexo=case_when(sexo=="Male"~"Male", sexo=="Female"~"Female"))
 prevalences_spain_sexo
@@ -752,7 +757,7 @@ clipr::write_clip(prevalences_spain_sexo_wide)
 prevalences_spain_age <- dt_clean %>%
   as_survey_design(weights = c(factor2)) %>%
   group_by(edad_cat3, survey) %>%
-  summarize(sedentarismo = survey_mean(sedentarismo, na.rm = T, vartype = "ci"),
+  summarize(sedentarismo = survey_mean(sedentarismo, na.rm = T, vartype = "ci")*100,
   ) %>%
   mutate(edad_cat3=case_when(edad_cat3=="6-9"~"6-9", edad_cat3=="10-12"~"10-12", edad_cat3=="13-15"~"13-15"))
 prevalences_spain_age
@@ -782,7 +787,7 @@ prevalence_class_overall
 prevalence_class_overall3 <- dt_clean %>%
   as_survey_design(weights = c(factor2)) %>%
   group_by(clase_3, survey) %>%
-  summarize(sedentarismo = survey_mean(sedentarismo, na.rm = T, vartype = "ci"),
+  summarize(sedentarismo = survey_mean(sedentarismo, na.rm = T, vartype = "ci")*100,
   ) %>%
   mutate(sex="Overall")
 prevalence_class_overall3
@@ -818,7 +823,7 @@ prevalence_class_sexo
 prevalence_class_sexo3 <- dt_clean %>%
   as_survey_design(weights = c(factor2)) %>%
   group_by(sexo, clase_3, survey) %>%
-  summarize(sedentarismo = survey_mean(sedentarismo, na.rm = T, vartype = "ci"),
+  summarize(sedentarismo = survey_mean(sedentarismo, na.rm = T, vartype = "ci")*100,
   ) %>% 
   mutate(sex=case_when(sexo=="Male"~"Male", sexo=="Female"~"Female"))
 prevalence_class_sexo3
@@ -826,14 +831,14 @@ prevalence_class_sexo3
 # Prevalence by class together
 prevalence_class <- prevalence_class_overall %>% 
   rbind(prevalence_class_sexo) 
-save(prevalence_class, file = "prevalence_class.RData")
+save(prevalence_class, file = "Datasets/clase_tr_2/new/prevalence_class.RData")
 print(prevalence_class, n = 90)
 clipr::write_clip(prevalence_class)
 
 # Prevalence by class 3 together
 prevalence_class3 <- prevalence_class_overall3 %>% 
   rbind(prevalence_class_sexo3) 
-save(prevalence_class, file = "prevalence_class3.RData")
+save(prevalence_class, file = "Datasets/clase_tr_2/new/prevalence_class3.RData")
 prevalence_class3
 clipr::write_clip(prevalence_class3)
 
@@ -901,14 +906,14 @@ prevalence_sex_class_ccaa3
 # Prevalence by CCAA, social class, and year together
 prevalence_class_ccaa <- prevalence_overall_class_ccaa %>% 
   rbind(prevalence_sex_class_ccaa)
-save(prevalence_class_ccaa, file = "prevalence_class_ccaa.RData")
+save(prevalence_class_ccaa, file = "Datasets/clase_tr_2/new/prevalence_class_ccaa.RData")
 clipr::write_clip(prevalence_class_ccaa)
 prevalence_class_ccaa
 
 # Prevalence by CCAA, social class 3, and year together
 prevalence_class_ccaa3 <- prevalence_overall_class_ccaa3 %>% 
   rbind(prevalence_sex_class_ccaa3)
-save(prevalence_class_ccaa3, file = "prevalence_class_ccaa3.RData")
+save(prevalence_class_ccaa3, file = "Datasets/clase_tr_2/new/prevalence_class_ccaa3.RData")
 clipr::write_clip(prevalence_class_ccaa3)
 prevalence_class_ccaa3
 
@@ -939,23 +944,30 @@ theme_inequalities <- function() {
     )
 }
 #### Visualization Descriptive Sedentarism Overall ####
-load("prevalences_spain.RData")
+load("Datasets/clase_tr_2/new/prevalences_spain.RData")
 
 prevalences_spain$survey <- as.numeric(as.character(prevalences_spain$survey))
 
 prevalences_spain <- prevalences_spain %>%
   mutate(
-    prevalence_label = paste0(round(sedentarismo * 100, 1), "%")
+    prevalence_label = paste0(round(sedentarismo, 1), "%")
   )
+
+prevalences_spain <- prevalences_spain %>%
+  mutate(sexo = case_when(
+    sexo == "Female" ~ "Girls",
+    sexo == "Male" ~ "Boys",
+    TRUE ~ sexo  # keep any other values as they are
+  ))
 
 # Both sexes
 fig_desc_sedentarism_overall <- prevalences_spain %>%
   filter(sexo == "Overall") %>%
   ggplot(aes(
     x = survey,
-    y = sedentarismo * 100,
-    ymin = sedentarismo_low * 100,
-    ymax = sedentarismo_upp * 100,
+    y = sedentarismo,
+    ymin = sedentarismo_low,
+    ymax = sedentarismo_upp,
     color = sexo,
     fill = sexo
   )) +
@@ -967,8 +979,8 @@ fig_desc_sedentarism_overall <- prevalences_spain %>%
     limits = c(0, 40)
   ) +
   geom_text_repel(
-    aes(label = prevalence_label),
-    size = 3,         # Adjust for readability
+    aes(label = prevalence_label, family = "Times New Roman"),
+    size = 4,         # Adjust for readability
     nudge_y = 0.5,
     max.overlaps = Inf,
     show.legend =  FALSE,
@@ -980,11 +992,14 @@ fig_desc_sedentarism_overall <- prevalences_spain %>%
     expand = c(0, 0.5)
   ) +
   scale_color_manual(
-    values = c("Overall" = "#1b9e77")
+    values = c(
+      "Overall" = "#4BAE48"
+    )
   ) +
   scale_fill_manual(
-    values = c("Overall" = "#1b9e77")
-  ) +
+    values = c(
+      "Overall" = "#4BAE48"
+    )) +
   labs(
     title = "Prevalence of Sedentarism Over Time (Girls and Boys)",
     x = NULL,
@@ -992,32 +1007,28 @@ fig_desc_sedentarism_overall <- prevalences_spain %>%
     color = "Sex",
     fill = "Sex"
   ) +
-  theme_inequalities()
+  theme_inequalities()+
+  theme(text = element_text(family = "Times New Roman"))
 fig_desc_sedentarism_overall
-ggsave("Figures/02-12/fig_desc_sedentarism_overall.png", width = 4000, height = 2200, dpi=300, units = "px")
+ggsave("Figures/prevalence/fig_desc_sedentarism_overall.png", width = 4000, height = 2200, dpi=300, units = "px")
 
 # Separate by sex
-prevalences_spain <- prevalences_spain %>%
-  mutate(
-    prevalence_label = paste0(round(sedentarismo * 100, 1), "%")
-  )
-
 fig_desc_sedentarism_sex <- prevalences_spain %>%
-  filter(sexo %in% c("Female", "Male")) %>%
+  filter(sexo %in% c("Girls", "Boys")) %>%
   ggplot(aes(
     x = survey,
-    y = sedentarismo * 100,
-    ymin = sedentarismo_low * 100,
-    ymax = sedentarismo_upp * 100,
+    y = sedentarismo,
+    ymin = sedentarismo_low,
+    ymax = sedentarismo_upp,
     color = sexo,
     fill = sexo
   )) +
   geom_line(linewidth = 0.75) +
   geom_ribbon(alpha = 0.3) +
   geom_text_repel(
-    aes(label = prevalence_label),
-    size = 3,         # Adjust for readability
-    nudge_y = 0.5,
+    aes(label = prevalence_label, family = "Times New Roman"),
+    size = 4,         # Adjust for readability
+    nudge_y = 1,
     max.overlaps = Inf,
     show.legend =  FALSE,
     fontface = "bold",
@@ -1034,16 +1045,16 @@ fig_desc_sedentarism_sex <- prevalences_spain %>%
   ) +
   scale_color_manual(
     values = c(
-      "Male" = "#f03b20",
-      "Female" = "#2c7fb8"
+      "Girls"   = "#317AB6",
+      "Boys"    = "#E41E20"
     )
   ) +
   scale_fill_manual(
     values = c(
-      "Male" = "#f03b20",
-      "Female" = "#2c7fb8"
+      "Girls"   = "#317AB6",
+      "Boys"    = "#E41E20"
     )
-  )  +
+    ) +
   labs(
     title = "Prevalence of Sedentarism Over Time by Sex",
     x = NULL,
@@ -1051,16 +1062,12 @@ fig_desc_sedentarism_sex <- prevalences_spain %>%
     color = "Sex",
     fill = "Sex"
   ) +
-  theme_inequalities()
+  theme_inequalities()+
+  theme(text = element_text(family = "Times New Roman"))
 fig_desc_sedentarism_sex
-ggsave("Figures/02-12/fig_desc_sedentarism_sex.png", width = 4000, height = 2200, dpi=300, units = "px")
+ggsave("Figures/prevalence/fig_desc_sedentarism_sex.png", width = 4000, height = 2200, dpi=300, units = "px")
 
 # Separate by age group
-prevalences_spain <- prevalences_spain %>%
-  mutate(
-    prevalence_label = paste0(round(sedentarismo * 100, 1), "%")
-  )
-
 prevalences_spain <- prevalences_spain %>%
   mutate(
     edad_cat3 = factor(
@@ -1073,17 +1080,17 @@ fig_desc_sedentarism_age <- prevalences_spain %>%
   filter(edad_cat3 %in% c("6-9", "10-12", "13-15")) %>%
   ggplot(aes(
     x = survey,
-    y = sedentarismo * 100,
-    ymin = sedentarismo_low * 100,
-    ymax = sedentarismo_upp * 100,
+    y = sedentarismo,
+    ymin = sedentarismo_low,
+    ymax = sedentarismo_upp,
     color = edad_cat3,
     fill = edad_cat3
   )) +
   geom_line(linewidth = 0.75) +
   geom_ribbon(alpha = 0.3) +
   geom_text_repel(
-    aes(label = prevalence_label),
-    size = 3,
+    aes(label = prevalence_label, family = "Times New Roman"),
+    size = 3.5,
     nudge_y = 0.5,
     max.overlaps = Inf,
     show.legend =  FALSE,
@@ -1120,16 +1127,24 @@ fig_desc_sedentarism_age <- prevalences_spain %>%
     color = "Age",
     fill = "Age"
   ) +
-  theme_inequalities()
+  theme_inequalities()+
+  theme(text = element_text(family = "Times New Roman"))
 fig_desc_sedentarism_age
-ggsave("Figures/02-12/fig_desc_sedentarism_age.png", width = 4000, height = 2200, dpi=300, units = "px")
+ggsave("Figures/prevalence/fig_desc_sedentarism_age.png", width = 4000, height = 2200, dpi=300, units = "px")
 
 # Figure prevalence by social class
 load("prevalence_class.RData")
-load("prevalence_class3.RData")
+load("Datasets/clase_tr_2/new/prevalence_class3.RData")
 
 prevalence_class$survey <- as.numeric(as.character(prevalence_class$survey))
 prevalence_class3$survey <- as.numeric(as.character(prevalence_class3$survey))
+
+prevalence_class3 <- prevalence_class3 %>%
+  mutate(sexo = case_when(
+    sexo == "Female" ~ "Girls",
+    sexo == "Male" ~ "Boys",
+    TRUE ~ sexo  # keep any other values as they are
+  ))
 
 prevalence_class <- prevalence_class %>%
   mutate(
@@ -1138,7 +1153,7 @@ prevalence_class <- prevalence_class %>%
 
 prevalence_class3 <- prevalence_class3 %>%
   mutate(
-    prevalence_label = paste0(round(sedentarismo * 100, 1), "%")
+    prevalence_label = paste0(round(sedentarismo, 1), "%")
   )
 
 fig_desc_sedentarism_class_overall <- prevalence_class %>%
@@ -1198,12 +1213,12 @@ ggsave("Figures/02-12/fig_desc_sedentarism_class_overall.png", width = 4000, hei
 # Figure for Class 3 categories
 fig_desc_sedentarism_class_overall3 <- prevalence_class3 %>%
   filter(sex == "Overall") %>%
-  ggplot(aes(x = survey, y = sedentarismo * 100, ymin = sedentarismo_low * 100, ymax = sedentarismo_upp * 100, color = clase_3, fill = clase_3)) +
+  ggplot(aes(x = survey, y = sedentarismo, ymin = sedentarismo_low, ymax = sedentarismo_upp, color = clase_3, fill = clase_3)) +
   geom_line(linewidth = 0.75) +
   geom_ribbon(alpha = 0.3, color = NA) +
   geom_text_repel(
-    aes(label = prevalence_label),
-    size = 3,         # Adjust for readability
+    aes(label = prevalence_label, family = "Times New Roman"),
+    size = 4,         # Adjust for readability
     nudge_y = 0.5,
     max.overlaps = Inf,
     show.legend =  FALSE,
@@ -1240,9 +1255,10 @@ fig_desc_sedentarism_class_overall3 <- prevalence_class3 %>%
     color = "Social Class",
     fill = "Social Class"
   ) +
-  theme_inequalities()
+  theme_inequalities()+
+  theme(text = element_text(family = "Times New Roman"))
 fig_desc_sedentarism_class_overall3
-ggsave("Figures/02-12/fig_desc_sedentarism_class_overall3.png", width = 4000, height = 2200, dpi=300, units = "px")
+ggsave("Figures/prevalence/fig_desc_sedentarism_class_overall3.png", width = 4000, height = 2200, dpi=300, units = "px")
 
 # Figure prevalence social class by sex
 fig_desc_sedentarism_class_sex <- prevalence_class %>%
@@ -1309,27 +1325,27 @@ ggsave("Figures/02-12/fig_desc_sedentarism_class_sex.png", width = 4000, height 
 
 # Figure prevalence social class 3 categories by sex
 fig_desc_sedentarism_class_sex3 <- prevalence_class3 %>%
-  filter(sex %in% c("Female", "Male")) %>%
+  filter(sexo %in% c("Girls", "Boys")) %>%
   ggplot(aes(
     x = survey,
-    y = sedentarismo * 100,
-    ymin = sedentarismo_low * 100,
-    ymax = sedentarismo_upp * 100,
+    y = sedentarismo,
+    ymin = sedentarismo_low,
+    ymax = sedentarismo_upp,
     color = clase_3,
     fill = clase_3
   )) +
   geom_line(linewidth = 0.75) +
   geom_ribbon(alpha = 0.3, color = NA) +
   geom_text_repel(
-    aes(label = prevalence_label),
-    size = 3,         # Adjust for readability
+    aes(label = prevalence_label, family = "Times New Roman"),
+    size = 4,         
     nudge_y = 0.5,
     max.overlaps = Inf,
     show.legend =  FALSE,
     fontface = "bold",
     color = "black"
   ) +
-  facet_wrap(~ sex) +
+  facet_wrap(~ sexo) +
   scale_y_continuous(
     expand = c(0, 0),
     breaks = seq(10, 40, by = 10),
@@ -1360,7 +1376,7 @@ fig_desc_sedentarism_class_sex3 <- prevalence_class3 %>%
     color = "Social Class",
     fill = "Social Class"
   ) +
-  theme_inequalities()
+  theme_inequalities()+
+  theme(text = element_text(family = "Times New Roman"))
 fig_desc_sedentarism_class_sex3
-ggsave("Figures/02-12/fig_desc_sedentarism_class_sex3.png", width = 4000, height = 2200, dpi=300, units = "px")
-
+ggsave("Figures/prevalence/fig_desc_sedentarism_class_sex3.png", width = 4000, height = 2200, dpi=300, units = "px")
