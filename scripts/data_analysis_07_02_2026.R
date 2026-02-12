@@ -27,6 +27,7 @@ library(tibble)
 library(ggrepel)
 library(sf) #map
 library(extrafont)
+library(segmented)
 
 font_import(prompt = FALSE)   # run once (can take a few minutes)
 loadfonts(device = "win") 
@@ -1756,20 +1757,105 @@ ggsave(
 ## Inflection Point ----
 ## Segmented package to decide the inflection point in the inequalities of sedentarism
 ## linear model fitted with survey year as a predictor
+load("Datasets/clase_tr_2/new/rii_sedentarism_overall_clase.RData")
 rii_sedentarism_overall_clase$encuesta <- as.numeric(rii_sedentarism_overall_clase$encuesta)
 
+# linear model
 m0 <- lm(rii ~ encuesta, data = rii_sedentarism_overall_clase)
 summary(m0)
 
-## fit segmented model
+# segmented model
 seg_m <- segmented(m0, seg.Z = ~encuesta, psi = 2011)
 seg_m ## 2014 inflection point
 
+# inflection point
+inflection <- summary(seg_m)$psi[2]
+
+# predicted year and rii
+pred_data <- data.frame(
+  encuesta = seq(min(rii_sedentarism_overall_clase$encuesta),
+                 max(rii_sedentarism_overall_clase$encuesta),
+                 length.out = 100)
+)
+
+pred_data$rii_pred <- predict(seg_m, newdata = pred_data)
+
 ## plot inflection point
 plot(rii ~ encuesta, data = rii_sedentarism_overall_clase)
-plot(seg_m, add = TRUE, col = "red")
-ggsave("Figures/inflection.png", width = 4000, height = 2200, dpi=300, units = "px")
+plot(seg_m, add = TRUE, col = "blue")
+
+# new plot
+ggplot(rii_sedentarism_overall_clase,
+       aes(x = encuesta, y = rii)) +
+  
+  scale_x_continuous(
+    breaks = c(2003, 2006, 2011, 2017, 2023)
+  ) +
+  geom_text(
+    aes(label = round(rii, 2)),
+    vjust = -1.35,              
+    size = 4,
+    # fontface = "bold",
+    family = "Times New Roman",
+    show.legend = FALSE
+  ) +
+  
+  geom_hline(yintercept = 1,
+             linetype = "dashed",
+             color = "black") +
+  
+  geom_ribbon(aes(ymin = rii_infci,
+                  ymax = rii_supci,
+                  fill = "95% CI"),
+              alpha = 0.15,
+              color = NA) +
+  
+  geom_line(aes(color = "Observed RII"),
+            linewidth = 1) +
+  
+  geom_point(aes(color = "Observed RII"),
+             size = 2) +
+  
+  geom_line(data = pred_data,
+            aes(y = rii_pred,
+                color = "Segmented trend"),
+            linewidth = 1.2) +
+  
+  geom_vline(xintercept = inflection,
+             linetype = "dotted",
+             color = "black") +
+  
+  annotate("text",
+           x = inflection,
+           y = max(rii_sedentarism_overall_clase$rii, na.rm = TRUE),
+           label = paste("Inflection:", round(inflection, 0)),
+           family = "Times New Roman",
+           hjust = -0.1,
+           vjust = 1,
+           size = 4) +
+  
+  scale_color_brewer(palette = "Set1") +
+  scale_fill_brewer(palette = "Set1") +
+  
+  labs(
+    title = "Inflection Point of Sedentarism Inequality",
+    subtitle = "Relative Index of Inequality (RII) across survey years",
+    x = "Survey Year",
+    y = "RII (95% CI)"
+  ) +
+  
+  theme_minimal(base_size = 13) +
+  theme(
+    text = element_text(family = "Times New Roman"),
+    legend.title = element_blank(),
+    plot.title = element_text(face = "bold"),
+    panel.grid.minor = element_blank()
+  )
+
+ggsave("Figures/clase_tr_2/inflection new.png", width = 4000, height = 2200, dpi=300, units = "px")
 ## Annual Percent Change ----
+load("Datasets/clase_tr_2/new/rii_sedentarism_CCAA_combined.RData")
+
 apc_dta <- rii_sedentarism_CCAA_combined %>%
   filter(
     Outcome == "Sedentarismo",

@@ -16,7 +16,6 @@ library(extrafont)
 font_import(prompt = FALSE)   # run once (can take a few minutes)
 loadfonts(device = "win") 
 
-
 ## Load data ----
 dt <- get(load("joined_6.RData")) ## 6 to 15 without dropping NAs
 dt_clean <- get(load("joined_clean_rii.RData")) ## 6 to 15 dropping NAs 
@@ -111,10 +110,11 @@ my_labels <- set_names(
     "Sedentarism",
     "Occupational Social Class",
     "Municipality Type",
-    "Autonomous Community"
+    "Autonomous Community",
+    "NUTS Region"
   ),
   c("edad_cat3", "sexo", "nacionalidad", "sedentarismo", "clase",
-    "urb_rur", "ccaa")
+    "urb_rur", "ccaa", "NUTS1")
 )
 
 valid_vars <- intersect(names(my_labels), names(dt_clean))
