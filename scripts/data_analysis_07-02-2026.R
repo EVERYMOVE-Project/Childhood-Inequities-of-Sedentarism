@@ -32,7 +32,7 @@ library(segmented)
 font_import(prompt = FALSE)   # run once (can take a few minutes)
 loadfonts(device = "win") 
 
-## read joined data
+## Load data ----
 dt <- get(load("joined_clean_rii.RData"))
 
 #### Regression Models for Inequality ####
