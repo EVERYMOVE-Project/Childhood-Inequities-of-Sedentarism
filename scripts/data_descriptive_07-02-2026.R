@@ -1,6 +1,8 @@
-# Data Descriptive INE
-# Finalized: 24th of July 2025
-# Edited: 7th of February 2026
+## Author: Diana Juanita Mora
+## Project: Childhood Inequities of Sedentarism
+## Script: Data Descriptive INE
+## Finalized: July 24 2025
+## Edited: February 7 2026
 
 ## Load libraries ----
 library(tidyverse)
@@ -75,32 +77,6 @@ tbl_summary(
   modify_header(all_stat_cols() ~ "**{level}**<br>N = {n} ({style_percent(p)}%)") %>%
   modify_footnote(~ "Values are as n (%).")
 
-## maihda
-tbl_summary(
-  maihda,
-  by = sedentarismo,
-  include = all_of(c("sexo", "edad_cat3", 
-                     "clase_2", "urb_rur", "survey2")),
-  label = list(
-    sexo ~ "Sex",
-    edad_cat3 ~ "Age (years)",
-    clase_2 ~ "Occupational Social Class",
-    urb_rur ~ "Municipality Type",
-    survey2 ~ "Inflection Point in Sedentarism Inequality"
-  ),
-  statistic = list(
-    all_categorical() ~ "{n} ({p}%)", 
-    all_continuous() ~ "{median} ({p25}, {p75})"
-  ),
-  digits = list(all_continuous() ~ 1),
-  missing = "no"
-) %>%
-  add_n() %>%
-  bold_labels() %>%
-  modify_caption("**Baseline Characteristics by Sedentarism (Unweighted)**<br>**Ages 6 to 15**") %>%
-  modify_header(all_stat_cols() ~ "**{level}**<br>N = {n} ({style_percent(p)}%)") %>%
-  modify_footnote(~ "N (%) for categorical variables.")
-
 #### Baseline Characteristics with Survey Weights ####
 my_labels <- set_names(
   list(
@@ -118,21 +94,6 @@ my_labels <- set_names(
 )
 
 valid_vars <- intersect(names(my_labels), names(dt_clean))
-
-## labels for MAIHDA
-my_labels <- set_names(
-  list(
-    "Sex",
-    "Age (years)",
-    "Sedentarism",
-    "Occupational Social Class",
-    "Municipality Type",
-    "Inflection Point of Sedentarism Inequality"
-  ),
-  c("sexo", "edad_cat3", "sedentarismo", "clase_2",
-    "urb_rur", "survey2")
-)
-valid_vars <- intersect(names(my_labels), names(maihda))
 
 ## Descriptive Unweighted + Weighted Table by Survey Year ----
 # Create unweighted table (counts only)
@@ -226,44 +187,6 @@ tbl_combined <- tbl_merge(
 tbl_final <- tbl_combined %>% 
   bold_labels() %>% 
   modify_caption("**Baseline Characteristics by Sedentarism**<br>**Ages 6 to 15**<br>n = unweighted counts, % = weighted proportions")
-tbl_final
-
-## Descriptive Weighted for MAIHDA by Sedentarism ----
-baseline <- svydesign(ids = ~1, weights = ~factor2, data = maihda)
-
-tbl_unweighted <- tbl_summary(
-  data = maihda,
-  by = sedentarismo,                     
-  include = all_of(valid_vars),
-  label = my_labels,
-  statistic = list(
-    all_categorical() ~ "{n}",     # counts only
-    all_continuous() ~ "{median} ({p25}, {p75})"
-  ),
-  digits = list(all_continuous() ~ 1)
-) %>% 
-  add_n()  
-
-tbl_weighted <- tbl_svysummary(
-  baseline,
-  by = sedentarismo,                       
-  include = all_of(valid_vars),
-  label = my_labels,
-  statistic = list(
-    all_categorical() ~ "{p}%",     # weighted percentages
-    all_continuous() ~ "{median} ({p25}, {p75})"
-  ),
-  digits = list(all_categorical() ~ 1)
-)
-
-tbl_combined <- tbl_merge(
-  tbls = list(tbl_unweighted, tbl_weighted),
-  tab_spanner = c("**Unweighted (N)**", "**Weighted (%)**")
-)
-
-tbl_final <- tbl_combined %>% 
-  bold_labels() %>% 
-  modify_caption("**Baseline Characteristics by Sedentarism for MAIHDA**<br>**Ages 6 to 15**<br>n = unweighted counts, % = weighted proportions")
 tbl_final
 
 #### Descriptive on Clean Overall ####

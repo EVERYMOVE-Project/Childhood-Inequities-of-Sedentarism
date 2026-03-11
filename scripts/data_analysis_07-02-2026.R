@@ -1,8 +1,8 @@
 ## Author: Diana Juanita Mora
 ## Project: Childhood Inequities of Sedentarism
 ## Script: Data Analysis - RII and SII (clase_tr_2)
-## Finalized: 28th of July 2025
-## Edited: 9th of February of 2026
+## Finalized: July 28 2025
+## Edited: February 9 2026
 
 ## Load libraries ----
 library(tidyverse)
@@ -619,15 +619,11 @@ ggsave("Figures/clase_tr_2/fig_sii_rii.png", width = 4000, height = 2200, dpi=30
 ccaas <- read_delim("Resources/ccaas.csv", delim = ";", 
                     escape_double = FALSE, trim_ws = TRUE)
 
-## New age variable
-dt <- dt %>% 
-  mutate(edad_original = edad)
-
 ## Center Age
   # So that the model's intercept represents the expected value of the outcome at the mean
   # age of the sample, rather than when age = 0, which also improves model fitting and convergence
 dt <- dt %>% 
-  mutate(edad = scale(edad, center = T, scale = F))
+  mutate(edad_scale = scale(edad, center = T, scale = F))
 
 ## RECALL NEED TO CHANGE VARIABLES TO DO EXTRACTION PER SEX
 ## FUNCTION THAT WORKS WITH clase_tr_2
@@ -684,7 +680,7 @@ extract_rii_by_group_CCAA <- function(
 table_ccaa <- dt %>%
   group_by(survey, ccaa) %>%
   summarise(
-    clase_tr_2 = min(table(clase_tr_2)),
+    clase_tr_2 = min(table(clase_tr_2_f)),
     .groups = "drop"
   ) %>%
   filter(clase_tr_2 < 15)
@@ -692,7 +688,7 @@ print(table_ccaa, n = 51)
 
 clipr::write_clip(table_ccaa)
 
-rii_sedentarism_CCAA <- glmmTMB(sedentarismo~clase_tr_2+edad+sexo+
+rii_sedentarism_CCAA <- glmmTMB(sedentarismo~clase_tr_2+edad_scale+sexo+
                                   (1+clase_tr_2|survey) + # allows the baseline level of sedentarism and the effect of social class to vary between survey years
                                   (1+clase_tr_2|survey:ccaa), # allows the same variations to differ between autonomous communities within each survey year
                                 data = dt,
@@ -734,7 +730,7 @@ table_ccaa_f <- dt %>%
 clipr::write_clip(table_ccaa_f)
 table_ccaa_f
 
-rii_sedentarism_CCAA_females <- glmmTMB(sedentarismo~clase_tr_2_f+edad+(1+clase_tr_2_f|survey) 
+rii_sedentarism_CCAA_females <- glmmTMB(sedentarismo~clase_tr_2_f+edad_scale+(1+clase_tr_2_f|survey) 
                                         + (1+clase_tr_2_f|survey:ccaa),  data = subset(dt, sexo == "Female"),
                                 family="poisson", weights = factor2)
 rii_sedentarism_CCAA_females
@@ -775,7 +771,7 @@ table_ccaa_m
 
 clipr::write_clip(table_ccaa_m)
 
-rii_sedentarism_CCAA_males <- glmmTMB(sedentarismo~clase_tr_2_m+edad+(1+clase_tr_2_m|survey) 
+rii_sedentarism_CCAA_males <- glmmTMB(sedentarismo~clase_tr_2_m+edad_scale+(1+clase_tr_2_m|survey) 
                                       + (1+clase_tr_2_m|survey:ccaa), data = subset(dt, sexo == "Male"),
                                         family="poisson", weights = factor2) # generalized linear mixed model
 VarCorr(rii_sedentarism_CCAA_males)
@@ -1047,7 +1043,7 @@ ggplot(map_ccaa) +
   geom_sf(aes(fill = rii), color = "white", linewidth = 0.2)
 
 rii_map_survey <- ggplot(
-  map_ccaa %>% dplyr::filter(sex == "Overall") 
+  map_ccaa %>% dplyr::filter(sex == "Male") 
 ) +
   geom_sf(aes(fill = rii), color = "white", linewidth = 0.2) +
   facet_wrap(~ survey) +
@@ -1294,7 +1290,7 @@ table_NUTS <- dt %>%
 table_NUTS
 clipr::write_clip(table_NUTS)
 
-rii_sedentarism_NUTS1 <- glmmTMB(sedentarismo~clase_tr_2+edad+sexo+
+rii_sedentarism_NUTS1 <- glmmTMB(sedentarismo~clase_tr_2+edad_scale+sexo+
                                   (1+clase_tr_2|survey) + 
                                   (1+clase_tr_2|survey:NUTS1), 
                                 data = dt,
@@ -1335,7 +1331,7 @@ table_NUTS_f <- dt %>%
 table_NUTS_f
 clipr::write_clip(table_NUTS_f)
 
-rii_sedentarism_NUTS1_females <- glmmTMB(sedentarismo~clase_tr_2_f+edad+
+rii_sedentarism_NUTS1_females <- glmmTMB(sedentarismo~clase_tr_2_f+edad_scale+
                                            (1+clase_tr_2_f|survey) 
                                         + (1+clase_tr_2_f|survey:NUTS1),  
                                         data = subset(dt, sexo == "Female"),
@@ -1375,7 +1371,7 @@ table_NUTS_m <- dt %>%
 table_NUTS_m
 clipr::write_clip(table_NUTS_m)
 
-rii_sedentarism_NUTS1_males <- glmmTMB(sedentarismo~clase_tr_2_m+edad+
+rii_sedentarism_NUTS1_males <- glmmTMB(sedentarismo~clase_tr_2_m+edad_scale+
                                          (1+clase_tr_2_m|survey) 
                                        + (1+clase_tr_2_m|survey:NUTS1), 
                                        data = subset(dt, sexo == "Male"),
@@ -1634,7 +1630,6 @@ fig_NUTS1_combined
 ggsave("Figures/clase_tr_2/fig_rii_NUTS1_sex.png", width = 4000, height = 2200, dpi=300, units = "px")
 
 ## RII NUTS1 Map ####
-
 NUTS1 <- st_read("Resources/NUTS1_ES_20M_2024_3035.shp") # Leemos los datos de capa
 load("Datasets/clase_tr_2/new/rii_sedentarism_NUTS1_combined.RData")
 
@@ -1859,7 +1854,7 @@ load("Datasets/clase_tr_2/new/rii_sedentarism_CCAA_combined.RData")
 apc_dta <- rii_sedentarism_CCAA_combined %>%
   filter(
     Outcome == "Sedentarismo",
-    sex == "Boys" # change to Girls or Boys
+    sex == "Boys" # Change Overall, Girls, Boys
   ) %>%
   mutate(
     survey = as.integer(survey)
@@ -1885,12 +1880,13 @@ apc_ccaa <- apc_dta %>%
     APC_low,
     APC_high
   )
+apc_ccaa
 clipr::write_clip(apc_ccaa)
 
 apc_dta2 <- rii_sedentarism_NUTS1_combined %>%
   filter(
     Outcome == "Sedentarismo",
-    sex == "Boys"
+    sex == "Boys" # Change, Overall, Girls, Boys
   ) %>%
   mutate(
     survey = as.integer(survey)
@@ -1916,6 +1912,7 @@ apc_nuts <- apc_dta2 %>%
     APC_low,
     APC_high
   )
+apc_nuts
 clipr::write_clip(apc_nuts)
 
 ## Prevalence Map CCAA ----

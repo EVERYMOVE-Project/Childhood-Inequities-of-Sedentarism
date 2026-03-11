@@ -1,8 +1,8 @@
 ## Author: Diana Juanita Mora
 ## Project: Childhood Inequities of Sedentarism
 ## Script: Data Cleaning INE Datasets
-## Finalized: 28th of July 2025
-## Edited: 7th of February 2026
+## Finalized: July 28 2025
+## Edited: February 7 2026
 
 ## Load libraries ----
 library(tidyverse)
