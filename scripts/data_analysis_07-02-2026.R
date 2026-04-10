@@ -1,5 +1,5 @@
 ## Author: Diana Juanita Mora
-## Project: Childhood Inequities of Sedentarism
+## Project: Childhood Inequities in Sedentarism
 ## Script: Data Analysis - RII and SII (clase_tr_2)
 ## Finalized: July 28 2025
 ## Edited: February 9 2026
@@ -29,13 +29,12 @@ library(sf) #map
 library(extrafont)
 library(segmented)
 
-font_import(prompt = FALSE)   # run once (can take a few minutes)
-loadfonts(device = "win") 
+# font_import(prompt = FALSE)   # run once (can take a few minutes)
+# loadfonts(device = "win") 
 
 ## Load data ----
 dt <- get(load("joined_clean_rii.RData"))
 
-#### Regression Models for Inequality ####
 #### Relative Index of Inequality (RII) ####
 # A summary measure of socioeconomic inequality in health which tells us how much
 # more or less common sedentarism is across the whole social gradient - using class
@@ -1452,6 +1451,98 @@ rii_change_2003_2023_m <- rii_change$change_2003_2023
 rii_change_2003_2023_m
 clipr::write_clip(rii_change_2003_2023_m)
 
+#### Calculate ICC for NUTS ----
+# ICC for each year between NUTS regions
+rii_model_icc_2003 <- glmmTMB(sedentarismo~clase_tr_2+edad_scale+sexo+(1|NUTS1), data=subset(dt, dt$survey==2003),
+                              family="poisson")
+
+icc_2003 <- performance::icc(rii_model_icc_2003) %>% 
+  mutate(survey=2003)
+icc_2003
+
+rii_model_icc_2006 <- glmmTMB(sedentarismo~clase_tr_2+edad+sexo+(1|NUTS1), data=subset(dt, dt$survey==2006),
+                              family="poisson")
+
+icc_2006 <- performance::icc(rii_model_icc_2006) %>% 
+  mutate(survey=2006)
+icc_2006
+
+rii_model_icc_2011 <- glmmTMB(sedentarismo~clase_tr_2+edad+sexo+(1|NUTS1), data=subset(dt, dt$survey==2011),
+                              family="poisson")
+
+icc_2011 <- performance::icc(rii_model_icc_2011) %>% 
+  mutate(survey=2011)
+icc_2011
+
+rii_model_icc_2017 <- glmmTMB(sedentarismo~clase_tr_2+edad+sexo+(1|NUTS1), data=subset(dt, dt$survey==2017),
+                              family="poisson")
+
+icc_2017 <- performance::icc(rii_model_icc_2017) %>% 
+  mutate(survey=2017)
+icc_2017
+
+rii_model_icc_2023 <- glmmTMB(sedentarismo~clase_tr_2+edad+sexo+(1|NUTS1), data=subset(dt, dt$survey==2023),
+                              family="poisson")
+
+icc_2023 <- performance::icc(rii_model_icc_2023) %>% 
+  mutate(survey=2023)
+icc_2023
+
+icc_nuts <- icc_2003 %>%
+  rbind(icc_2006) %>% 
+  rbind(icc_2011) %>% 
+  rbind(icc_2017) %>% 
+  rbind(icc_2023)
+
+fig_icc <-  ggplot(icc_nuts, aes(x=survey, y=ICC_adjusted)) +
+  geom_line()+
+  geom_point()+
+  labs(x="", y="ICC")+
+  ylim(0, 0.1)+
+  scale_x_continuous(breaks=c(2003, 2006, 2011, 2017, 2023))+
+  theme_bw()+
+  theme_fis+
+  theme()
+
+fig_icc
+
+# ICC for each year between NUTS regions random slope of clase_tr_2
+rii_model_icc_2003 <- glmmTMB(sedentarismo~clase_tr_2+edad_scale+sexo+(1+clase_tr_2|NUTS1), data=subset(dt, dt$survey==2003),
+                              family="poisson")
+
+icc_2003 <- performance::icc(rii_model_icc_2003) %>% 
+  mutate(survey=2003)
+icc_2003
+
+rii_model_icc_2006 <- glmmTMB(sedentarismo~clase_tr_2+edad+sexo+(1+clase_tr_2|NUTS1), data=subset(dt, dt$survey==2006),
+                              family="poisson")
+rii_model_icc_2006
+
+icc_2006 <- performance::icc(rii_model_icc_2006) %>% 
+  mutate(survey=2006)
+icc_2006
+
+rii_model_icc_2011 <- glmmTMB(sedentarismo~clase_tr_2+edad+sexo+(1+clase_tr_2|NUTS1), data=subset(dt, dt$survey==2011),
+                              family="poisson")
+
+icc_2011 <- performance::icc(rii_model_icc_2011) %>% 
+  mutate(survey=2011)
+icc_2011
+
+rii_model_icc_2017 <- glmmTMB(sedentarismo~clase_tr_2+edad+sexo+(1+clase_tr_2|NUTS1), data=subset(dt, dt$survey==2017),
+                              family="poisson")
+
+icc_2017 <- performance::icc(rii_model_icc_2017) %>% 
+  mutate(survey=2017)
+icc_2017
+
+rii_model_icc_2023 <- glmmTMB(sedentarismo~clase_tr_2+edad+sexo+(1+clase_tr_2|NUTS1), data=subset(dt, dt$survey==2023),
+                              family="poisson")
+
+icc_2023 <- performance::icc(rii_model_icc_2023) %>% 
+  mutate(survey=2023)
+icc_2023
+
 #### Visualization RII by NUTS1 ####
 ## NUTS1
 NUTS1_survey_table <- dt %>%
@@ -1566,7 +1657,7 @@ fig_NUTS1_combined <- ggplot(
   geom_hline(yintercept = 1, linetype = "dashed", color = "gray50") +
   geom_ribbon(aes(ymin = rii_infci, ymax = rii_supci), alpha = 0.15, color = NA) +
   geom_line(linewidth = 1) +
-  geom_point(size = 2) +
+  geom_point(size = 1) +
   # Add RII text labels
   # geom_text_repel(
   #   data = subset(rii_sedentarism_NUTS1_combined, survey == max(survey)),
@@ -1574,7 +1665,7 @@ fig_NUTS1_combined <- ggplot(
   #   size = 3,
   #   show.legend = FALSE
   # ) +
-  facet_wrap(~NUTS1, ncol = 3, scales = "free_y", axes = "all_x") +
+  facet_wrap(~NUTS1, ncol = 2, scales = "free_y", axes = "all_x") +
   scale_y_continuous(
     trans = "log",
     breaks = c(0.75, 1, 2, 4, 8),
@@ -1586,17 +1677,17 @@ fig_NUTS1_combined <- ggplot(
     title = "Social Inequalities in Sedentarism Across Spain",
     subtitle = "Relative Index of Inequality (RII) by NUTS 1 region, sex, and survey year",
     x = "Survey Year",
-    y = "RII (log scale, 95% CI)",
-    caption = paste(
-      "Nomenclature of Territorial Units for Statistics (NUTS) Regions",
-      "\nCanary Islands: Canary Islands;",
-      "\nCentre: Castile and Leon, Castilla-La Mancha, Extremadura;",
-      "\nEast: Catalonia, Valencian Community, Balearic Islands;",
-      "\nMadrid: Madrid;",
-      "\nNorth-East: Basque Country, Navarre, La Rioja, Aragon;",
-      "\nNorth-West: Galicia, Asturias, Cantabria;",
-      "\nSouth: Andalusia, Murcia, Ceuta and Melilla."
-    )) +
+    y = "RII and 95% CI") +
+    # caption = paste(
+    #   "Nomenclature of Territorial Units for Statistics (NUTS) Regions",
+    #   "\nCanary Islands: Canary Islands;",
+    #   "\nCentre: Castile and Leon, Castilla-La Mancha, Extremadura;",
+    #   "\nEast: Catalonia, Valencian Community, Balearic Islands;",
+    #   "\nMadrid: Madrid;",
+    #   "\nNorth-East: Basque Country, Navarre, La Rioja, Aragon;",
+    #   "\nNorth-West: Galicia, Asturias, Cantabria;",
+    #   "\nSouth: Andalusia, Murcia, Ceuta and Melilla."
+    # )) +
   theme_bw() +
   theme(
     strip.text = element_text(size = 12, face = "bold"),
@@ -1627,7 +1718,7 @@ fig_NUTS1_combined <- ggplot(
     legend.key.width = unit(1.2, "cm")
   )
 fig_NUTS1_combined
-ggsave("Figures/clase_tr_2/fig_rii_NUTS1_sex.png", width = 4000, height = 2200, dpi=300, units = "px")
+ggsave("Figures/clase_tr_2/fig_rii_NUTS1_sex_new.png", width = 4000, height = 2200, dpi=300, units = "px")
 
 ## RII NUTS1 Map ####
 NUTS1 <- st_read("Resources/NUTS1_ES_20M_2024_3035.shp") # Leemos los datos de capa
@@ -1775,6 +1866,52 @@ pred_data <- data.frame(
 
 pred_data$rii_pred <- predict(seg_m, newdata = pred_data)
 
+# create slope segments
+slope_pre  <- coef(seg_m)["encuesta"]                # slope before breakpoint
+slope_post <- coef(seg_m)["encuesta"] + coef(seg_m)["U1.encuesta"]  # slope after breakpoint
+
+# plot with slopes
+ggplot(rii_sedentarism_overall_clase, aes(x = encuesta, y = rii)) +
+  
+  geom_line(data = pred_data, aes(y = rii_pred, color = "Segmented trend"), linewidth = 1.2) +
+  
+  geom_vline(xintercept = inflection, linetype = "dotted", color = "black") +
+  
+  annotate("text",
+           family = "Times New Roman",
+           x = inflection,
+           y = max(rii_sedentarism_overall_clase$rii, na.rm = TRUE),
+           label = paste("Inflection:", round(inflection, 0)),
+           hjust = 0.5, vjust = 2, size = 4) +
+  
+  # add slope labels
+  annotate("text",
+           family = "Times New Roman",
+           x = min(pred_data$encuesta),
+           y = min(pred_data$rii_pred),
+           label = paste0("Slope pre-inflection: ", round(slope_pre, 3)),
+           hjust = -0.5, vjust = -1.5, size = 4, color = "black") +
+  
+  annotate("text",
+           family = "Times New Roman",
+           x = max(pred_data$encuesta),
+           y = max(pred_data$rii_pred),
+           label = paste0("Slope post-inflection: ", round(slope_post, 3)),
+           hjust = 0.95, vjust = 20, size = 4, color = "black") +
+  
+  scale_color_brewer(palette = "Set1") +
+  labs(title = "Inflection Point of Sedentarism Inequality",
+       subtitle = "Relative Index of Inequality (RII) across survey years",
+       x = "Survey Year",
+       y = "RII") +
+  theme_minimal(base_size = 13) +
+  theme(
+    text = element_text(family = "Times New Roman"),
+    legend.title = element_blank(),
+    plot.title = element_text(face = "bold"),
+    panel.grid.minor = element_blank()
+  )
+
 ## plot inflection point
 plot(rii ~ encuesta, data = rii_sedentarism_overall_clase)
 plot(seg_m, add = TRUE, col = "blue")
@@ -1786,30 +1923,30 @@ ggplot(rii_sedentarism_overall_clase,
   scale_x_continuous(
     breaks = c(2003, 2006, 2011, 2017, 2023)
   ) +
-  geom_text(
-    aes(label = round(rii, 2)),
-    vjust = -1.35,              
-    size = 4,
-    # fontface = "bold",
-    family = "Times New Roman",
-    show.legend = FALSE
-  ) +
+  # geom_text(
+  #   aes(label = round(rii, 2)),
+  #   vjust = -1.35,              
+  #   size = 4,
+  #   # fontface = "bold",
+  #   family = "Times New Roman",
+  #   show.legend = FALSE
+  # ) +
   
   geom_hline(yintercept = 1,
              linetype = "dashed",
              color = "black") +
   
-  geom_ribbon(aes(ymin = rii_infci,
-                  ymax = rii_supci,
-                  fill = "95% CI"),
-              alpha = 0.15,
-              color = NA) +
+  # geom_ribbon(aes(ymin = rii_infci,
+  #                 ymax = rii_supci,
+  #                 fill = "95% CI"),
+  #             alpha = 0.15,
+  #             color = NA) +
   
-  geom_line(aes(color = "Observed RII"),
-            linewidth = 1) +
-  
-  geom_point(aes(color = "Observed RII"),
-             size = 2) +
+  # geom_line(aes(color = "Observed RII"),
+  #           linewidth = 1) +
+  # 
+  # geom_point(aes(color = "Observed RII"),
+  #            size = 2) +
   
   geom_line(data = pred_data,
             aes(y = rii_pred,
@@ -1847,8 +1984,35 @@ ggplot(rii_sedentarism_overall_clase,
     panel.grid.minor = element_blank()
   )
 
-ggsave("Figures/clase_tr_2/inflection new.png", width = 4000, height = 2200, dpi=300, units = "px")
+ggsave("Figures/clase_tr_2/inflection_12-03-26.png", width = 4000, height = 2200, dpi=300, units = "px")
+
 ## Annual Percent Change ----
+apc_dta_overall <- rii_data %>%
+  filter(
+    sex == "Boys" # Change Overall, Girls, Boys
+  ) %>%
+  mutate(
+    year = as.integer(year)
+  )
+
+apc_overall <- apc_dta_overall %>%
+  summarise(
+    model = list(rlm(log(RII) ~ year, data = cur_data()))
+  ) %>%
+  mutate(
+    tidy = map(model, tidy)
+  ) %>%
+  unnest(tidy) %>%
+  filter(term == "year") %>%
+  mutate(
+    APC = (exp(estimate) - 1) * 100,
+    APC_low = (exp(estimate - 1.96 * std.error) - 1) * 100,
+    APC_high = (exp(estimate + 1.96 * std.error) - 1) * 100
+  ) %>%
+  select(APC, APC_low, APC_high)
+apc_overall
+
+# apc CCAA # apc CCAA RII
 load("Datasets/clase_tr_2/new/rii_sedentarism_CCAA_combined.RData")
 
 apc_dta <- rii_sedentarism_CCAA_combined %>%
@@ -1859,7 +2023,7 @@ apc_dta <- rii_sedentarism_CCAA_combined %>%
   mutate(
     survey = as.integer(survey)
   )
-
+ 
 apc_ccaa <- apc_dta %>%
   group_by(ccaa) %>%
   nest() %>%
@@ -1883,6 +2047,7 @@ apc_ccaa <- apc_dta %>%
 apc_ccaa
 clipr::write_clip(apc_ccaa)
 
+# apc NUTS
 apc_dta2 <- rii_sedentarism_NUTS1_combined %>%
   filter(
     Outcome == "Sedentarismo",

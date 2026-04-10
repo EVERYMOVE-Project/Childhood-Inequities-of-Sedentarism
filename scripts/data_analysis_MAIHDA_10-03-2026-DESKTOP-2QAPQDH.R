@@ -21,7 +21,7 @@ library(sjPlot)
 library(merTools)
 library(pROC)
 
-library(extrafont)
+#library(extrafont)
 
 # Load data ----
 dt <- get(load("joined_clean_maihda.RData"))
@@ -264,9 +264,6 @@ m1_prob_total <- mutate(m1_prob_total, id=row_number())
 m1_prob_fixed <- predictInterval(model1, level=0.95, which = "fixed", include.resid.var=FALSE, type = "probability")
 m1_prob_fixed <- mutate(m1_prob_fixed, id=row_number())
 
-m1_random <- predictInterval(model1, level=0.95, which = "random", include.resid.var=FALSE, type = "probability")
-m1_random <- mutate(m1_random, id=row_number())
-
 # variable for merging
 dt$id <- seq.int(nrow(dt))
 
@@ -278,10 +275,6 @@ dt2 <- merge(dt, m1_prob_total, by="id") %>%
 dt2 <- merge(dt2, m1_prob_fixed, by="id") %>%
   rename(m1fit_fixed=fit, m1upr_fixed=upr, m1lwr_fixed=lwr)
 
-# merge random effect
-dt2 <- merge(dt2, m1_random, by="id") %>%
-  rename(m1fit_random=fit, m1upr_random=upr, m1lwr_random=lwr)
-
 # collapse to stratum level
 stratum_level2 <- dt2 %>% 
   group_by(stratum) %>% 
@@ -291,8 +284,7 @@ stratum_level2 <- dt2 %>%
              m0_prob_total, m0_prob_fixed,
              m1_log_total, m1_log_total_upr, m1_log_total_lwr, 
              m1_log_fixed, m1fit_fixed, m1upr_fixed, m1lwr_fixed,
-             m1fit_total, m1upr_total, m1lwr_total, 
-             m1fit_random, m1upr_random, m1lwr_random), mean)
+             m1fit_total, m1upr_total, m1lwr_total), mean)
   )
 
 # convert to percentage
@@ -300,8 +292,7 @@ stratum_level2 <- stratum_level2 %>%
   mutate(across(
     c(m0_prob_total, m0_prob_fixed, 
       m1fit_fixed, m1upr_fixed, m1lwr_fixed, 
-      m1fit_total, m1upr_total, m1lwr_total,
-      m1fit_random, m1upr_random, m1lwr_random),
+      m1fit_total, m1upr_total, m1lwr_total),
     ~ .x * 100
   ))
 
@@ -313,7 +304,6 @@ m1SE <- REsim(model1)
 
 save(stratum_level2, file = "stratum_level2.RData")
 stratum_level <- get(load("stratum_level2.RData"))
-clipr::write_clip(stratum_level2)
 
 # Table 2 ----
 # Generate binary indicators for whether each stratum has more than X 
@@ -848,7 +838,7 @@ ggplot(stratum_level3, aes(x = rank2, y = dif_mean)) +
     panel.background = element_rect(fill = "white", color = NA)
   )
 
-ggsave("Figures/MAIHDA/caterpillarplot_re_10-03-26.png", width = 4000, height = 2200, dpi=300, units = "px")
+ggsave("Figures/MAIHDA/caterpillarplot_re_no_18-03-26.png", width = 4000, height = 2200, dpi=300, units = "px")
 
 # list of 6 highest and 6 lowest stratum residual effects
 stratum_level3 <- stratum_level3[order(stratum_level3$rank2),]

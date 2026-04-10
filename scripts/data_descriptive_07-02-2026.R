@@ -898,8 +898,8 @@ fig_desc_sedentarism_overall <- prevalences_spain %>%
   geom_ribbon(alpha = 0.3) +
   scale_y_continuous(
     expand = c(0, 0),
-    breaks = seq(10, 40, by = 10),
-    limits = c(0, 40)
+    breaks = seq(10, 30, by = 10),
+    limits = c(0, 30)
   ) +
   geom_text_repel(
     aes(label = prevalence_label, family = "Times New Roman"),
@@ -937,7 +937,7 @@ ggsave("Figures/prevalence/fig_desc_sedentarism_overall.png", width = 4000, heig
 
 # Separate by sex
 fig_desc_sedentarism_sex <- prevalences_spain %>%
-  filter(sexo %in% c("Girls", "Boys")) %>%
+  filter(sexo %in% c("Girls", "Boys", "Overall")) %>%
   ggplot(aes(
     x = survey,
     y = sedentarismo,
@@ -969,13 +969,15 @@ fig_desc_sedentarism_sex <- prevalences_spain %>%
   scale_color_manual(
     values = c(
       "Girls"   = "#317AB6",
-      "Boys"    = "#E41E20"
+      "Boys"    = "#E41E20",
+      "Overall" = "#4BAE48"
     )
   ) +
   scale_fill_manual(
     values = c(
       "Girls"   = "#317AB6",
-      "Boys"    = "#E41E20"
+      "Boys"    = "#E41E20",
+      "Overall" = "#4BAE48"
     )
     ) +
   labs(
@@ -988,7 +990,7 @@ fig_desc_sedentarism_sex <- prevalences_spain %>%
   theme_inequalities()+
   theme(text = element_text(family = "Times New Roman"))
 fig_desc_sedentarism_sex
-ggsave("Figures/prevalence/fig_desc_sedentarism_sex.png", width = 4000, height = 2200, dpi=300, units = "px")
+ggsave("Figures/prevalence/fig_desc_sedentarism_sex_new.png", width = 4000, height = 2200, dpi=300, units = "px")
 
 # Separate by age group
 prevalences_spain <- prevalences_spain %>%
