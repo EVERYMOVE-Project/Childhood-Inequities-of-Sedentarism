@@ -8,7 +8,7 @@
 version 18.0
 
 * Change the working directory
-cd "C:\Users\Juanita Mora\OneDrive\Documents\UAH\PhD Documents\INEdatos\Analysis\STATA"
+cd "C:\Users\juani\OneDrive\Documents\UAH\PhD Documents\INEdatos\Analysis\STATA"
 
 * Load data
 use dt.dta, clear
@@ -18,7 +18,7 @@ set cformat %9.2f
 
 * Log analysis and save log
 capture log close
-log using "C:\Users\Juanita Mora\OneDrive\Documents\UAH\PhD Documents\INEdatos\Analysis\STATA/TutorialLog" , replace
+log using "C:\Users\juani\OneDrive\Documents\UAH\PhD Documents\INEdatos\Analysis\STATA/TutorialLog" , replace
 
 * Describe data
 describe
@@ -326,7 +326,7 @@ list stratum sexo edad_cat3 clase_2 urb_rur survey2 n m1_diff_rank m1_diff m1_di
 **# Close log file
 capture log close
 
-translate "C:\Users\Juanita Mora\OneDrive\Documents\UAH\PhD Documents\INEdatos\Analysis\STATA/TutorialLog.smcl" "C:\Users\Juanita Mora\OneDrive\Documents\UAH\PhD Documents\INEdatos\Analysis\STATA/TutorialLog.pdf", replace
+translate "C:\Users\juani\OneDrive\Documents\UAH\PhD Documents\INEdatos\Analysis/TutorialLog.smcl" "C:\Users\juani\OneDrive\Documents\UAH\PhD Documents\INEdatos\Analysis/TutorialLog.pdf", replace
 // Log will be converted and saved as a PDF.
 
 

@@ -1,9 +1,9 @@
 {smcl}
 {com}{sf}{ul off}{txt}{.-}
       name:  {res}<unnamed>
-       {txt}log:  {res}C:\Users\juani\OneDrive\Documents\UAH\PhD Documents\INEdatos\Analysis/TutorialLog.smcl
+       {txt}log:  {res}C:\Users\Juanita Mora\OneDrive\Documents\UAH\PhD Documents\INEdatos\Analysis\STATA/TutorialLog.smcl
   {txt}log type:  {res}smcl
- {txt}opened on:  {res} 9 Mar 2026, 12:21:43
+ {txt}opened on:  {res}15 Apr 2026, 19:25:17
 {txt}
 {com}. 
 . * Describe data
@@ -169,36 +169,36 @@ Iteration 6:{space 2}Log likelihood = {res:-7649.4122}
 
 {col 49}{txt}Wald chi2({res}7{txt}){col 67}={res}{col 70}   252.56
 {txt}Log likelihood = {res}-7649.4122{col 49}{txt}Prob > chi2{col 67}={res}{col 73}0.0000
-{txt}{hline 16}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
-{col 1}  sedentarismo2{col 17}{c |} Odds ratio{col 29}   Std. err.{col 41}      z{col 49}   P>|z|{col 57}     [95% con{col 70}f. interval]
-{hline 16}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
-{space 11}sexo {c |}
-{space 10}Male  {c |}{col 17}{res}{space 2}     1.00{col 29}{txt}  (base)
-{space 8}Female  {c |}{col 17}{res}{space 2}     1.91{col 29}{space 2}     0.12{col 40}{space 1}   10.62{col 49}{space 3}0.000{col 57}{space 4}     1.69{col 70}{space 3}     2.15
-{txt}{space 15} {c |}
-{space 6}edad_cat3 {c |}
-{space 11}6-9  {c |}{col 17}{res}{space 2}     1.00{col 29}{txt}  (base)
-{space 9}10-12  {c |}{col 17}{res}{space 2}     1.05{col 29}{space 2}     0.08{col 40}{space 1}    0.65{col 49}{space 3}0.518{col 57}{space 4}     0.91{col 70}{space 3}     1.22
-{txt}{space 9}13-15  {c |}{col 17}{res}{space 2}     1.64{col 29}{space 2}     0.12{col 40}{space 1}    6.84{col 49}{space 3}0.000{col 57}{space 4}     1.42{col 70}{space 3}     1.89
-{txt}{space 15} {c |}
-{space 8}clase_2 {c |}
-Non-Manual W..  {c |}{col 17}{res}{space 2}     1.00{col 29}{txt}  (base)
-Manual Workers  {c |}{col 17}{res}{space 2}     1.62{col 29}{space 2}     0.10{col 40}{space 1}    7.80{col 49}{space 3}0.000{col 57}{space 4}     1.43{col 70}{space 3}     1.82
-{txt}{space 15} {c |}
-{space 8}urb_rur {c |}
-{space 9}Rural  {c |}{col 17}{res}{space 2}     1.00{col 29}{txt}  (base)
-{space 4}Semi-urban  {c |}{col 17}{res}{space 2}     1.34{col 29}{space 2}     0.11{col 40}{space 1}    3.64{col 49}{space 3}0.000{col 57}{space 4}     1.14{col 70}{space 3}     1.57
-{txt}{space 9}Urban  {c |}{col 17}{res}{space 2}     1.36{col 29}{space 2}     0.10{col 40}{space 1}    4.02{col 49}{space 3}0.000{col 57}{space 4}     1.17{col 70}{space 3}     1.58
-{txt}{space 15} {c |}
-{space 8}survey2 {c |}
-{space 10}Post  {c |}{col 17}{res}{space 2}     1.00{col 29}{txt}  (base)
-{space 11}Pre  {c |}{col 17}{res}{space 2}     1.32{col 29}{space 2}     0.08{col 40}{space 1}    4.39{col 49}{space 3}0.000{col 57}{space 4}     1.17{col 70}{space 3}     1.49
-{txt}{space 15} {c |}
-{space 10}_cons {c |}{col 17}{res}{space 2}     0.05{col 29}{space 2}     0.00{col 40}{space 1}  -30.01{col 49}{space 3}0.000{col 57}{space 4}     0.04{col 70}{space 3}     0.06
-{txt}{hline 16}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
-{col 1}{res}stratum        {col 17}{txt}{c |}
-{space 6}var(_cons){c |}{col 17}{res}{space 2}     0.03{col 29}{space 2}     0.01{col 57}{space 4}     0.01{col 70}{space 3}     0.06
-{txt}{hline 16}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{txt}{hline 20}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{col 1}      sedentarismo2{col 21}{c |} Odds ratio{col 33}   Std. err.{col 45}      z{col 53}   P>|z|{col 61}     [95% con{col 74}f. interval]
+{hline 20}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 15}sexo {c |}
+{space 14}Male  {c |}{col 21}{res}{space 2}     1.00{col 33}{txt}  (base)
+{space 12}Female  {c |}{col 21}{res}{space 2}     1.91{col 33}{space 2}     0.12{col 44}{space 1}   10.62{col 53}{space 3}0.000{col 61}{space 4}     1.69{col 74}{space 3}     2.15
+{txt}{space 19} {c |}
+{space 10}edad_cat3 {c |}
+{space 15}6-9  {c |}{col 21}{res}{space 2}     1.00{col 33}{txt}  (base)
+{space 13}10-12  {c |}{col 21}{res}{space 2}     1.05{col 33}{space 2}     0.08{col 44}{space 1}    0.65{col 53}{space 3}0.518{col 61}{space 4}     0.91{col 74}{space 3}     1.22
+{txt}{space 13}13-15  {c |}{col 21}{res}{space 2}     1.64{col 33}{space 2}     0.12{col 44}{space 1}    6.84{col 53}{space 3}0.000{col 61}{space 4}     1.42{col 74}{space 3}     1.89
+{txt}{space 19} {c |}
+{space 12}clase_2 {c |}
+Non-Manual Workers  {c |}{col 21}{res}{space 2}     1.00{col 33}{txt}  (base)
+{space 4}Manual Workers  {c |}{col 21}{res}{space 2}     1.62{col 33}{space 2}     0.10{col 44}{space 1}    7.80{col 53}{space 3}0.000{col 61}{space 4}     1.43{col 74}{space 3}     1.82
+{txt}{space 19} {c |}
+{space 12}urb_rur {c |}
+{space 13}Rural  {c |}{col 21}{res}{space 2}     1.00{col 33}{txt}  (base)
+{space 8}Semi-urban  {c |}{col 21}{res}{space 2}     1.34{col 33}{space 2}     0.11{col 44}{space 1}    3.64{col 53}{space 3}0.000{col 61}{space 4}     1.14{col 74}{space 3}     1.57
+{txt}{space 13}Urban  {c |}{col 21}{res}{space 2}     1.36{col 33}{space 2}     0.10{col 44}{space 1}    4.02{col 53}{space 3}0.000{col 61}{space 4}     1.17{col 74}{space 3}     1.58
+{txt}{space 19} {c |}
+{space 12}survey2 {c |}
+{space 14}Post  {c |}{col 21}{res}{space 2}     1.00{col 33}{txt}  (base)
+{space 15}Pre  {c |}{col 21}{res}{space 2}     1.32{col 33}{space 2}     0.08{col 44}{space 1}    4.39{col 53}{space 3}0.000{col 61}{space 4}     1.17{col 74}{space 3}     1.49
+{txt}{space 19} {c |}
+{space 14}_cons {c |}{col 21}{res}{space 2}     0.05{col 33}{space 2}     0.00{col 44}{space 1}  -30.01{col 53}{space 3}0.000{col 61}{space 4}     0.04{col 74}{space 3}     0.06
+{txt}{hline 20}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{col 1}{res}stratum            {col 21}{txt}{c |}
+{space 10}var(_cons){c |}{col 21}{res}{space 2}     0.03{col 33}{space 2}     0.01{col 61}{space 4}     0.01{col 74}{space 3}     0.06
+{txt}{hline 20}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
 {p 0 6 2}Note: {help eform_option:Estimates are transformed} only in the first equation to odds ratios.{p_end}
 {p 0 6 2}Note: {bf:_cons} estimates baseline odds (conditional on zero random effects){txt}.{p_end}
 {txt}LR test vs. logistic model: {txt}{help j_chibar##|_new:chibar2(01) =}{res} 14.03{col 55}{txt}Prob >= chibar2 = {res}{col 73}0.0001
@@ -316,9 +316,9 @@ saved
 . codebook stratum, compact
 {res}
 {txt}Variable     Obs Unique      Mean  Min  Max  Label
-{txt}{hline 82}
+{txt}{hline 176}
 {txt}stratum  {res}  19503     72  36.54248    1   72  {txt}
-{txt}{hline 82}
+{txt}{hline 176}
 
 {com}. 
 . * Tabulate each individual characteristic
@@ -560,36 +560,36 @@ sedentaris~2 {c |}{col 16}{res}    19,503{col 29} .1410039{col 41} .0024921{col 
 
 {col 49}{txt}Wald chi2({res}7{txt}){col 67}={res}{col 70}   252.56
 {txt}Log likelihood = {res}-7649.4122{col 49}{txt}Prob > chi2{col 67}={res}{col 73}0.0000
-{txt}{hline 16}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
-{col 1}  sedentarismo2{col 17}{c |} Odds ratio{col 29}   Std. err.{col 41}      z{col 49}   P>|z|{col 57}     [95% con{col 70}f. interval]
-{hline 16}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
-{space 11}sexo {c |}
-{space 10}Male  {c |}{col 17}{res}{space 2}     1.00{col 29}{txt}  (base)
-{space 8}Female  {c |}{col 17}{res}{space 2}     1.91{col 29}{space 2}     0.12{col 40}{space 1}   10.62{col 49}{space 3}0.000{col 57}{space 4}     1.69{col 70}{space 3}     2.15
-{txt}{space 15} {c |}
-{space 6}edad_cat3 {c |}
-{space 11}6-9  {c |}{col 17}{res}{space 2}     1.00{col 29}{txt}  (base)
-{space 9}10-12  {c |}{col 17}{res}{space 2}     1.05{col 29}{space 2}     0.08{col 40}{space 1}    0.65{col 49}{space 3}0.518{col 57}{space 4}     0.91{col 70}{space 3}     1.22
-{txt}{space 9}13-15  {c |}{col 17}{res}{space 2}     1.64{col 29}{space 2}     0.12{col 40}{space 1}    6.84{col 49}{space 3}0.000{col 57}{space 4}     1.42{col 70}{space 3}     1.89
-{txt}{space 15} {c |}
-{space 8}clase_2 {c |}
-Non-Manual W..  {c |}{col 17}{res}{space 2}     1.00{col 29}{txt}  (base)
-Manual Workers  {c |}{col 17}{res}{space 2}     1.62{col 29}{space 2}     0.10{col 40}{space 1}    7.80{col 49}{space 3}0.000{col 57}{space 4}     1.43{col 70}{space 3}     1.82
-{txt}{space 15} {c |}
-{space 8}urb_rur {c |}
-{space 9}Rural  {c |}{col 17}{res}{space 2}     1.00{col 29}{txt}  (base)
-{space 4}Semi-urban  {c |}{col 17}{res}{space 2}     1.34{col 29}{space 2}     0.11{col 40}{space 1}    3.64{col 49}{space 3}0.000{col 57}{space 4}     1.14{col 70}{space 3}     1.57
-{txt}{space 9}Urban  {c |}{col 17}{res}{space 2}     1.36{col 29}{space 2}     0.10{col 40}{space 1}    4.02{col 49}{space 3}0.000{col 57}{space 4}     1.17{col 70}{space 3}     1.58
-{txt}{space 15} {c |}
-{space 8}survey2 {c |}
-{space 10}Post  {c |}{col 17}{res}{space 2}     1.00{col 29}{txt}  (base)
-{space 11}Pre  {c |}{col 17}{res}{space 2}     1.32{col 29}{space 2}     0.08{col 40}{space 1}    4.39{col 49}{space 3}0.000{col 57}{space 4}     1.17{col 70}{space 3}     1.49
-{txt}{space 15} {c |}
-{space 10}_cons {c |}{col 17}{res}{space 2}     0.05{col 29}{space 2}     0.00{col 40}{space 1}  -30.01{col 49}{space 3}0.000{col 57}{space 4}     0.04{col 70}{space 3}     0.06
-{txt}{hline 16}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
-{col 1}{res}stratum        {col 17}{txt}{c |}
-{space 6}var(_cons){c |}{col 17}{res}{space 2}     0.03{col 29}{space 2}     0.01{col 57}{space 4}     0.01{col 70}{space 3}     0.06
-{txt}{hline 16}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{txt}{hline 20}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{col 1}      sedentarismo2{col 21}{c |} Odds ratio{col 33}   Std. err.{col 45}      z{col 53}   P>|z|{col 61}     [95% con{col 74}f. interval]
+{hline 20}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 15}sexo {c |}
+{space 14}Male  {c |}{col 21}{res}{space 2}     1.00{col 33}{txt}  (base)
+{space 12}Female  {c |}{col 21}{res}{space 2}     1.91{col 33}{space 2}     0.12{col 44}{space 1}   10.62{col 53}{space 3}0.000{col 61}{space 4}     1.69{col 74}{space 3}     2.15
+{txt}{space 19} {c |}
+{space 10}edad_cat3 {c |}
+{space 15}6-9  {c |}{col 21}{res}{space 2}     1.00{col 33}{txt}  (base)
+{space 13}10-12  {c |}{col 21}{res}{space 2}     1.05{col 33}{space 2}     0.08{col 44}{space 1}    0.65{col 53}{space 3}0.518{col 61}{space 4}     0.91{col 74}{space 3}     1.22
+{txt}{space 13}13-15  {c |}{col 21}{res}{space 2}     1.64{col 33}{space 2}     0.12{col 44}{space 1}    6.84{col 53}{space 3}0.000{col 61}{space 4}     1.42{col 74}{space 3}     1.89
+{txt}{space 19} {c |}
+{space 12}clase_2 {c |}
+Non-Manual Workers  {c |}{col 21}{res}{space 2}     1.00{col 33}{txt}  (base)
+{space 4}Manual Workers  {c |}{col 21}{res}{space 2}     1.62{col 33}{space 2}     0.10{col 44}{space 1}    7.80{col 53}{space 3}0.000{col 61}{space 4}     1.43{col 74}{space 3}     1.82
+{txt}{space 19} {c |}
+{space 12}urb_rur {c |}
+{space 13}Rural  {c |}{col 21}{res}{space 2}     1.00{col 33}{txt}  (base)
+{space 8}Semi-urban  {c |}{col 21}{res}{space 2}     1.34{col 33}{space 2}     0.11{col 44}{space 1}    3.64{col 53}{space 3}0.000{col 61}{space 4}     1.14{col 74}{space 3}     1.57
+{txt}{space 13}Urban  {c |}{col 21}{res}{space 2}     1.36{col 33}{space 2}     0.10{col 44}{space 1}    4.02{col 53}{space 3}0.000{col 61}{space 4}     1.17{col 74}{space 3}     1.58
+{txt}{space 19} {c |}
+{space 12}survey2 {c |}
+{space 14}Post  {c |}{col 21}{res}{space 2}     1.00{col 33}{txt}  (base)
+{space 15}Pre  {c |}{col 21}{res}{space 2}     1.32{col 33}{space 2}     0.08{col 44}{space 1}    4.39{col 53}{space 3}0.000{col 61}{space 4}     1.17{col 74}{space 3}     1.49
+{txt}{space 19} {c |}
+{space 14}_cons {c |}{col 21}{res}{space 2}     0.05{col 33}{space 2}     0.00{col 44}{space 1}  -30.01{col 53}{space 3}0.000{col 61}{space 4}     0.04{col 74}{space 3}     0.06
+{txt}{hline 20}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{col 1}{res}stratum            {col 21}{txt}{c |}
+{space 10}var(_cons){c |}{col 21}{res}{space 2}     0.03{col 33}{space 2}     0.01{col 61}{space 4}     0.01{col 74}{space 3}     0.06
+{txt}{hline 20}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
 {p 0 6 2}Note: {help eform_option:Estimates are transformed} only in the first equation to odds ratios.{p_end}
 {p 0 6 2}Note: {bf:_cons} estimates baseline odds (conditional on zero random effects){txt}.{p_end}
 {txt}LR test vs. logistic model: {txt}{help j_chibar##|_new:chibar2(01) =}{res} 14.03{col 55}{txt}Prob >= chibar2 = {res}{col 73}0.0001
@@ -696,89 +696,29 @@ format
 . sort m1_prob_total_rank
 {txt}
 {com}. list stratum sexo edad_cat3 clase_2 urb_rur survey2 n m1_prob_total_rank m1_prob_total m1_total_lo m1_total_hi in f/5
-
-     {txt}{c TLC}{hline 9}{c TT}{hline 6}{c TT}{hline 10}{c TT}{hline 14}{c TT}{hline 12}{c TT}{hline 9}{c TT}{hline 5}{c TRC}
-  1. {c |} stratum {c |} sexo {c |} edad_c~3 {c |}      clase_2 {c |}    urb_rur {c |} survey2 {c |}   n {c |}
-     {c |} {res}  11111 {txt}{c |} {res}Male {txt}{c |} {res}     6-9 {txt}{c |} {res}Non-Manual W {txt}{c |} {res}     Rural {txt}{c |} {res}   Post {txt}{c |} {res} 75 {txt}{c |}
-     {c LT}{hline 9}{c BT}{hline 6}{c BT}{c TT}{hline 9}{c BT}{hline 7}{c TT}{hline 6}{c BT}{hline 10}{c TT}{hline 1}{c BT}{hline 9}{c BT}{hline 5}{c RT}
-     {c |}    m1_pro~k     {c |}    m1_pro~l     {c |}    m1_tot~o     {c |}    m1_tot~i     {c |}
-     {c |}    {res}       1     {txt}{c |}    {res}  4.3875     {txt}{c |}    {res}3.084746     {txt}{c |}    {res} 6.20521     {txt}{c |}
-     {c BLC}{hline 17}{c BT}{hline 17}{c BT}{hline 17}{c BT}{hline 17}{c BRC}
-
-     {c TLC}{hline 9}{c TT}{hline 6}{c TT}{hline 10}{c TT}{hline 14}{c TT}{hline 12}{c TT}{hline 9}{c TT}{hline 5}{c TRC}
-  2. {c |} stratum {c |} sexo {c |} edad_c~3 {c |}      clase_2 {c |}    urb_rur {c |} survey2 {c |}   n {c |}
-     {c |} {res}  12111 {txt}{c |} {res}Male {txt}{c |} {res}   10-12 {txt}{c |} {res}Non-Manual W {txt}{c |} {res}     Rural {txt}{c |} {res}   Post {txt}{c |} {res} 81 {txt}{c |}
-     {c LT}{hline 9}{c BT}{hline 6}{c BT}{c TT}{hline 9}{c BT}{hline 7}{c TT}{hline 6}{c BT}{hline 10}{c TT}{hline 1}{c BT}{hline 9}{c BT}{hline 5}{c RT}
-     {c |}    m1_pro~k     {c |}    m1_pro~l     {c |}    m1_tot~o     {c |}    m1_tot~i     {c |}
-     {c |}    {res}       2     {txt}{c |}    {res}4.655903     {txt}{c |}    {res} 3.27858     {txt}{c |}    {res}6.572518     {txt}{c |}
-     {c BLC}{hline 17}{c BT}{hline 17}{c BT}{hline 17}{c BT}{hline 17}{c BRC}
-
-     {c TLC}{hline 9}{c TT}{hline 6}{c TT}{hline 10}{c TT}{hline 14}{c TT}{hline 12}{c TT}{hline 9}{c TT}{hline 5}{c TRC}
-  3. {c |} stratum {c |} sexo {c |} edad_c~3 {c |}      clase_2 {c |}    urb_rur {c |} survey2 {c |}   n {c |}
-     {c |} {res}  11121 {txt}{c |} {res}Male {txt}{c |} {res}     6-9 {txt}{c |} {res}Non-Manual W {txt}{c |} {res}Semi-urban {txt}{c |} {res}   Post {txt}{c |} {res}151 {txt}{c |}
-     {c LT}{hline 9}{c BT}{hline 6}{c BT}{c TT}{hline 9}{c BT}{hline 7}{c TT}{hline 6}{c BT}{hline 10}{c TT}{hline 1}{c BT}{hline 9}{c BT}{hline 5}{c RT}
-     {c |}    m1_pro~k     {c |}    m1_pro~l     {c |}    m1_tot~o     {c |}    m1_tot~i     {c |}
-     {c |}    {res}       3     {txt}{c |}    {res}5.275023     {txt}{c |}    {res}3.794945     {txt}{c |}    {res}7.288618     {txt}{c |}
-     {c BLC}{hline 17}{c BT}{hline 17}{c BT}{hline 17}{c BT}{hline 17}{c BRC}
-
-     {c TLC}{hline 9}{c TT}{hline 6}{c TT}{hline 10}{c TT}{hline 14}{c TT}{hline 12}{c TT}{hline 9}{c TT}{hline 5}{c TRC}
-  4. {c |} stratum {c |} sexo {c |} edad_c~3 {c |}      clase_2 {c |}    urb_rur {c |} survey2 {c |}   n {c |}
-     {c |} {res}  12112 {txt}{c |} {res}Male {txt}{c |} {res}   10-12 {txt}{c |} {res}Non-Manual W {txt}{c |} {res}     Rural {txt}{c |} {res}    Pre {txt}{c |} {res}191 {txt}{c |}
-     {c LT}{hline 9}{c BT}{hline 6}{c BT}{c TT}{hline 9}{c BT}{hline 7}{c TT}{hline 6}{c BT}{hline 10}{c TT}{hline 1}{c BT}{hline 9}{c BT}{hline 5}{c RT}
-     {c |}    m1_pro~k     {c |}    m1_pro~l     {c |}    m1_tot~o     {c |}    m1_tot~i     {c |}
-     {c |}    {res}       4     {txt}{c |}    {res}5.952586     {txt}{c |}    {res}4.328017     {txt}{c |}    {res}8.135104     {txt}{c |}
-     {c BLC}{hline 17}{c BT}{hline 17}{c BT}{hline 17}{c BT}{hline 17}{c BRC}
-
-     {c TLC}{hline 9}{c TT}{hline 6}{c TT}{hline 10}{c TT}{hline 14}{c TT}{hline 12}{c TT}{hline 9}{c TT}{hline 5}{c TRC}
-  5. {c |} stratum {c |} sexo {c |} edad_c~3 {c |}      clase_2 {c |}    urb_rur {c |} survey2 {c |}   n {c |}
-     {c |} {res}  12131 {txt}{c |} {res}Male {txt}{c |} {res}   10-12 {txt}{c |} {res}Non-Manual W {txt}{c |} {res}     Urban {txt}{c |} {res}   Post {txt}{c |} {res}251 {txt}{c |}
-     {c LT}{hline 9}{c BT}{hline 6}{c BT}{c TT}{hline 9}{c BT}{hline 7}{c TT}{hline 6}{c BT}{hline 10}{c TT}{hline 1}{c BT}{hline 9}{c BT}{hline 5}{c RT}
-     {c |}    m1_pro~k     {c |}    m1_pro~l     {c |}    m1_tot~o     {c |}    m1_tot~i     {c |}
-     {c |}    {res}       5     {txt}{c |}    {res}6.235746     {txt}{c |}    {res}4.596965     {txt}{c |}    {res}8.407256     {txt}{c |}
-     {c BLC}{hline 17}{c BT}{hline 17}{c BT}{hline 17}{c BT}{hline 17}{c BRC}
+{txt}
+     {c TLC}{hline 9}{c -}{hline 6}{c -}{hline 10}{c -}{hline 14}{c -}{hline 12}{c -}{hline 9}{c -}{hline 5}{c -}{hline 10}{c -}{hline 10}{c -}{hline 10}{c -}{hline 10}{c TRC}
+     {c |} {res}stratum   sexo   edad_c~3        clase_2      urb_rur   survey2     n   m1_pro~k   m1_pro~l   m1_tot~o   m1_tot~i {txt}{c |}
+     {c LT}{hline 9}{c -}{hline 6}{c -}{hline 10}{c -}{hline 14}{c -}{hline 12}{c -}{hline 9}{c -}{hline 5}{c -}{hline 10}{c -}{hline 10}{c -}{hline 10}{c -}{hline 10}{c RT}
+  1. {c |} {res}  11111   Male        6-9   Non-Manual W        Rural      Post    75          1     4.3875   3.084746    6.20521 {txt}{c |}
+  2. {c |} {res}  12111   Male      10-12   Non-Manual W        Rural      Post    81          2   4.655903    3.27858   6.572518 {txt}{c |}
+  3. {c |} {res}  11121   Male        6-9   Non-Manual W   Semi-urban      Post   151          3   5.275023   3.794945   7.288618 {txt}{c |}
+  4. {c |} {res}  12112   Male      10-12   Non-Manual W        Rural       Pre   191          4   5.952586   4.328017   8.135104 {txt}{c |}
+  5. {c |} {res}  12131   Male      10-12   Non-Manual W        Urban      Post   251          5   6.235746   4.596965   8.407256 {txt}{c |}
+     {c BLC}{hline 9}{c -}{hline 6}{c -}{hline 10}{c -}{hline 14}{c -}{hline 12}{c -}{hline 9}{c -}{hline 5}{c -}{hline 10}{c -}{hline 10}{c -}{hline 10}{c -}{hline 10}{c BRC}
 
 {com}. list stratum  sexo edad_cat3 clase_2 urb_rur survey2 n m1_prob_total_rank m1_prob_total m1_total_lo m1_total_hi ///
 >         in -5/-1
-
-     {txt}{c TLC}{hline 9}{c TT}{hline 8}{c TT}{hline 10}{c TT}{hline 14}{c TT}{hline 12}{c TT}{hline 9}{c TT}{hline 5}{c TRC}
- 68. {c |} stratum {c |}   sexo {c |} edad_c~3 {c |}      clase_2 {c |}    urb_rur {c |} survey2 {c |}   n {c |}
-     {c |} {res}  23221 {txt}{c |} {res}Female {txt}{c |} {res}   13-15 {txt}{c |} {res}Manual Worke {txt}{c |} {res}Semi-urban {txt}{c |} {res}   Post {txt}{c |} {res}157 {txt}{c |}
-     {c LT}{hline 9}{c BT}{hline 7}{c TT}{c BT}{hline 10}{c BT}{hline 5}{c TT}{hline 8}{c BT}{hline 9}{c TT}{hline 2}{c BT}{hline 9}{c BT}{hline 5}{c RT}
-     {c |}    m1_pro~k     {c |}    m1_pro~l     {c |}     m1_tot~o     {c |}     m1_tot~i     {c |}
-     {c |}    {res}      68     {txt}{c |}    {res} 23.4239     {txt}{c |}     {res}18.57581     {txt}{c |}     {res}29.08533     {txt}{c |}
-     {c BLC}{hline 17}{c BT}{hline 17}{c BT}{hline 18}{c BT}{hline 18}{c BRC}
-
-     {c TLC}{hline 9}{c TT}{hline 8}{c TT}{hline 10}{c TT}{hline 14}{c TT}{hline 12}{c TT}{hline 9}{c TT}{hline 5}{c TRC}
- 69. {c |} stratum {c |}   sexo {c |} edad_c~3 {c |}      clase_2 {c |}    urb_rur {c |} survey2 {c |}   n {c |}
-     {c |} {res}  23122 {txt}{c |} {res}Female {txt}{c |} {res}   13-15 {txt}{c |} {res}Non-Manual W {txt}{c |} {res}Semi-urban {txt}{c |} {res}    Pre {txt}{c |} {res}246 {txt}{c |}
-     {c LT}{hline 9}{c BT}{hline 7}{c TT}{c BT}{hline 10}{c BT}{hline 5}{c TT}{hline 8}{c BT}{hline 9}{c TT}{hline 2}{c BT}{hline 9}{c BT}{hline 5}{c RT}
-     {c |}    m1_pro~k     {c |}    m1_pro~l     {c |}     m1_tot~o     {c |}     m1_tot~i     {c |}
-     {c |}    {res}      69     {txt}{c |}    {res}24.17674     {txt}{c |}     {res}19.59134     {txt}{c |}     {res} 29.4424     {txt}{c |}
-     {c BLC}{hline 17}{c BT}{hline 17}{c BT}{hline 18}{c BT}{hline 18}{c BRC}
-
-     {c TLC}{hline 9}{c TT}{hline 8}{c TT}{hline 10}{c TT}{hline 14}{c TT}{hline 12}{c TT}{hline 9}{c TT}{hline 5}{c TRC}
- 70. {c |} stratum {c |}   sexo {c |} edad_c~3 {c |}      clase_2 {c |}    urb_rur {c |} survey2 {c |}   n {c |}
-     {c |} {res}  23231 {txt}{c |} {res}Female {txt}{c |} {res}   13-15 {txt}{c |} {res}Manual Worke {txt}{c |} {res}     Urban {txt}{c |} {res}   Post {txt}{c |} {res}249 {txt}{c |}
-     {c LT}{hline 9}{c BT}{hline 7}{c TT}{c BT}{hline 10}{c BT}{hline 5}{c TT}{hline 8}{c BT}{hline 9}{c TT}{hline 2}{c BT}{hline 9}{c BT}{hline 5}{c RT}
-     {c |}    m1_pro~k     {c |}    m1_pro~l     {c |}     m1_tot~o     {c |}     m1_tot~i     {c |}
-     {c |}    {res}      70     {txt}{c |}    {res}26.08607     {txt}{c |}     {res}21.30369     {txt}{c |}     {res}31.51213     {txt}{c |}
-     {c BLC}{hline 17}{c BT}{hline 17}{c BT}{hline 18}{c BT}{hline 18}{c BRC}
-
-     {c TLC}{hline 9}{c TT}{hline 8}{c TT}{hline 10}{c TT}{hline 14}{c TT}{hline 12}{c TT}{hline 9}{c TT}{hline 5}{c TRC}
- 71. {c |} stratum {c |}   sexo {c |} edad_c~3 {c |}      clase_2 {c |}    urb_rur {c |} survey2 {c |}   n {c |}
-     {c |} {res}  23222 {txt}{c |} {res}Female {txt}{c |} {res}   13-15 {txt}{c |} {res}Manual Worke {txt}{c |} {res}Semi-urban {txt}{c |} {res}    Pre {txt}{c |} {res}351 {txt}{c |}
-     {c LT}{hline 9}{c BT}{hline 7}{c TT}{c BT}{hline 10}{c BT}{hline 5}{c TT}{hline 8}{c BT}{hline 9}{c TT}{hline 2}{c BT}{hline 9}{c BT}{hline 5}{c RT}
-     {c |}    m1_pro~k     {c |}    m1_pro~l     {c |}     m1_tot~o     {c |}     m1_tot~i     {c |}
-     {c |}    {res}      71     {txt}{c |}    {res}31.16492     {txt}{c |}     {res} 26.2306     {txt}{c |}     {res}36.56733     {txt}{c |}
-     {c BLC}{hline 17}{c BT}{hline 17}{c BT}{hline 18}{c BT}{hline 18}{c BRC}
-
-     {c TLC}{hline 9}{c TT}{hline 8}{c TT}{hline 10}{c TT}{hline 14}{c TT}{hline 12}{c TT}{hline 9}{c TT}{hline 5}{c TRC}
- 72. {c |} stratum {c |}   sexo {c |} edad_c~3 {c |}      clase_2 {c |}    urb_rur {c |} survey2 {c |}   n {c |}
-     {c |} {res}  23232 {txt}{c |} {res}Female {txt}{c |} {res}   13-15 {txt}{c |} {res}Manual Worke {txt}{c |} {res}     Urban {txt}{c |} {res}    Pre {txt}{c |} {res}503 {txt}{c |}
-     {c LT}{hline 9}{c BT}{hline 7}{c TT}{c BT}{hline 10}{c BT}{hline 5}{c TT}{hline 8}{c BT}{hline 9}{c TT}{hline 2}{c BT}{hline 9}{c BT}{hline 5}{c RT}
-     {c |}    m1_pro~k     {c |}    m1_pro~l     {c |}     m1_tot~o     {c |}     m1_tot~i     {c |}
-     {c |}    {res}      72     {txt}{c |}    {res}31.64188     {txt}{c |}     {res}27.03463     {txt}{c |}     {res}36.64002     {txt}{c |}
-     {c BLC}{hline 17}{c BT}{hline 17}{c BT}{hline 18}{c BT}{hline 18}{c BRC}
+{txt}
+     {c TLC}{hline 9}{c -}{hline 8}{c -}{hline 10}{c -}{hline 14}{c -}{hline 12}{c -}{hline 9}{c -}{hline 5}{c -}{hline 10}{c -}{hline 10}{c -}{hline 10}{c -}{hline 10}{c TRC}
+     {c |} {res}stratum     sexo   edad_c~3        clase_2      urb_rur   survey2     n   m1_pro~k   m1_pro~l   m1_tot~o   m1_tot~i {txt}{c |}
+     {c LT}{hline 9}{c -}{hline 8}{c -}{hline 10}{c -}{hline 14}{c -}{hline 12}{c -}{hline 9}{c -}{hline 5}{c -}{hline 10}{c -}{hline 10}{c -}{hline 10}{c -}{hline 10}{c RT}
+ 68. {c |} {res}  23221   Female      13-15   Manual Worke   Semi-urban      Post   157         68    23.4239   18.57581   29.08533 {txt}{c |}
+ 69. {c |} {res}  23122   Female      13-15   Non-Manual W   Semi-urban       Pre   246         69   24.17674   19.59134    29.4424 {txt}{c |}
+ 70. {c |} {res}  23231   Female      13-15   Manual Worke        Urban      Post   249         70   26.08607   21.30369   31.51213 {txt}{c |}
+ 71. {c |} {res}  23222   Female      13-15   Manual Worke   Semi-urban       Pre   351         71   31.16492    26.2306   36.56733 {txt}{c |}
+ 72. {c |} {res}  23232   Female      13-15   Manual Worke        Urban       Pre   503         72   31.64188   27.03463   36.64002 {txt}{c |}
+     {c BLC}{hline 9}{c -}{hline 8}{c -}{hline 10}{c -}{hline 14}{c -}{hline 12}{c -}{hline 9}{c -}{hline 5}{c -}{hline 10}{c -}{hline 10}{c -}{hline 10}{c -}{hline 10}{c BRC}
 
 {com}. 
 . **# Figure 3 - Residual Effects
@@ -907,89 +847,29 @@ format
 . sort m1_diff_rank
 {txt}
 {com}. list stratum sexo edad_cat3 clase_2 urb_rur survey2 n m1_diff_rank m1_diff m1_diff_lo m1_diff_hi in f/5
-
-     {txt}{c TLC}{hline 9}{c TT}{hline 8}{c TT}{hline 10}{c TT}{hline 14}{c TT}{hline 9}{c TT}{hline 9}{c TT}{hline 5}{c TRC}
-  1. {c |} stratum {c |}   sexo {c |} edad_c~3 {c |}      clase_2 {c |} urb_rur {c |} survey2 {c |}   n {c |}
-     {c |} {res}  21132 {txt}{c |} {res}Female {txt}{c |} {res}     6-9 {txt}{c |} {res}Non-Manual W {txt}{c |} {res}  Urban {txt}{c |} {res}    Pre {txt}{c |} {res}514 {txt}{c |}
-     {c LT}{hline 9}{c BT}{hline 6}{c TT}{hline 1}{c BT}{hline 10}{c BT}{hline 4}{c TT}{hline 9}{c BT}{hline 7}{c TT}{hline 1}{c BT}{hline 9}{c BT}{hline 5}{c RT}
-     {c |}    m1_dif~k    {c |}      m1_diff    {c |}    m1_diff~o    {c |}    m1_dif~i     {c |}
-     {c |}    {res}       1    {txt}{c |}    {res}-3.923442    {txt}{c |}    {res}-4.989115    {txt}{c |}    {res}.4280205     {txt}{c |}
-     {c BLC}{hline 16}{c BT}{hline 17}{c BT}{hline 17}{c BT}{hline 17}{c BRC}
-
-     {c TLC}{hline 9}{c TT}{hline 8}{c TT}{hline 10}{c TT}{hline 14}{c TT}{hline 9}{c TT}{hline 9}{c TT}{hline 5}{c TRC}
-  2. {c |} stratum {c |}   sexo {c |} edad_c~3 {c |}      clase_2 {c |} urb_rur {c |} survey2 {c |}   n {c |}
-     {c |} {res}  21132 {txt}{c |} {res}Female {txt}{c |} {res}     6-9 {txt}{c |} {res}Non-Manual W {txt}{c |} {res}  Urban {txt}{c |} {res}    Pre {txt}{c |} {res}514 {txt}{c |}
-     {c LT}{hline 9}{c BT}{hline 6}{c TT}{hline 1}{c BT}{hline 10}{c BT}{hline 4}{c TT}{hline 9}{c BT}{hline 7}{c TT}{hline 1}{c BT}{hline 9}{c BT}{hline 5}{c RT}
-     {c |}    m1_dif~k    {c |}      m1_diff    {c |}    m1_diff~o    {c |}    m1_dif~i     {c |}
-     {c |}    {res}       1    {txt}{c |}    {res}-.4263048    {txt}{c |}    {res}-4.989115    {txt}{c |}    {res}.4280205     {txt}{c |}
-     {c BLC}{hline 16}{c BT}{hline 17}{c BT}{hline 17}{c BT}{hline 17}{c BRC}
-
-     {c TLC}{hline 9}{c TT}{hline 8}{c TT}{hline 10}{c TT}{hline 14}{c TT}{hline 9}{c TT}{hline 9}{c TT}{hline 5}{c TRC}
-  3. {c |} stratum {c |}   sexo {c |} edad_c~3 {c |}      clase_2 {c |} urb_rur {c |} survey2 {c |}   n {c |}
-     {c |} {res}  21132 {txt}{c |} {res}Female {txt}{c |} {res}     6-9 {txt}{c |} {res}Non-Manual W {txt}{c |} {res}  Urban {txt}{c |} {res}    Pre {txt}{c |} {res}514 {txt}{c |}
-     {c LT}{hline 9}{c BT}{hline 6}{c TT}{hline 1}{c BT}{hline 10}{c BT}{hline 4}{c TT}{hline 9}{c BT}{hline 7}{c TT}{hline 1}{c BT}{hline 9}{c BT}{hline 5}{c RT}
-     {c |}    m1_dif~k    {c |}      m1_diff    {c |}    m1_diff~o    {c |}    m1_dif~i     {c |}
-     {c |}    {res}       1    {txt}{c |}    {res}-3.213659    {txt}{c |}    {res}-4.989115    {txt}{c |}    {res}.4280205     {txt}{c |}
-     {c BLC}{hline 16}{c BT}{hline 17}{c BT}{hline 17}{c BT}{hline 17}{c BRC}
-
-     {c TLC}{hline 9}{c TT}{hline 8}{c TT}{hline 10}{c TT}{hline 14}{c TT}{hline 9}{c TT}{hline 9}{c TT}{hline 5}{c TRC}
-  4. {c |} stratum {c |}   sexo {c |} edad_c~3 {c |}      clase_2 {c |} urb_rur {c |} survey2 {c |}   n {c |}
-     {c |} {res}  21132 {txt}{c |} {res}Female {txt}{c |} {res}     6-9 {txt}{c |} {res}Non-Manual W {txt}{c |} {res}  Urban {txt}{c |} {res}    Pre {txt}{c |} {res}514 {txt}{c |}
-     {c LT}{hline 9}{c BT}{hline 6}{c TT}{hline 1}{c BT}{hline 10}{c BT}{hline 4}{c TT}{hline 9}{c BT}{hline 7}{c TT}{hline 1}{c BT}{hline 9}{c BT}{hline 5}{c RT}
-     {c |}    m1_dif~k    {c |}      m1_diff    {c |}    m1_diff~o    {c |}    m1_dif~i     {c |}
-     {c |}    {res}       1    {txt}{c |}    {res}-2.496414    {txt}{c |}    {res}-4.989115    {txt}{c |}    {res}.4280205     {txt}{c |}
-     {c BLC}{hline 16}{c BT}{hline 17}{c BT}{hline 17}{c BT}{hline 17}{c BRC}
-
-     {c TLC}{hline 9}{c TT}{hline 8}{c TT}{hline 10}{c TT}{hline 14}{c TT}{hline 9}{c TT}{hline 9}{c TT}{hline 5}{c TRC}
-  5. {c |} stratum {c |}   sexo {c |} edad_c~3 {c |}      clase_2 {c |} urb_rur {c |} survey2 {c |}   n {c |}
-     {c |} {res}  21132 {txt}{c |} {res}Female {txt}{c |} {res}     6-9 {txt}{c |} {res}Non-Manual W {txt}{c |} {res}  Urban {txt}{c |} {res}    Pre {txt}{c |} {res}514 {txt}{c |}
-     {c LT}{hline 9}{c BT}{hline 6}{c TT}{hline 1}{c BT}{hline 10}{c BT}{hline 4}{c TT}{hline 9}{c BT}{hline 7}{c TT}{hline 1}{c BT}{hline 9}{c BT}{hline 5}{c RT}
-     {c |}    m1_dif~k    {c |}      m1_diff    {c |}    m1_diff~o    {c |}    m1_dif~i     {c |}
-     {c |}    {res}       1    {txt}{c |}    {res}-3.072948    {txt}{c |}    {res}-4.989115    {txt}{c |}    {res}.4280205     {txt}{c |}
-     {c BLC}{hline 16}{c BT}{hline 17}{c BT}{hline 17}{c BT}{hline 17}{c BRC}
+{txt}
+     {c TLC}{hline 9}{c -}{hline 8}{c -}{hline 10}{c -}{hline 14}{c -}{hline 9}{c -}{hline 9}{c -}{hline 5}{c -}{hline 10}{c -}{hline 11}{c -}{hline 11}{c -}{hline 10}{c TRC}
+     {c |} {res}stratum     sexo   edad_c~3        clase_2   urb_rur   survey2     n   m1_dif~k     m1_diff   m1_diff~o   m1_dif~i {txt}{c |}
+     {c LT}{hline 9}{c -}{hline 8}{c -}{hline 10}{c -}{hline 14}{c -}{hline 9}{c -}{hline 9}{c -}{hline 5}{c -}{hline 10}{c -}{hline 11}{c -}{hline 11}{c -}{hline 10}{c RT}
+  1. {c |} {res}  21132   Female        6-9   Non-Manual W     Urban       Pre   514          1   -3.691597   -4.989115   .4280205 {txt}{c |}
+  2. {c |} {res}  21132   Female        6-9   Non-Manual W     Urban       Pre   514          1   -2.822013   -4.989115   .4280205 {txt}{c |}
+  3. {c |} {res}  21132   Female        6-9   Non-Manual W     Urban       Pre   514          1   -3.051135   -4.989115   .4280205 {txt}{c |}
+  4. {c |} {res}  21132   Female        6-9   Non-Manual W     Urban       Pre   514          1   -2.843754   -4.989115   .4280205 {txt}{c |}
+  5. {c |} {res}  21132   Female        6-9   Non-Manual W     Urban       Pre   514          1     .811718   -4.989115   .4280205 {txt}{c |}
+     {c BLC}{hline 9}{c -}{hline 8}{c -}{hline 10}{c -}{hline 14}{c -}{hline 9}{c -}{hline 9}{c -}{hline 5}{c -}{hline 10}{c -}{hline 11}{c -}{hline 11}{c -}{hline 10}{c BRC}
 
 {com}. list stratum sexo edad_cat3 clase_2 urb_rur survey2 n m1_diff_rank m1_diff m1_diff_lo m1_diff_hi ///
 >         in -5/-1
-
-       {txt}{c TLC}{hline 9}{c TT}{hline 8}{c TT}{hline 10}{c TT}{hline 14}{c TT}{hline 12}{c TT}{hline 9}{c TT}{hline 5}{c TRC}
-71996. {c |} stratum {c |}   sexo {c |} edad_c~3 {c |}      clase_2 {c |}    urb_rur {c |} survey2 {c |}   n {c |}
-       {c |} {res}  23122 {txt}{c |} {res}Female {txt}{c |} {res}   13-15 {txt}{c |} {res}Non-Manual W {txt}{c |} {res}Semi-urban {txt}{c |} {res}    Pre {txt}{c |} {res}246 {txt}{c |}
-       {c LT}{hline 9}{c BT}{hline 7}{c TT}{c BT}{hline 10}{c BT}{hline 5}{c TT}{hline 8}{c BT}{hline 9}{c TT}{hline 2}{c BT}{hline 9}{c BT}{hline 5}{c RT}
-       {c |}    m1_dif~k     {c |}     m1_diff     {c |}    m1_diff~o     {c |}     m1_dif~i     {c |}
-       {c |}    {res}      72     {txt}{c |}    {res}4.462572     {txt}{c |}    {res}-.7405663     {txt}{c |}     {res}9.239945     {txt}{c |}
-       {c BLC}{hline 17}{c BT}{hline 17}{c BT}{hline 18}{c BT}{hline 18}{c BRC}
-
-       {c TLC}{hline 9}{c TT}{hline 8}{c TT}{hline 10}{c TT}{hline 14}{c TT}{hline 12}{c TT}{hline 9}{c TT}{hline 5}{c TRC}
-71997. {c |} stratum {c |}   sexo {c |} edad_c~3 {c |}      clase_2 {c |}    urb_rur {c |} survey2 {c |}   n {c |}
-       {c |} {res}  23122 {txt}{c |} {res}Female {txt}{c |} {res}   13-15 {txt}{c |} {res}Non-Manual W {txt}{c |} {res}Semi-urban {txt}{c |} {res}    Pre {txt}{c |} {res}246 {txt}{c |}
-       {c LT}{hline 9}{c BT}{hline 7}{c TT}{c BT}{hline 10}{c BT}{hline 5}{c TT}{hline 8}{c BT}{hline 9}{c TT}{hline 2}{c BT}{hline 9}{c BT}{hline 5}{c RT}
-       {c |}    m1_dif~k     {c |}     m1_diff     {c |}    m1_diff~o     {c |}     m1_dif~i     {c |}
-       {c |}    {res}      72     {txt}{c |}    {res}3.457743     {txt}{c |}    {res}-.7405663     {txt}{c |}     {res}9.239945     {txt}{c |}
-       {c BLC}{hline 17}{c BT}{hline 17}{c BT}{hline 18}{c BT}{hline 18}{c BRC}
-
-       {c TLC}{hline 9}{c TT}{hline 8}{c TT}{hline 10}{c TT}{hline 14}{c TT}{hline 12}{c TT}{hline 9}{c TT}{hline 5}{c TRC}
-71998. {c |} stratum {c |}   sexo {c |} edad_c~3 {c |}      clase_2 {c |}    urb_rur {c |} survey2 {c |}   n {c |}
-       {c |} {res}  23122 {txt}{c |} {res}Female {txt}{c |} {res}   13-15 {txt}{c |} {res}Non-Manual W {txt}{c |} {res}Semi-urban {txt}{c |} {res}    Pre {txt}{c |} {res}246 {txt}{c |}
-       {c LT}{hline 9}{c BT}{hline 7}{c TT}{c BT}{hline 10}{c BT}{hline 5}{c TT}{hline 8}{c BT}{hline 9}{c TT}{hline 2}{c BT}{hline 9}{c BT}{hline 5}{c RT}
-       {c |}    m1_dif~k     {c |}     m1_diff     {c |}    m1_diff~o     {c |}     m1_dif~i     {c |}
-       {c |}    {res}      72     {txt}{c |}    {res}.2092018     {txt}{c |}    {res}-.7405663     {txt}{c |}     {res}9.239945     {txt}{c |}
-       {c BLC}{hline 17}{c BT}{hline 17}{c BT}{hline 18}{c BT}{hline 18}{c BRC}
-
-       {c TLC}{hline 9}{c TT}{hline 8}{c TT}{hline 10}{c TT}{hline 14}{c TT}{hline 12}{c TT}{hline 9}{c TT}{hline 5}{c TRC}
-71999. {c |} stratum {c |}   sexo {c |} edad_c~3 {c |}      clase_2 {c |}    urb_rur {c |} survey2 {c |}   n {c |}
-       {c |} {res}  23122 {txt}{c |} {res}Female {txt}{c |} {res}   13-15 {txt}{c |} {res}Non-Manual W {txt}{c |} {res}Semi-urban {txt}{c |} {res}    Pre {txt}{c |} {res}246 {txt}{c |}
-       {c LT}{hline 9}{c BT}{hline 7}{c TT}{c BT}{hline 10}{c BT}{hline 5}{c TT}{hline 8}{c BT}{hline 9}{c TT}{hline 2}{c BT}{hline 9}{c BT}{hline 5}{c RT}
-       {c |}    m1_dif~k     {c |}     m1_diff     {c |}    m1_diff~o     {c |}     m1_dif~i     {c |}
-       {c |}    {res}      72     {txt}{c |}    {res}3.825914     {txt}{c |}    {res}-.7405663     {txt}{c |}     {res}9.239945     {txt}{c |}
-       {c BLC}{hline 17}{c BT}{hline 17}{c BT}{hline 18}{c BT}{hline 18}{c BRC}
-
-       {c TLC}{hline 9}{c TT}{hline 8}{c TT}{hline 10}{c TT}{hline 14}{c TT}{hline 12}{c TT}{hline 9}{c TT}{hline 5}{c TRC}
-72000. {c |} stratum {c |}   sexo {c |} edad_c~3 {c |}      clase_2 {c |}    urb_rur {c |} survey2 {c |}   n {c |}
-       {c |} {res}  23122 {txt}{c |} {res}Female {txt}{c |} {res}   13-15 {txt}{c |} {res}Non-Manual W {txt}{c |} {res}Semi-urban {txt}{c |} {res}    Pre {txt}{c |} {res}246 {txt}{c |}
-       {c LT}{hline 9}{c BT}{hline 7}{c TT}{c BT}{hline 10}{c BT}{hline 5}{c TT}{hline 8}{c BT}{hline 9}{c TT}{hline 2}{c BT}{hline 9}{c BT}{hline 5}{c RT}
-       {c |}    m1_dif~k     {c |}     m1_diff     {c |}    m1_diff~o     {c |}     m1_dif~i     {c |}
-       {c |}    {res}      72     {txt}{c |}    {res} 3.97044     {txt}{c |}    {res}-.7405663     {txt}{c |}     {res}9.239945     {txt}{c |}
-       {c BLC}{hline 17}{c BT}{hline 17}{c BT}{hline 18}{c BT}{hline 18}{c BRC}
+{txt}
+       {c TLC}{hline 9}{c -}{hline 8}{c -}{hline 10}{c -}{hline 14}{c -}{hline 12}{c -}{hline 9}{c -}{hline 5}{c -}{hline 10}{c -}{hline 11}{c -}{hline 11}{c -}{hline 10}{c TRC}
+       {c |} {res}stratum     sexo   edad_c~3        clase_2      urb_rur   survey2     n   m1_dif~k     m1_diff   m1_diff~o   m1_dif~i {txt}{c |}
+       {c LT}{hline 9}{c -}{hline 8}{c -}{hline 10}{c -}{hline 14}{c -}{hline 12}{c -}{hline 9}{c -}{hline 5}{c -}{hline 10}{c -}{hline 11}{c -}{hline 11}{c -}{hline 10}{c RT}
+71996. {c |} {res}  23122   Female      13-15   Non-Manual W   Semi-urban       Pre   246         72    4.478016   -.7405663   9.239945 {txt}{c |}
+71997. {c |} {res}  23122   Female      13-15   Non-Manual W   Semi-urban       Pre   246         72    3.193956   -.7405663   9.239945 {txt}{c |}
+71998. {c |} {res}  23122   Female      13-15   Non-Manual W   Semi-urban       Pre   246         72   -.2015305   -.7405663   9.239945 {txt}{c |}
+71999. {c |} {res}  23122   Female      13-15   Non-Manual W   Semi-urban       Pre   246         72    5.583233   -.7405663   9.239945 {txt}{c |}
+72000. {c |} {res}  23122   Female      13-15   Non-Manual W   Semi-urban       Pre   246         72    2.353325   -.7405663   9.239945 {txt}{c |}
+       {c BLC}{hline 9}{c -}{hline 8}{c -}{hline 10}{c -}{hline 14}{c -}{hline 12}{c -}{hline 9}{c -}{hline 5}{c -}{hline 10}{c -}{hline 11}{c -}{hline 11}{c -}{hline 10}{c BRC}
 
 {com}.         
 . **# Close log file
