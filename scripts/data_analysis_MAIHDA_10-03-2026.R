@@ -61,6 +61,33 @@ table1 <- dt %>%
 
 table1
 
+table1_sed <- dt %>%
+  select(sedentarismo, sexo, edad_cat3, urb_rur, clase_2, survey2) %>%
+  tbl_summary(
+    by = sedentarismo,
+    label = list(
+      sexo ~ "Sex",
+      edad_cat3 ~ "Age Group",
+      clase_2 ~ "Occupational Social Class",
+      urb_rur ~ "Municipality Type",
+      survey2 ~ "Pre-Post"
+    ),
+    type = list(
+      all_categorical() ~ "categorical"
+    ),
+    statistic = list(all_categorical() ~ "{n} ({p}%)"),
+    digits = list(all_categorical() ~ c(0, 1))
+  ) %>%
+  add_overall %>% 
+  bold_labels() %>% 
+  as_gt() %>%
+  gt::tab_header(
+    title = "Table 1. Descriptive Summary of Study Sample by Sedentarism",
+    subtitle = "Counts and percentages of variables used to define strata"
+  )
+
+table1_sed
+
 # weighted 
 my_labels <- set_names(
   list(
@@ -120,17 +147,6 @@ seg_m <- segmented(m0, seg.Z = ~encuesta, psi = 2011)
 plot(rii ~ encuesta, data = rii_sedentarism_overall_clase)
 plot(seg_m, add = TRUE, col = "red")
 ggsave("Figures/inflection.png", width = 4000, height = 2200, dpi=300, units = "px")
-
-dt <- dt %>% 
-  mutate(survey2 = case_when(
-    survey %in% c("2003", "2006", "2011") ~ "Pre",
-    survey %in% c("2017", "2023") ~ "Post",
-    TRUE ~ NA_character_
-  ),
-  survey2 = factor(survey2, levels = c("Post", "Pre")),
-  urb_rur = as.character(urb_rur),
-  urb_rur = factor(urb_rur)
-  )
 
 # Database MAIHDA ####
 # adapt category names before tables

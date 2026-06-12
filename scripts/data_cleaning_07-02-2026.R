@@ -1390,4 +1390,15 @@ joined_clean_maihda <- joined_clean_maihda %>%
     ),
     clase_2 = factor(clase_2, levels = c("Non-Manual Workers", "Manual Workers"))
   )
+
+# New survey2 variable Pre-Post inflection
+joined_clean_maihda <- joined_clean_maihda %>% 
+  mutate(survey2 = case_when(
+    survey %in% c("2003", "2006", "2011") ~ "Pre",
+    survey %in% c("2017", "2023") ~ "Post",
+    TRUE ~ NA_character_
+  ),
+  survey2 = factor(survey2, levels = c("Post", "Pre"))
+  )
+
 save(joined_clean_maihda, file = "joined_clean_maihda.RData") ## FINAL CLEAN DATABASE FOR MAIHDA
