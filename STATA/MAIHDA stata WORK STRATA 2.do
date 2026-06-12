@@ -11,7 +11,7 @@ version 18.0
 cd "C:\Users\juani\OneDrive\Documents\UAH\PhD Documents\INEdatos\Analysis\STATA"
 
 * Load data
-use dt.dta, clear
+use dt_stata2.dta, clear
 
 * Set output format of coefficients, SEs, and confidence limits to 2dp
 set cformat %9.2f
@@ -42,7 +42,7 @@ predict m0_fixed, xb
 
 **# Model 1
 * Fit the two-level logistic regression with covariates
-melogit sedentarismo2 i.sexo i.edad_cat3 i.clase_2 i.urb_rur i.survey2 || stratum:, ///
+melogit sedentarismo2 i.sexo i.edad_cat i.clase_2 i.urb_rur i.survey2 || stratum:, ///
 	or baselevels
 
 * Save the model results
@@ -75,11 +75,11 @@ save "individual.dta", replace
 
 * Collapse the data down to a stratum-level dataset
 collapse (count) n = sedentarismo2 (mean) sedentarismo2, ///
-	by(stratum sexo edad_cat3 clase_2 urb_rur survey2 ///
+	by(stratum sexo edad_cat clase_2 urb_rur survey2 ///
 	 m0_total m0_fixed m1_total m1_fixed m1_fixed_se m1_random_se m1_random)
 
 * Move the list of variables to the beginning of the dataset
-order stratum sexo edad_cat3 clase_2 urb_rur survey2 n sedentarismo2
+order stratum sexo edad_cat clase_2 urb_rur survey2 n sedentarismo2
 
 * Convert the outcome from a proportion to a percentage
 replace sedentarismo2 = 100*sedentarismo2
@@ -107,7 +107,7 @@ codebook stratum, compact
 
 * Tabulate each individual characteristic
 tabulate sexo 
-tabulate edad_cat3 
+tabulate edad_cat
 tabulate clase_2
 tabulate urb_rur
 tabulate survey2
@@ -212,14 +212,14 @@ twoway ///
     (rspike m1_total_hi m1_total_lo m1_prob_total_rank, lcolor(gs4)) ///
     (scatter m1_prob_total m1_prob_total_rank, mcolor(black) msymbol(smcircle)) ///
 	(scatter lab_y m1_prob_total_rank, msymbol(none) ///
-	mlabel(stratum) mlabsize(*0.8) mlabcolor(black) ///
+	mlabel(stratum) mlabsize(*1) mlabcolor(black) ///
     mlabangle(90) mlabposition(12) mlabgap(*1)) ///)
     , ///
     ytitle("Predicted Percent Sedentarism" " " "Model 2", size(*1.5)) ///
     ylabel(0(10)50, angle(horizontal) labsize(*1.5)) ///
     yline(10 20 30 40 50, lwidth(vthin) lcolor(gray)) ///
     xtitle("Stratum rank", size(*1.5)) ///
-    xlabel(0(12)72, labsize(*1.5)) ///
+    xlabel(0(12)48, labsize(*1.5)) ///
     legend(off) ///
     scheme(s1mono) ///
     name(Figure2B, replace) ///
@@ -230,9 +230,11 @@ graph export "Figure2_predictedprobability_sedentarism.png", replace width(1000)
 
 * Generate list of 5 highest/lowest predicted stratum percentages (for Table 4)
 sort m1_prob_total_rank
-list stratum sexo edad_cat3 clase_2 urb_rur survey2 n m1_prob_total_rank m1_prob_total m1_total_lo m1_total_hi in f/5
-list stratum  sexo edad_cat3 clase_2 urb_rur survey2 n m1_prob_total_rank m1_prob_total m1_total_lo m1_total_hi ///
+list stratum sexo edad_cat clase_2 urb_rur survey2 n m1_prob_total_rank m1_prob_total m1_total_lo m1_total_hi in f/5
+list stratum  sexo edad_cat clase_2 urb_rur survey2 n m1_prob_total_rank m1_prob_total m1_total_lo m1_total_hi ///
 	in -5/-1
+	
+save "strata2_predicted_probabilities.dta", replace
 
 **# Figure 3 - Residual Effects
 * Load the stratum-level data
@@ -274,6 +276,9 @@ bysort stratum: egen m1_diff_hi = pctile(m1_diff), p(97.5)
 
 * ── SAVE original data with stratum-level vars BEFORE collapsing ──
 preserve
+keep stratum sexo edad_cat clase_2 urb_rur survey2
+save "stratum_lookup.dta", replace
+restore
 
 * Convert the data into a stratum-level dataset
 collapse (mean) m1_diff, by(stratum m1_diff_lo m1_diff_hi)
@@ -291,7 +296,7 @@ twoway ///
 	(rspike m1_diff_hi m1_diff_lo m1_diff_rank, lcolor(gs4)) ///
 	(scatter m1_diff m1_diff_rank, mcolor(black) msymbol(smcircle)) ///
 	(scatter lab_y m1_diff_rank, msymbol(none) ///
-	mlabel(stratum) mlabsize(*0.8) mlabcolor(black) ///
+	mlabel(stratum) mlabsize(*1) mlabcolor(black) ///
     mlabangle(90) mlabposition(12) mlabgap(*1)) ///)
 	, ///
 	ytitle("Difference in Predicted Percent" ///
@@ -300,7 +305,7 @@ twoway ///
 	yline(-10 -5 5 10 15, lcolor(gray)) ///
 	ylabel(-10(5)15, angle(horizontal) labsize(*1.5)) ///
 	xtitle("Stratum rank", size(*1.5)) ///
-	xlabel(0(12)72, labsize(*1.5)) ///
+	xlabel(0(12)48, labsize(*1.5)) ///
 	legend(off) ///
 	scheme(s1mono) ///
 	name(Figure3C, replace) ///
@@ -313,14 +318,14 @@ graph export "Figure 3_residualeffects.png", replace width(1000)
 restore
 
 * Merge in the stratum-level results
-merge m:1 stratum using "strata2.dta"
+merge 1:1 stratum using "stratum_lookup.dta"
 drop _merge
 
 * Generate list of 5 highest/lowest residual effects strata
 
 sort m1_diff_rank
-list stratum sexo edad_cat3 clase_2 urb_rur survey2 n m1_diff_rank m1_diff m1_diff_lo m1_diff_hi in f/5
-list stratum sexo edad_cat3 clase_2 urb_rur survey2 n m1_diff_rank m1_diff m1_diff_lo m1_diff_hi ///
+list stratum sexo edad_cat clase_2 urb_rur survey2 n m1_diff_rank m1_diff m1_diff_lo m1_diff_hi in f/5
+list stratum sexo edad_cat clase_2 urb_rur survey2 n m1_diff_rank m1_diff m1_diff_lo m1_diff_hi ///
 	in -5/-1
 	
 **# Close log file

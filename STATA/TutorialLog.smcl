@@ -1,40 +1,44 @@
 {smcl}
 {com}{sf}{ul off}{txt}{.-}
       name:  {res}<unnamed>
-       {txt}log:  {res}C:\Users\Juanita Mora\OneDrive\Documents\UAH\PhD Documents\INEdatos\Analysis\STATA/TutorialLog.smcl
+       {txt}log:  {res}C:\Users\juani\OneDrive\Documents\UAH\PhD Documents\INEdatos\Analysis\STATA/TutorialLog.smcl
   {txt}log type:  {res}smcl
- {txt}opened on:  {res}15 Apr 2026, 19:25:17
+ {txt}opened on:  {res}21 Apr 2026, 16:54:00
 {txt}
 {com}. 
 . * Describe data
 . describe
 
-{txt}Contains data from {res}dt.dta
+{txt}Contains data from {res}dt_stata3.dta
 {txt} Observations:{res}        19,503                  
-{txt}    Variables:{res}            17                  08 Mar 2026 19:26
+{txt}    Variables:{res}            22                  16 Apr 2026 16:51
 {txt}{hline}
 Variable      Storage   Display    Value
     name         type    format    label      Variable label
 {hline}
 {p 0 48}{res}{bind:factor2        }{txt}{bind: double  }{bind:%10.0g    }{space 1}{bind:         }{bind:  }{res}{res}{p_end}
 {p 0 48}{bind:sexo           }{txt}{bind: long    }{bind:%12.0g    }{space 1}{bind:sexo     }{bind:  }{res}{res}{p_end}
-{p 0 48}{bind:edad_cat3      }{txt}{bind: long    }{bind:%12.0g    }{space 1}{txt}edad_cat3{p_end}
-{p 0 48}{space 44}{bind:  }{res}{res}{p_end}
+{p 0 48}{bind:edad_cat       }{txt}{bind: long    }{bind:%12.0g    }{space 1}{bind:edad_cat }{bind:  }{res}{res}{p_end}
 {p 0 48}{bind:clase_2        }{txt}{bind: long    }{bind:%12.0g    }{space 1}{bind:clase_2  }{bind:  }{res}{res}{p_end}
-{p 0 48}{bind:survey         }{txt}{bind: long    }{bind:%12.0g    }{space 1}{bind:survey   }{bind:  }{res}{res}{p_end}
+{p 0 48}{bind:survey         }{txt}{bind: str4    }{bind:%-9s      }{space 1}{bind:         }{bind:  }{res}{res}{p_end}
 {p 0 48}{bind:survey2        }{txt}{bind: long    }{bind:%12.0g    }{space 1}{bind:survey2  }{bind:  }{res}{res}{p_end}
 {p 0 48}{bind:sedentarismo   }{txt}{bind: long    }{bind:%12.0g    }{space 1}{txt}sedentarismo{p_end}
 {p 0 48}{space 44}{bind:  }{res}{res}{p_end}
 {p 0 48}{bind:urb_rur        }{txt}{bind: long    }{bind:%12.0g    }{space 1}{bind:urb_rur  }{bind:  }{res}{res}{p_end}
+{p 0 48}{bind:NUTS1          }{txt}{bind: long    }{bind:%12.0g    }{space 1}{bind:NUTS1    }{bind:  }{res}{res}{p_end}
 {p 0 48}{bind:sexo_num       }{txt}{bind: double  }{bind:%10.0g    }{space 1}{bind:         }{bind:  }{res}{res}{p_end}
-{p 0 48}{bind:edad_cat3_num  }{txt}{bind: double  }{bind:%10.0g    }{space 1}{bind:         }{bind:  }{res}{res}{p_end}
+{p 0 48}{bind:edad_cat_num   }{txt}{bind: double  }{bind:%10.0g    }{space 1}{bind:         }{bind:  }{res}{res}{p_end}
 {p 0 48}{bind:clase_2_num    }{txt}{bind: double  }{bind:%10.0g    }{space 1}{bind:         }{bind:  }{res}{res}{p_end}
 {p 0 48}{bind:urb_rur_num    }{txt}{bind: double  }{bind:%10.0g    }{space 1}{bind:         }{bind:  }{res}{res}{p_end}
 {p 0 48}{bind:survey_num     }{txt}{bind: double  }{bind:%10.0g    }{space 1}{bind:         }{bind:  }{res}{res}{p_end}
 {p 0 48}{bind:survey2_num    }{txt}{bind: double  }{bind:%10.0g    }{space 1}{bind:         }{bind:  }{res}{res}{p_end}
+{p 0 48}{bind:NUTS1_num      }{txt}{bind: double  }{bind:%10.0g    }{space 1}{bind:         }{bind:  }{res}{res}{p_end}
 {p 0 48}{bind:sedentarismo2  }{txt}{bind: double  }{bind:%10.0g    }{space 1}{bind:         }{bind:  }{res}{res}{p_end}
 {p 0 48}{bind:stratum        }{txt}{bind: long    }{bind:%12.0g    }{space 1}{bind:stratum  }{bind:  }{res}{res}{p_end}
 {p 0 48}{bind:strataN        }{txt}{bind: long    }{bind:%12.0g    }{space 1}{bind:         }{bind:  }{res}{res}{p_end}
+{p 0 48}{bind:m1_log_total_~r}{txt}{bind: double  }{bind:%10.0g    }{space 1}{bind:         }{bind:  }{res}{res}{p_end}
+{p 0 48}{bind:m1_log_fixed   }{txt}{bind: double  }{bind:%10.0g    }{space 1}{bind:         }{bind:  }{res}{res}{p_end}
+{p 0 48}{bind:id             }{txt}{bind: long    }{bind:%12.0g    }{space 1}{bind:         }{bind:  }{res}{res}{p_end}
 {txt}{hline}
 Sorted by: 
 
@@ -44,24 +48,30 @@ Sorted by:
 {hline 13}{c +}{hline 57}
 {space 5}factor2 {c |}{res}     19,503    14.54011     11.2549          1        100
 {txt}{space 8}sexo {c |}{res}     19,503    1.486592     .499833          1          2
-{txt}{space 3}edad_cat3 {c |}{res}     19,503    1.954571    .8247576          1          3
+{txt}{space 4}edad_cat {c |}{res}     19,503    1.431267    .4952659          1          2
 {txt}{space 5}clase_2 {c |}{res}     19,503    1.568733    .4952659          1          2
-{txt}{space 6}survey {c |}{res}     19,503     2.72153    1.350954          1          5
+{txt}{space 6}survey {c |}{res}          0
 {txt}{hline 13}{c +}{hline 57}
 {space 5}survey2 {c |}{res}     19,503     1.67041    .4700765          1          2
 {txt}sedentarismo {c |}{res}     19,503    1.141004    .3480345          1          2
 {txt}{space 5}urb_rur {c |}{res}     19,503    2.243757    .8042797          1          3
+{txt}{space 7}NUTS1 {c |}{res}     19,503    4.186741    2.072943          1          7
 {txt}{space 4}sexo_num {c |}{res}     19,503    1.486592     .499833          1          2
-{txt}edad_cat3_~m {c |}{res}     19,503    1.954571    .8247576          1          3
 {txt}{hline 13}{c +}{hline 57}
-{space 1}clase_2_num {c |}{res}     19,503    1.568733    .4952659          1          2
+edad_cat_num {c |}{res}     19,503    1.431267    .4952659          1          2
+{txt}{space 1}clase_2_num {c |}{res}     19,503    1.568733    .4952659          1          2
 {txt}{space 1}urb_rur_num {c |}{res}     19,503    2.243757    .8042797          1          3
-{txt}{space 2}survey_num {c |}{res}     19,503     2.72153    1.350954          1          5
+{txt}{space 2}survey_num {c |}{res}     19,503    2010.514    6.866931       2003       2023
 {txt}{space 1}survey2_num {c |}{res}     19,503     1.67041    .4700765          1          2
-{txt}sedentaris~2 {c |}{res}     19,503    .1410039    .3480345          0          1
 {txt}{hline 13}{c +}{hline 57}
-{space 5}stratum {c |}{res}     19,503    36.54248    20.77069          1         72
-{txt}{space 5}strataN {c |}{res}     19,503    338.2991    135.8224         62        560
+{space 3}NUTS1_num {c |}{res}     19,503    4.364816    1.922844          1          7
+{txt}sedentaris~2 {c |}{res}     19,503    .1410039    .3480345          0          1
+{txt}{space 5}stratum {c |}{res}     19,503    55.68692    32.18363          1        112
+{txt}{space 5}strataN {c |}{res}     19,503    237.0089     106.693         17        488
+{txt}m1_log_tot~r {c |}{res}     19,503   -2.234464       .6022  -3.808683  -.7993941
+{txt}{hline 13}{c +}{hline 57}
+m1_log_fixed {c |}{res}     19,503   -1.926377    .5770259  -3.374856  -.5042865
+{txt}{space 10}id {c |}{res}     19,503        9752    5630.175          1      19503
 {txt}
 {com}. 
 . **# Model 0
@@ -77,39 +87,39 @@ Iteration 3:{space 2}Log likelihood = {res:-7933.4648}
 
 Refining starting values:
 
-Grid node 0:{space 2}Log likelihood = {res:-7720.0617}
+Grid node 0:{space 2}Log likelihood = {res:-7667.7865}
 
 Fitting full model:
 {res}
-{txt}Iteration 0:{space 2}Log likelihood = {res:-7720.0617}  (not concave)
-Iteration 1:{space 2}Log likelihood = {res:-7709.5751}  
-Iteration 2:{space 2}Log likelihood = {res:-7703.2899}  
-Iteration 3:{space 2}Log likelihood = {res:-7702.5497}  
-Iteration 4:{space 2}Log likelihood = {res:-7702.5415}  
-Iteration 5:{space 2}Log likelihood = {res:-7702.5415}  
+{txt}Iteration 0:{space 2}Log likelihood = {res:-7667.7865}  (not concave)
+Iteration 1:{space 2}Log likelihood = {res:-7651.2988}  
+Iteration 2:{space 2}Log likelihood = {res: -7647.088}  
+Iteration 3:{space 2}Log likelihood = {res:-7646.8519}  
+Iteration 4:{space 2}Log likelihood = {res: -7646.851}  
+Iteration 5:{space 2}Log likelihood = {res: -7646.851}  
 {res}
 {txt}Mixed-effects logistic regression{col 49}{txt}Number of obs{col 67}={res}{col 69}    19,503
-{txt}Group variable: {res}stratum{col 49}{txt}Number of groups{col 67}={res}{col 69}        72
+{txt}Group variable: {res}stratum{col 49}{txt}Number of groups{col 67}={res}{col 69}       112
 
 {col 49}{txt}Obs per group:
-{col 63}{txt}min{col 67}={res}{col 69}        62
-{col 63}{txt}avg{col 67}={res}{col 69}     270.9
-{col 63}{txt}max{col 67}={res}{col 69}       560
+{col 63}{txt}min{col 67}={res}{col 69}        17
+{col 63}{txt}avg{col 67}={res}{col 69}     174.1
+{col 63}{txt}max{col 67}={res}{col 69}       488
 
 {txt}Integration method: {res}mvaghermite{col 49}{txt}Integration pts.{col 67}={col 78}{res}7
 
 {col 49}{txt}Wald chi2({res}0{txt}){col 67}={res}{col 70}        .
-{txt}Log likelihood = {res}-7702.5415{col 49}{txt}Prob > chi2{col 67}={res}{col 73}     .
+{txt}Log likelihood = {res}-7646.851{col 49}{txt}Prob > chi2{col 67}={res}{col 73}     .
 {txt}{hline 13}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
 {col 1}sedentaris~2{col 14}{c |}       Odds{col 26}   Std. err.{col 38}      z{col 46}   P>|z|{col 54}     [95% con{col 67}f. interval]
 {hline 13}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
-{space 7}_cons {c |}{col 14}{res}{space 2}     0.14{col 26}{space 2}     0.01{col 37}{space 1}  -29.10{col 46}{space 3}0.000{col 54}{space 4}     0.12{col 67}{space 3}     0.16
+{space 7}_cons {c |}{col 14}{res}{space 2}     0.13{col 26}{space 2}     0.01{col 37}{space 1}  -32.26{col 46}{space 3}0.000{col 54}{space 4}     0.12{col 67}{space 3}     0.15
 {txt}{hline 13}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
 {col 1}{res}stratum     {col 14}{txt}{c |}
-{space 3}var(_cons){c |}{col 14}{res}{space 2}     0.28{col 26}{space 2}     0.06{col 54}{space 4}     0.19{col 67}{space 3}     0.41
+{space 3}var(_cons){c |}{col 14}{res}{space 2}     0.34{col 26}{space 2}     0.06{col 54}{space 4}     0.24{col 67}{space 3}     0.47
 {txt}{hline 13}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
 {p 0 6 2}Note: {help eform_option:Estimates are transformed} only in the first equation to odds.{p_end}
-{txt}LR test vs. logistic model: {txt}{help j_chibar##|_new:chibar2(01) =}{res} 461.85{col 55}{txt}Prob >= chibar2 = {res}{col 73}0.0000
+{txt}LR test vs. logistic model: {txt}{help j_chibar##|_new:chibar2(01) =}{res} 573.23{col 55}{txt}Prob >= chibar2 = {res}{col 73}0.0000
 {txt}
 {com}. 
 . * Save the model results
@@ -133,75 +143,77 @@ Iteration 5:{space 2}Log likelihood = {res:-7702.5415}
 {com}. 
 . **# Model 1
 . * Fit the two-level logistic regression with covariates
-. melogit sedentarismo2 i.sexo i.edad_cat3 i.clase_2 i.urb_rur i.survey2 || stratum:, ///
+. melogit sedentarismo2 i.sexo i.edad_cat i.clase_2 i.NUTS1 i.survey2 || stratum:, ///
 >         or baselevels
 {res}{txt}
 Fitting fixed-effects model:
 
-Iteration 0:{space 2}Log likelihood = {res:-7715.2179}  
-Iteration 1:{space 2}Log likelihood = {res:-7656.5568}  
-Iteration 2:{space 2}Log likelihood = {res: -7656.429}  
-Iteration 3:{space 2}Log likelihood = {res: -7656.429}  
+Iteration 0:{space 2}Log likelihood = {res:-7647.5564}  
+Iteration 1:{space 2}Log likelihood = {res:-7572.8275}  
+Iteration 2:{space 2}Log likelihood = {res:-7572.5877}  
+Iteration 3:{space 2}Log likelihood = {res:-7572.5876}  
 
 Refining starting values:
 
-Grid node 0:{space 2}Log likelihood = {res:-7709.3085}
+Grid node 0:{space 2}Log likelihood = {res:  -7647.86}
 
 Fitting full model:
 {res}
-{txt}Iteration 0:{space 2}Log likelihood = {res:-7709.3085}  (not concave)
-Iteration 1:{space 2}Log likelihood = {res:-7681.4963}  (not concave)
-Iteration 2:{space 2}Log likelihood = {res:-7654.7224}  
-Iteration 3:{space 2}Log likelihood = {res:-7649.6464}  
-Iteration 4:{space 2}Log likelihood = {res:-7649.4416}  
-Iteration 5:{space 2}Log likelihood = {res:-7649.4122}  
-Iteration 6:{space 2}Log likelihood = {res:-7649.4122}  
+{txt}Iteration 0:{space 2}Log likelihood = {res:  -7647.86}  (not concave)
+Iteration 1:{space 2}Log likelihood = {res:-7581.7256}  (not concave)
+Iteration 2:{space 2}Log likelihood = {res:-7563.8619}  
+Iteration 3:{space 2}Log likelihood = {res:-7563.6156}  
+Iteration 4:{space 2}Log likelihood = {res:-7563.6146}  
+Iteration 5:{space 2}Log likelihood = {res:-7563.6146}  
 {res}
 {txt}Mixed-effects logistic regression{col 49}{txt}Number of obs{col 67}={res}{col 69}    19,503
-{txt}Group variable: {res}stratum{col 49}{txt}Number of groups{col 67}={res}{col 69}        72
+{txt}Group variable: {res}stratum{col 49}{txt}Number of groups{col 67}={res}{col 69}       112
 
 {col 49}{txt}Obs per group:
-{col 63}{txt}min{col 67}={res}{col 69}        62
-{col 63}{txt}avg{col 67}={res}{col 69}     270.9
-{col 63}{txt}max{col 67}={res}{col 69}       560
+{col 63}{txt}min{col 67}={res}{col 69}        17
+{col 63}{txt}avg{col 67}={res}{col 69}     174.1
+{col 63}{txt}max{col 67}={res}{col 69}       488
 
 {txt}Integration method: {res}mvaghermite{col 49}{txt}Integration pts.{col 67}={col 78}{res}7
 
-{col 49}{txt}Wald chi2({res}7{txt}){col 67}={res}{col 70}   252.56
-{txt}Log likelihood = {res}-7649.4122{col 49}{txt}Prob > chi2{col 67}={res}{col 73}0.0000
+{col 49}{txt}Wald chi2({res}10{txt}){col 67}={res}{col 70}   381.15
+{txt}Log likelihood = {res}-7563.6146{col 49}{txt}Prob > chi2{col 67}={res}{col 73}0.0000
 {txt}{hline 20}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
 {col 1}      sedentarismo2{col 21}{c |} Odds ratio{col 33}   Std. err.{col 45}      z{col 53}   P>|z|{col 61}     [95% con{col 74}f. interval]
 {hline 20}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
 {space 15}sexo {c |}
-{space 14}Male  {c |}{col 21}{res}{space 2}     1.00{col 33}{txt}  (base)
-{space 12}Female  {c |}{col 21}{res}{space 2}     1.91{col 33}{space 2}     0.12{col 44}{space 1}   10.62{col 53}{space 3}0.000{col 61}{space 4}     1.69{col 74}{space 3}     2.15
+{space 14}Boys  {c |}{col 21}{res}{space 2}     1.00{col 33}{txt}  (base)
+{space 13}Girls  {c |}{col 21}{res}{space 2}     1.93{col 33}{space 2}     0.11{col 44}{space 1}   11.55{col 53}{space 3}0.000{col 61}{space 4}     1.73{col 74}{space 3}     2.16
 {txt}{space 19} {c |}
-{space 10}edad_cat3 {c |}
-{space 15}6-9  {c |}{col 21}{res}{space 2}     1.00{col 33}{txt}  (base)
-{space 13}10-12  {c |}{col 21}{res}{space 2}     1.05{col 33}{space 2}     0.08{col 44}{space 1}    0.65{col 53}{space 3}0.518{col 61}{space 4}     0.91{col 74}{space 3}     1.22
-{txt}{space 13}13-15  {c |}{col 21}{res}{space 2}     1.64{col 33}{space 2}     0.12{col 44}{space 1}    6.84{col 53}{space 3}0.000{col 61}{space 4}     1.42{col 74}{space 3}     1.89
+{space 11}edad_cat {c |}
+{space 14}6-11  {c |}{col 21}{res}{space 2}     1.00{col 33}{txt}  (base)
+{space 13}12-15  {c |}{col 21}{res}{space 2}     1.53{col 33}{space 2}     0.09{col 44}{space 1}    7.57{col 53}{space 3}0.000{col 61}{space 4}     1.37{col 74}{space 3}     1.71
 {txt}{space 19} {c |}
 {space 12}clase_2 {c |}
 Non-Manual Workers  {c |}{col 21}{res}{space 2}     1.00{col 33}{txt}  (base)
-{space 4}Manual Workers  {c |}{col 21}{res}{space 2}     1.62{col 33}{space 2}     0.10{col 44}{space 1}    7.80{col 53}{space 3}0.000{col 61}{space 4}     1.43{col 74}{space 3}     1.82
+{space 4}Manual Workers  {c |}{col 21}{res}{space 2}     1.56{col 33}{space 2}     0.09{col 44}{space 1}    7.68{col 53}{space 3}0.000{col 61}{space 4}     1.39{col 74}{space 3}     1.74
 {txt}{space 19} {c |}
-{space 12}urb_rur {c |}
-{space 13}Rural  {c |}{col 21}{res}{space 2}     1.00{col 33}{txt}  (base)
-{space 8}Semi-urban  {c |}{col 21}{res}{space 2}     1.34{col 33}{space 2}     0.11{col 44}{space 1}    3.64{col 53}{space 3}0.000{col 61}{space 4}     1.14{col 74}{space 3}     1.57
-{txt}{space 13}Urban  {c |}{col 21}{res}{space 2}     1.36{col 33}{space 2}     0.10{col 44}{space 1}    4.02{col 53}{space 3}0.000{col 61}{space 4}     1.17{col 74}{space 3}     1.58
+{space 14}NUTS1 {c |}
+{space 8}North-East  {c |}{col 21}{res}{space 2}     1.00{col 33}{txt}  (base)
+{space 4}Canary Islands  {c |}{col 21}{res}{space 2}     1.25{col 33}{space 2}     0.17{col 44}{space 1}    1.63{col 53}{space 3}0.103{col 61}{space 4}     0.96{col 74}{space 3}     1.64
+{txt}{space 12}Centre  {c |}{col 21}{res}{space 2}     1.44{col 33}{space 2}     0.15{col 44}{space 1}    3.42{col 53}{space 3}0.001{col 61}{space 4}     1.17{col 74}{space 3}     1.77
+{txt}{space 14}East  {c |}{col 21}{res}{space 2}     1.69{col 33}{space 2}     0.17{col 44}{space 1}    5.26{col 53}{space 3}0.000{col 61}{space 4}     1.39{col 74}{space 3}     2.06
+{txt}{space 12}Madrid  {c |}{col 21}{res}{space 2}     1.42{col 33}{space 2}     0.17{col 44}{space 1}    2.91{col 53}{space 3}0.004{col 61}{space 4}     1.12{col 74}{space 3}     1.80
+{txt}{space 8}North-West  {c |}{col 21}{res}{space 2}     1.66{col 33}{space 2}     0.18{col 44}{space 1}    4.70{col 53}{space 3}0.000{col 61}{space 4}     1.34{col 74}{space 3}     2.06
+{txt}{space 13}South  {c |}{col 21}{res}{space 2}     2.82{col 33}{space 2}     0.28{col 44}{space 1}   10.59{col 53}{space 3}0.000{col 61}{space 4}     2.32{col 74}{space 3}     3.41
 {txt}{space 19} {c |}
 {space 12}survey2 {c |}
 {space 14}Post  {c |}{col 21}{res}{space 2}     1.00{col 33}{txt}  (base)
-{space 15}Pre  {c |}{col 21}{res}{space 2}     1.32{col 33}{space 2}     0.08{col 44}{space 1}    4.39{col 53}{space 3}0.000{col 61}{space 4}     1.17{col 74}{space 3}     1.49
+{space 15}Pre  {c |}{col 21}{res}{space 2}     1.36{col 33}{space 2}     0.08{col 44}{space 1}    5.07{col 53}{space 3}0.000{col 61}{space 4}     1.21{col 74}{space 3}     1.53
 {txt}{space 19} {c |}
-{space 14}_cons {c |}{col 21}{res}{space 2}     0.05{col 33}{space 2}     0.00{col 44}{space 1}  -30.01{col 53}{space 3}0.000{col 61}{space 4}     0.04{col 74}{space 3}     0.06
+{space 14}_cons {c |}{col 21}{res}{space 2}     0.03{col 33}{space 2}     0.00{col 44}{space 1}  -32.01{col 53}{space 3}0.000{col 61}{space 4}     0.03{col 74}{space 3}     0.04
 {txt}{hline 20}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
 {col 1}{res}stratum            {col 21}{txt}{c |}
 {space 10}var(_cons){c |}{col 21}{res}{space 2}     0.03{col 33}{space 2}     0.01{col 61}{space 4}     0.01{col 74}{space 3}     0.06
 {txt}{hline 20}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
 {p 0 6 2}Note: {help eform_option:Estimates are transformed} only in the first equation to odds ratios.{p_end}
 {p 0 6 2}Note: {bf:_cons} estimates baseline odds (conditional on zero random effects){txt}.{p_end}
-{txt}LR test vs. logistic model: {txt}{help j_chibar##|_new:chibar2(01) =}{res} 14.03{col 55}{txt}Prob >= chibar2 = {res}{col 73}0.0001
+{txt}LR test vs. logistic model: {txt}{help j_chibar##|_new:chibar2(01) =}{res} 17.95{col 55}{txt}Prob >= chibar2 = {res}{col 73}0.0000
 {txt}
 {com}. 
 . * Save the model results
@@ -238,22 +250,24 @@ Non-Manual Workers  {c |}{col 21}{res}{space 2}     1.00{col 33}{txt}  (base)
 . * Compress the data
 . compress
   {txt}variable {bf}{res}sexo{sf}{txt} was {bf}{res}long{sf}{txt} now {bf}{res}byte{sf}
-  {txt}variable {bf}{res}edad_cat3{sf}{txt} was {bf}{res}long{sf}{txt} now {bf}{res}byte{sf}
+  {txt}variable {bf}{res}edad_cat{sf}{txt} was {bf}{res}long{sf}{txt} now {bf}{res}byte{sf}
   {txt}variable {bf}{res}clase_2{sf}{txt} was {bf}{res}long{sf}{txt} now {bf}{res}byte{sf}
-  {txt}variable {bf}{res}survey{sf}{txt} was {bf}{res}long{sf}{txt} now {bf}{res}byte{sf}
   {txt}variable {bf}{res}survey2{sf}{txt} was {bf}{res}long{sf}{txt} now {bf}{res}byte{sf}
   {txt}variable {bf}{res}sedentarismo{sf}{txt} was {bf}{res}long{sf}{txt} now {bf}{res}byte{sf}
   {txt}variable {bf}{res}urb_rur{sf}{txt} was {bf}{res}long{sf}{txt} now {bf}{res}byte{sf}
-  {txt}variable {bf}{res}stratum{sf}{txt} was {bf}{res}long{sf}{txt} now {bf}{res}byte{sf}
+  {txt}variable {bf}{res}NUTS1{sf}{txt} was {bf}{res}long{sf}{txt} now {bf}{res}byte{sf}
+  {txt}variable {bf}{res}stratum{sf}{txt} was {bf}{res}long{sf}{txt} now {bf}{res}int{sf}
   {txt}variable {bf}{res}strataN{sf}{txt} was {bf}{res}long{sf}{txt} now {bf}{res}int{sf}
+  {txt}variable {bf}{res}id{sf}{txt} was {bf}{res}long{sf}{txt} now {bf}{res}int{sf}
   {txt}variable {bf}{res}sexo_num{sf}{txt} was {bf}{res}double{sf}{txt} now {bf}{res}byte{sf}
-  {txt}variable {bf}{res}edad_cat3_num{sf}{txt} was {bf}{res}double{sf}{txt} now {bf}{res}byte{sf}
+  {txt}variable {bf}{res}edad_cat_num{sf}{txt} was {bf}{res}double{sf}{txt} now {bf}{res}byte{sf}
   {txt}variable {bf}{res}clase_2_num{sf}{txt} was {bf}{res}double{sf}{txt} now {bf}{res}byte{sf}
   {txt}variable {bf}{res}urb_rur_num{sf}{txt} was {bf}{res}double{sf}{txt} now {bf}{res}byte{sf}
-  {txt}variable {bf}{res}survey_num{sf}{txt} was {bf}{res}double{sf}{txt} now {bf}{res}byte{sf}
+  {txt}variable {bf}{res}survey_num{sf}{txt} was {bf}{res}double{sf}{txt} now {bf}{res}int{sf}
   {txt}variable {bf}{res}survey2_num{sf}{txt} was {bf}{res}double{sf}{txt} now {bf}{res}byte{sf}
+  {txt}variable {bf}{res}NUTS1_num{sf}{txt} was {bf}{res}double{sf}{txt} now {bf}{res}byte{sf}
   {txt}variable {bf}{res}sedentarismo2{sf}{txt} was {bf}{res}double{sf}{txt} now {bf}{res}byte{sf}
-{txt}  (1,462,725 bytes saved)
+{txt}  (1,599,246 bytes saved)
 
 {com}. 
 . * Save the data
@@ -269,17 +283,17 @@ saved
 . 
 . * Collapse the data down to a stratum-level dataset
 . collapse (count) n = sedentarismo2 (mean) sedentarismo2, ///
->         by(stratum sexo edad_cat3 clase_2 urb_rur survey2 ///
+>         by(stratum sexo edad_cat clase_2 NUTS1 survey2 ///
 >          m0_total m0_fixed m1_total m1_fixed m1_fixed_se m1_random_se m1_random)
 {res}{txt}
 {com}. 
 . * Move the list of variables to the beginning of the dataset
-. order stratum sexo edad_cat3 clase_2 urb_rur survey2 n sedentarismo2
+. order stratum sexo edad_cat clase_2 NUTS1 survey2 n sedentarismo2
 {txt}
 {com}. 
 . * Convert the outcome from a proportion to a percentage
 . replace sedentarismo2 = 100*sedentarismo2
-{txt}(72 real changes made)
+{txt}(111 real changes made)
 
 {com}. 
 . * Set the display format to 1dp
@@ -294,7 +308,7 @@ saved
 . * Compress the data
 . compress
   {txt}variable {bf}{res}n{sf}{txt} was {bf}{res}long{sf}{txt} now {bf}{res}int{sf}
-{txt}  (144 bytes saved)
+{txt}  (224 bytes saved)
 
 {com}. 
 . * Save the data
@@ -316,9 +330,9 @@ saved
 . codebook stratum, compact
 {res}
 {txt}Variable     Obs Unique      Mean  Min  Max  Label
-{txt}{hline 176}
-{txt}stratum  {res}  19503     72  36.54248    1   72  {txt}
-{txt}{hline 176}
+{txt}{hline 212}
+{txt}stratum  {res}  19503    112  55.68692    1  112  {txt}
+{txt}{hline 212}
 
 {com}. 
 . * Tabulate each individual characteristic
@@ -326,18 +340,17 @@ saved
 
        {txt}sexo {c |}      Freq.     Percent        Cum.
 {hline 12}{c +}{hline 35}
-       Male {c |}{res}     10,013       51.34       51.34
-{txt}     Female {c |}{res}      9,490       48.66      100.00
+       Boys {c |}{res}     10,013       51.34       51.34
+{txt}      Girls {c |}{res}      9,490       48.66      100.00
 {txt}{hline 12}{c +}{hline 35}
       Total {c |}{res}     19,503      100.00
 {txt}
-{com}. tabulate edad_cat3 
+{com}. tabulate edad_cat
 
-  {txt}edad_cat3 {c |}      Freq.     Percent        Cum.
+   {txt}edad_cat {c |}      Freq.     Percent        Cum.
 {hline 12}{c +}{hline 35}
-        6-9 {c |}{res}      7,096       36.38       36.38
-{txt}      10-12 {c |}{res}      6,197       31.77       68.16
-{txt}      13-15 {c |}{res}      6,210       31.84      100.00
+       6-11 {c |}{res}     11,092       56.87       56.87
+{txt}      12-15 {c |}{res}      8,411       43.13      100.00
 {txt}{hline 12}{c +}{hline 35}
       Total {c |}{res}     19,503      100.00
 {txt}
@@ -350,15 +363,19 @@ Non-Manual Workers {c |}{res}      8,411       43.13       43.13
 {txt}{hline 19}{c +}{hline 35}
              Total {c |}{res}     19,503      100.00
 {txt}
-{com}. tabulate urb_rur
+{com}. tabulate NUTS1
 
-    {txt}urb_rur {c |}      Freq.     Percent        Cum.
-{hline 12}{c +}{hline 35}
-      Rural {c |}{res}      4,510       23.12       23.12
-{txt} Semi-urban {c |}{res}      5,729       29.37       52.50
-{txt}      Urban {c |}{res}      9,264       47.50      100.00
-{txt}{hline 12}{c +}{hline 35}
-      Total {c |}{res}     19,503      100.00
+         {txt}NUTS1 {c |}      Freq.     Percent        Cum.
+{hline 15}{c +}{hline 35}
+    North-East {c |}{res}      3,303       16.94       16.94
+{txt}Canary Islands {c |}{res}        955        4.90       21.83
+{txt}        Centre {c |}{res}      3,114       15.97       37.80
+{txt}          East {c |}{res}      4,098       21.01       58.81
+{txt}        Madrid {c |}{res}      1,572        8.06       66.87
+{txt}    North-West {c |}{res}      2,380       12.20       79.08
+{txt}         South {c |}{res}      4,081       20.92      100.00
+{txt}{hline 15}{c +}{hline 35}
+         Total {c |}{res}     19,503      100.00
 {txt}
 {com}. tabulate survey2
 
@@ -415,50 +432,53 @@ sedentaris~2 {c |}{col 16}{res}    19,503{col 29} .1410039{col 41} .0024921{col 
 
    {txt}n100plus {c |}      Freq.     Percent        Cum.
 {hline 12}{c +}{hline 35}
-          0 {c |}{res}          6        8.33        8.33
-{txt}          1 {c |}{res}         66       91.67      100.00
+          0 {c |}{res}         34       30.36       30.36
+{txt}          1 {c |}{res}         78       69.64      100.00
 {txt}{hline 12}{c +}{hline 35}
-      Total {c |}{res}         72      100.00
+      Total {c |}{res}        112      100.00
 {txt}
 {com}. tabulate n50plus
 
     {txt}n50plus {c |}      Freq.     Percent        Cum.
 {hline 12}{c +}{hline 35}
-          1 {c |}{res}         72      100.00      100.00
+          0 {c |}{res}         10        8.93        8.93
+{txt}          1 {c |}{res}        102       91.07      100.00
 {txt}{hline 12}{c +}{hline 35}
-      Total {c |}{res}         72      100.00
+      Total {c |}{res}        112      100.00
 {txt}
 {com}. tabulate n30plus
 
     {txt}n30plus {c |}      Freq.     Percent        Cum.
 {hline 12}{c +}{hline 35}
-          1 {c |}{res}         72      100.00      100.00
+          0 {c |}{res}          3        2.68        2.68
+{txt}          1 {c |}{res}        109       97.32      100.00
 {txt}{hline 12}{c +}{hline 35}
-      Total {c |}{res}         72      100.00
+      Total {c |}{res}        112      100.00
 {txt}
 {com}. tabulate n20plus
 
     {txt}n20plus {c |}      Freq.     Percent        Cum.
 {hline 12}{c +}{hline 35}
-          1 {c |}{res}         72      100.00      100.00
+          0 {c |}{res}          1        0.89        0.89
+{txt}          1 {c |}{res}        111       99.11      100.00
 {txt}{hline 12}{c +}{hline 35}
-      Total {c |}{res}         72      100.00
+      Total {c |}{res}        112      100.00
 {txt}
 {com}. tabulate n10plus
 
     {txt}n10plus {c |}      Freq.     Percent        Cum.
 {hline 12}{c +}{hline 35}
-          1 {c |}{res}         72      100.00      100.00
+          1 {c |}{res}        112      100.00      100.00
 {txt}{hline 12}{c +}{hline 35}
-      Total {c |}{res}         72      100.00
+      Total {c |}{res}        112      100.00
 {txt}
 {com}. tabulate nlessthan10
 
 {txt}nlessthan10 {c |}      Freq.     Percent        Cum.
 {hline 12}{c +}{hline 35}
-          0 {c |}{res}         72      100.00      100.00
+          0 {c |}{res}        112      100.00      100.00
 {txt}{hline 12}{c +}{hline 35}
-      Total {c |}{res}         72      100.00
+      Total {c |}{res}        112      100.00
 {txt}
 {com}. 
 . **# Table 3
@@ -480,27 +500,27 @@ sedentaris~2 {c |}{col 16}{res}    19,503{col 29} .1410039{col 41} .0024921{col 
 {hline}
 
 {txt}Mixed-effects logistic regression{col 49}{txt}Number of obs{col 67}={res}{col 69}    19,503
-{txt}Group variable: {res}stratum{col 49}{txt}Number of groups{col 67}={res}{col 69}        72
+{txt}Group variable: {res}stratum{col 49}{txt}Number of groups{col 67}={res}{col 69}       112
 
 {col 49}{txt}Obs per group:
-{col 63}{txt}min{col 67}={res}{col 69}        62
-{col 63}{txt}avg{col 67}={res}{col 69}     270.9
-{col 63}{txt}max{col 67}={res}{col 69}       560
+{col 63}{txt}min{col 67}={res}{col 69}        17
+{col 63}{txt}avg{col 67}={res}{col 69}     174.1
+{col 63}{txt}max{col 67}={res}{col 69}       488
 
 {txt}Integration method: {res}mvaghermite{col 49}{txt}Integration pts.{col 67}={col 78}{res}7
 
 {col 49}{txt}Wald chi2({res}0{txt}){col 67}={res}{col 70}        .
-{txt}Log likelihood = {res}-7702.5415{col 49}{txt}Prob > chi2{col 67}={res}{col 73}     .
+{txt}Log likelihood = {res}-7646.851{col 49}{txt}Prob > chi2{col 67}={res}{col 73}     .
 {txt}{hline 13}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
 {col 1}sedentaris~2{col 14}{c |}       Odds{col 26}   Std. err.{col 38}      z{col 46}   P>|z|{col 54}     [95% con{col 67}f. interval]
 {hline 13}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
-{space 7}_cons {c |}{col 14}{res}{space 2}     0.14{col 26}{space 2}     0.01{col 37}{space 1}  -29.10{col 46}{space 3}0.000{col 54}{space 4}     0.12{col 67}{space 3}     0.16
+{space 7}_cons {c |}{col 14}{res}{space 2}     0.13{col 26}{space 2}     0.01{col 37}{space 1}  -32.26{col 46}{space 3}0.000{col 54}{space 4}     0.12{col 67}{space 3}     0.15
 {txt}{hline 13}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
 {col 1}{res}stratum     {col 14}{txt}{c |}
-{space 3}var(_cons){c |}{col 14}{res}{space 2}     0.28{col 26}{space 2}     0.06{col 54}{space 4}     0.19{col 67}{space 3}     0.41
+{space 3}var(_cons){c |}{col 14}{res}{space 2}     0.34{col 26}{space 2}     0.06{col 54}{space 4}     0.24{col 67}{space 3}     0.47
 {txt}{hline 13}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
 {p 0 6 2}Note: {help eform_option:Estimates are transformed} only in the first equation to odds.{p_end}
-{txt}LR test vs. logistic model: {txt}{help j_chibar##|_new:chibar2(01) =}{res} 461.85{col 55}{txt}Prob >= chibar2 = {res}{col 73}0.0000
+{txt}LR test vs. logistic model: {txt}{help j_chibar##|_new:chibar2(01) =}{res} 573.23{col 55}{txt}Prob >= chibar2 = {res}{col 73}0.0000
 {txt}
 {com}. 
 . * Calculate the variance partition coefficient (VPC)
@@ -511,7 +531,7 @@ sedentaris~2 {c |}{col 16}{res}    19,503{col 29} .1410039{col 41} .0024921{col 
 {res}{col 1}{text}{hline 29}{c TT}{hline 12}{hline 12}{hline 12}{hline 12}
 {col 1}{text}                       Level{col 30}{c |}        ICC{col 43}  Std. err.{col 55}    [95% conf. interval]
 {res}{col 1}{text}{hline 29}{c +}{hline 12}{hline 12}{hline 12}{hline 12}
-{col 1}{text}                     stratum{col 30}{c |}{result}{space 2} .0778026{col 43}{space 1} .0146322{col 55}{space 3} .0535405{col 67}{space 3}  .111761
+{col 1}{text}                     stratum{col 30}{c |}{result}{space 2} .0934837{col 43}{space 1} .0142475{col 55}{space 3} .0690524{col 67}{space 3} .1253945
 {col 1}{text}{hline 29}{c BT}{hline 12}{hline 12}{hline 12}{hline 12}
 {res}{txt}
 {com}. 
@@ -533,7 +553,7 @@ sedentaris~2 {c |}{col 16}{res}    19,503{col 29} .1410039{col 41} .0024921{col 
 {txt}{col 23}ROC{col 32}{col 46}{space 1}Asymptotic normal{space 2}
            Obs       area     Std. err.      [95% conf. interval]
      {hline 60}
-{col 5}{res}    19,503{col 18}  0.6498{col 31}  0.0056{col 46} 0.63877{col 58} 0.66090
+{col 5}{res}    19,503{col 18}  0.6687{col 31}  0.0055{col 46} 0.65792{col 58} 0.67955
 {txt}
 {com}. 
 . * Model 1 
@@ -549,50 +569,53 @@ sedentaris~2 {c |}{col 16}{res}    19,503{col 29} .1410039{col 41} .0024921{col 
 {hline}
 
 {txt}Mixed-effects logistic regression{col 49}{txt}Number of obs{col 67}={res}{col 69}    19,503
-{txt}Group variable: {res}stratum{col 49}{txt}Number of groups{col 67}={res}{col 69}        72
+{txt}Group variable: {res}stratum{col 49}{txt}Number of groups{col 67}={res}{col 69}       112
 
 {col 49}{txt}Obs per group:
-{col 63}{txt}min{col 67}={res}{col 69}        62
-{col 63}{txt}avg{col 67}={res}{col 69}     270.9
-{col 63}{txt}max{col 67}={res}{col 69}       560
+{col 63}{txt}min{col 67}={res}{col 69}        17
+{col 63}{txt}avg{col 67}={res}{col 69}     174.1
+{col 63}{txt}max{col 67}={res}{col 69}       488
 
 {txt}Integration method: {res}mvaghermite{col 49}{txt}Integration pts.{col 67}={col 78}{res}7
 
-{col 49}{txt}Wald chi2({res}7{txt}){col 67}={res}{col 70}   252.56
-{txt}Log likelihood = {res}-7649.4122{col 49}{txt}Prob > chi2{col 67}={res}{col 73}0.0000
+{col 49}{txt}Wald chi2({res}10{txt}){col 67}={res}{col 70}   381.15
+{txt}Log likelihood = {res}-7563.6146{col 49}{txt}Prob > chi2{col 67}={res}{col 73}0.0000
 {txt}{hline 20}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
 {col 1}      sedentarismo2{col 21}{c |} Odds ratio{col 33}   Std. err.{col 45}      z{col 53}   P>|z|{col 61}     [95% con{col 74}f. interval]
 {hline 20}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
 {space 15}sexo {c |}
-{space 14}Male  {c |}{col 21}{res}{space 2}     1.00{col 33}{txt}  (base)
-{space 12}Female  {c |}{col 21}{res}{space 2}     1.91{col 33}{space 2}     0.12{col 44}{space 1}   10.62{col 53}{space 3}0.000{col 61}{space 4}     1.69{col 74}{space 3}     2.15
+{space 14}Boys  {c |}{col 21}{res}{space 2}     1.00{col 33}{txt}  (base)
+{space 13}Girls  {c |}{col 21}{res}{space 2}     1.93{col 33}{space 2}     0.11{col 44}{space 1}   11.55{col 53}{space 3}0.000{col 61}{space 4}     1.73{col 74}{space 3}     2.16
 {txt}{space 19} {c |}
-{space 10}edad_cat3 {c |}
-{space 15}6-9  {c |}{col 21}{res}{space 2}     1.00{col 33}{txt}  (base)
-{space 13}10-12  {c |}{col 21}{res}{space 2}     1.05{col 33}{space 2}     0.08{col 44}{space 1}    0.65{col 53}{space 3}0.518{col 61}{space 4}     0.91{col 74}{space 3}     1.22
-{txt}{space 13}13-15  {c |}{col 21}{res}{space 2}     1.64{col 33}{space 2}     0.12{col 44}{space 1}    6.84{col 53}{space 3}0.000{col 61}{space 4}     1.42{col 74}{space 3}     1.89
+{space 11}edad_cat {c |}
+{space 14}6-11  {c |}{col 21}{res}{space 2}     1.00{col 33}{txt}  (base)
+{space 13}12-15  {c |}{col 21}{res}{space 2}     1.53{col 33}{space 2}     0.09{col 44}{space 1}    7.57{col 53}{space 3}0.000{col 61}{space 4}     1.37{col 74}{space 3}     1.71
 {txt}{space 19} {c |}
 {space 12}clase_2 {c |}
 Non-Manual Workers  {c |}{col 21}{res}{space 2}     1.00{col 33}{txt}  (base)
-{space 4}Manual Workers  {c |}{col 21}{res}{space 2}     1.62{col 33}{space 2}     0.10{col 44}{space 1}    7.80{col 53}{space 3}0.000{col 61}{space 4}     1.43{col 74}{space 3}     1.82
+{space 4}Manual Workers  {c |}{col 21}{res}{space 2}     1.56{col 33}{space 2}     0.09{col 44}{space 1}    7.68{col 53}{space 3}0.000{col 61}{space 4}     1.39{col 74}{space 3}     1.74
 {txt}{space 19} {c |}
-{space 12}urb_rur {c |}
-{space 13}Rural  {c |}{col 21}{res}{space 2}     1.00{col 33}{txt}  (base)
-{space 8}Semi-urban  {c |}{col 21}{res}{space 2}     1.34{col 33}{space 2}     0.11{col 44}{space 1}    3.64{col 53}{space 3}0.000{col 61}{space 4}     1.14{col 74}{space 3}     1.57
-{txt}{space 13}Urban  {c |}{col 21}{res}{space 2}     1.36{col 33}{space 2}     0.10{col 44}{space 1}    4.02{col 53}{space 3}0.000{col 61}{space 4}     1.17{col 74}{space 3}     1.58
+{space 14}NUTS1 {c |}
+{space 8}North-East  {c |}{col 21}{res}{space 2}     1.00{col 33}{txt}  (base)
+{space 4}Canary Islands  {c |}{col 21}{res}{space 2}     1.25{col 33}{space 2}     0.17{col 44}{space 1}    1.63{col 53}{space 3}0.103{col 61}{space 4}     0.96{col 74}{space 3}     1.64
+{txt}{space 12}Centre  {c |}{col 21}{res}{space 2}     1.44{col 33}{space 2}     0.15{col 44}{space 1}    3.42{col 53}{space 3}0.001{col 61}{space 4}     1.17{col 74}{space 3}     1.77
+{txt}{space 14}East  {c |}{col 21}{res}{space 2}     1.69{col 33}{space 2}     0.17{col 44}{space 1}    5.26{col 53}{space 3}0.000{col 61}{space 4}     1.39{col 74}{space 3}     2.06
+{txt}{space 12}Madrid  {c |}{col 21}{res}{space 2}     1.42{col 33}{space 2}     0.17{col 44}{space 1}    2.91{col 53}{space 3}0.004{col 61}{space 4}     1.12{col 74}{space 3}     1.80
+{txt}{space 8}North-West  {c |}{col 21}{res}{space 2}     1.66{col 33}{space 2}     0.18{col 44}{space 1}    4.70{col 53}{space 3}0.000{col 61}{space 4}     1.34{col 74}{space 3}     2.06
+{txt}{space 13}South  {c |}{col 21}{res}{space 2}     2.82{col 33}{space 2}     0.28{col 44}{space 1}   10.59{col 53}{space 3}0.000{col 61}{space 4}     2.32{col 74}{space 3}     3.41
 {txt}{space 19} {c |}
 {space 12}survey2 {c |}
 {space 14}Post  {c |}{col 21}{res}{space 2}     1.00{col 33}{txt}  (base)
-{space 15}Pre  {c |}{col 21}{res}{space 2}     1.32{col 33}{space 2}     0.08{col 44}{space 1}    4.39{col 53}{space 3}0.000{col 61}{space 4}     1.17{col 74}{space 3}     1.49
+{space 15}Pre  {c |}{col 21}{res}{space 2}     1.36{col 33}{space 2}     0.08{col 44}{space 1}    5.07{col 53}{space 3}0.000{col 61}{space 4}     1.21{col 74}{space 3}     1.53
 {txt}{space 19} {c |}
-{space 14}_cons {c |}{col 21}{res}{space 2}     0.05{col 33}{space 2}     0.00{col 44}{space 1}  -30.01{col 53}{space 3}0.000{col 61}{space 4}     0.04{col 74}{space 3}     0.06
+{space 14}_cons {c |}{col 21}{res}{space 2}     0.03{col 33}{space 2}     0.00{col 44}{space 1}  -32.01{col 53}{space 3}0.000{col 61}{space 4}     0.03{col 74}{space 3}     0.04
 {txt}{hline 20}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
 {col 1}{res}stratum            {col 21}{txt}{c |}
 {space 10}var(_cons){c |}{col 21}{res}{space 2}     0.03{col 33}{space 2}     0.01{col 61}{space 4}     0.01{col 74}{space 3}     0.06
 {txt}{hline 20}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
 {p 0 6 2}Note: {help eform_option:Estimates are transformed} only in the first equation to odds ratios.{p_end}
 {p 0 6 2}Note: {bf:_cons} estimates baseline odds (conditional on zero random effects){txt}.{p_end}
-{txt}LR test vs. logistic model: {txt}{help j_chibar##|_new:chibar2(01) =}{res} 14.03{col 55}{txt}Prob >= chibar2 = {res}{col 73}0.0001
+{txt}LR test vs. logistic model: {txt}{help j_chibar##|_new:chibar2(01) =}{res} 17.95{col 55}{txt}Prob >= chibar2 = {res}{col 73}0.0000
 {txt}
 {com}. 
 . * Calculate the variance partition coefficient (VPC)
@@ -603,13 +626,13 @@ Non-Manual Workers  {c |}{col 21}{res}{space 2}     1.00{col 33}{txt}  (base)
 {res}{col 1}{text}{hline 29}{c TT}{hline 12}{hline 12}{hline 12}{hline 12}
 {col 1}{text}                       Level{col 30}{c |}        ICC{col 43}  Std. err.{col 55}    [95% conf. interval]
 {res}{col 1}{text}{hline 29}{c +}{hline 12}{hline 12}{hline 12}{hline 12}
-{col 1}{text}                     stratum{col 30}{c |}{result}{space 2} .0079565{col 43}{space 1} .0032902{col 55}{space 3} .0035305{col 67}{space 3} .0178318
+{col 1}{text}                     stratum{col 30}{c |}{result}{space 2} .0083203{col 43}{space 1} .0029928{col 55}{space 3} .0041043{col 67}{space 3}  .016794
 {col 1}{text}{hline 29}{c BT}{hline 12}{hline 12}{hline 12}{hline 12}
 {res}{txt}
 {com}. 
 . * Calculate the Proportional Change in Variance (PCV) (as a percentage)
 . display %3.1f 100*(m0sigma2 - m1sigma2) / m0sigma2
-{res}90.5
+{res}91.9
 {txt}
 {com}. 
 . * Calculate the area under the receiver operating characteristic (ROC) curve
@@ -620,7 +643,7 @@ Non-Manual Workers  {c |}{col 21}{res}{space 2}     1.00{col 33}{txt}  (base)
 {txt}{col 23}ROC{col 32}{col 46}{space 1}Asymptotic normal{space 2}
            Obs       area     Std. err.      [95% conf. interval]
      {hline 60}
-{col 5}{res}    19,503{col 18}  0.6344{col 31}  0.0058{col 46} 0.62307{col 58} 0.64576
+{col 5}{res}    19,503{col 18}  0.6539{col 31}  0.0056{col 46} 0.64292{col 58} 0.66488
 {txt}
 {com}. 
 . * Calculate the area under the receiver operating characteristic (ROC) curve
@@ -630,7 +653,7 @@ Non-Manual Workers  {c |}{col 21}{res}{space 2}     1.00{col 33}{txt}  (base)
 {txt}{col 23}ROC{col 32}{col 46}{space 1}Asymptotic normal{space 2}
            Obs       area     Std. err.      [95% conf. interval]
      {hline 60}
-{col 5}{res}    19,503{col 18}  0.6451{col 31}  0.0057{col 46} 0.63394{col 58} 0.65631
+{col 5}{res}    19,503{col 18}  0.6635{col 31}  0.0056{col 46} 0.65252{col 58} 0.67442
 {txt}
 {com}. 
 . **# Figure 2 - Predicted Probability
@@ -667,14 +690,14 @@ Non-Manual Workers  {c |}{col 21}{res}{space 2}     1.00{col 33}{txt}  (base)
 >     (rspike m1_total_hi m1_total_lo m1_prob_total_rank, lcolor(gs4)) ///
 >     (scatter m1_prob_total m1_prob_total_rank, mcolor(black) msymbol(smcircle)) ///
 >         (scatter lab_y m1_prob_total_rank, msymbol(none) ///
->         mlabel(stratum) mlabsize(*0.8) mlabcolor(black) ///
+>         mlabel(stratum) mlabsize(*1) mlabcolor(black) ///
 >     mlabangle(90) mlabposition(12) mlabgap(*1)) ///)
 >     , ///
 >     ytitle("Predicted Percent Sedentarism" " " "Model 2", size(*1.5)) ///
 >     ylabel(0(10)50, angle(horizontal) labsize(*1.5)) ///
->     yline(10 20 30 40 50 60 70, lwidth(vthin) lcolor(gray)) ///
+>     yline(10 20 30 40 50, lwidth(vthin) lcolor(gray)) ///
 >     xtitle("Stratum rank", size(*1.5)) ///
->     xlabel(0(12)72, labsize(*1.5)) ///
+>     xlabel(0(20)112, labsize(*1.5)) ///
 >     legend(off) ///
 >     scheme(s1mono) ///
 >     name(Figure2B, replace) ///
@@ -695,30 +718,38 @@ format
 . * Generate list of 5 highest/lowest predicted stratum percentages (for Table 4)
 . sort m1_prob_total_rank
 {txt}
-{com}. list stratum sexo edad_cat3 clase_2 urb_rur survey2 n m1_prob_total_rank m1_prob_total m1_total_lo m1_total_hi in f/5
+{com}. list stratum sexo edad_cat clase_2 NUTS1 survey2 n m1_prob_total_rank m1_prob_total m1_total_lo m1_total_hi in f/5
 {txt}
-     {c TLC}{hline 9}{c -}{hline 6}{c -}{hline 10}{c -}{hline 14}{c -}{hline 12}{c -}{hline 9}{c -}{hline 5}{c -}{hline 10}{c -}{hline 10}{c -}{hline 10}{c -}{hline 10}{c TRC}
-     {c |} {res}stratum   sexo   edad_c~3        clase_2      urb_rur   survey2     n   m1_pro~k   m1_pro~l   m1_tot~o   m1_tot~i {txt}{c |}
-     {c LT}{hline 9}{c -}{hline 6}{c -}{hline 10}{c -}{hline 14}{c -}{hline 12}{c -}{hline 9}{c -}{hline 5}{c -}{hline 10}{c -}{hline 10}{c -}{hline 10}{c -}{hline 10}{c RT}
-  1. {c |} {res}  11111   Male        6-9   Non-Manual W        Rural      Post    75          1     4.3875   3.084746    6.20521 {txt}{c |}
-  2. {c |} {res}  12111   Male      10-12   Non-Manual W        Rural      Post    81          2   4.655903    3.27858   6.572518 {txt}{c |}
-  3. {c |} {res}  11121   Male        6-9   Non-Manual W   Semi-urban      Post   151          3   5.275023   3.794945   7.288618 {txt}{c |}
-  4. {c |} {res}  12112   Male      10-12   Non-Manual W        Rural       Pre   191          4   5.952586   4.328017   8.135104 {txt}{c |}
-  5. {c |} {res}  12131   Male      10-12   Non-Manual W        Urban      Post   251          5   6.235746   4.596965   8.407256 {txt}{c |}
-     {c BLC}{hline 9}{c -}{hline 6}{c -}{hline 10}{c -}{hline 14}{c -}{hline 12}{c -}{hline 9}{c -}{hline 5}{c -}{hline 10}{c -}{hline 10}{c -}{hline 10}{c -}{hline 10}{c BRC}
+     {c TLC}{hline 9}{c -}{hline 6}{c -}{hline 10}{c -}{hline 14}{c -}{hline 14}{c -}{hline 9}{c -}{hline 5}{c -}{hline 10}{c -}{hline 10}{c -}{hline 10}{c -}{hline 10}{c TRC}
+     {c |} {res}stratum   sexo   edad_cat        clase_2          NUTS1   survey2     n   m1_pro~k   m1_pro~l   m1_tot~o   m1_tot~i {txt}{c |}
+     {c LT}{hline 9}{c -}{hline 6}{c -}{hline 10}{c -}{hline 14}{c -}{hline 14}{c -}{hline 9}{c -}{hline 5}{c -}{hline 10}{c -}{hline 10}{c -}{hline 10}{c -}{hline 10}{c RT}
+  1. {c |} {res}  11151   Boys       6-11   Non-Manual W     North-East      Post   148          1   3.159486   2.204005   4.510083 {txt}{c |}
+  2. {c |} {res}  11111   Boys       6-11   Non-Manual W   Canary Islan      Post    26          2   4.208423   2.809457    6.25914 {txt}{c |}
+  3. {c |} {res}  11121   Boys       6-11   Non-Manual W         Centre      Post    91          3   4.541589   3.188457   6.430822 {txt}{c |}
+  4. {c |} {res}  11152   Boys       6-11   Non-Manual W     North-East       Pre   286          4   4.543199   3.278495   6.264175 {txt}{c |}
+  5. {c |} {res}  11141   Boys       6-11   Non-Manual W         Madrid      Post    87          5   4.848103   3.362441   6.943031 {txt}{c |}
+     {c BLC}{hline 9}{c -}{hline 6}{c -}{hline 10}{c -}{hline 14}{c -}{hline 14}{c -}{hline 9}{c -}{hline 5}{c -}{hline 10}{c -}{hline 10}{c -}{hline 10}{c -}{hline 10}{c BRC}
 
-{com}. list stratum  sexo edad_cat3 clase_2 urb_rur survey2 n m1_prob_total_rank m1_prob_total m1_total_lo m1_total_hi ///
+{com}. list stratum  sexo edad_cat clase_2 NUTS1 survey2 n m1_prob_total_rank m1_prob_total m1_total_lo m1_total_hi ///
 >         in -5/-1
 {txt}
-     {c TLC}{hline 9}{c -}{hline 8}{c -}{hline 10}{c -}{hline 14}{c -}{hline 12}{c -}{hline 9}{c -}{hline 5}{c -}{hline 10}{c -}{hline 10}{c -}{hline 10}{c -}{hline 10}{c TRC}
-     {c |} {res}stratum     sexo   edad_c~3        clase_2      urb_rur   survey2     n   m1_pro~k   m1_pro~l   m1_tot~o   m1_tot~i {txt}{c |}
-     {c LT}{hline 9}{c -}{hline 8}{c -}{hline 10}{c -}{hline 14}{c -}{hline 12}{c -}{hline 9}{c -}{hline 5}{c -}{hline 10}{c -}{hline 10}{c -}{hline 10}{c -}{hline 10}{c RT}
- 68. {c |} {res}  23221   Female      13-15   Manual Worke   Semi-urban      Post   157         68    23.4239   18.57581   29.08533 {txt}{c |}
- 69. {c |} {res}  23122   Female      13-15   Non-Manual W   Semi-urban       Pre   246         69   24.17674   19.59134    29.4424 {txt}{c |}
- 70. {c |} {res}  23231   Female      13-15   Manual Worke        Urban      Post   249         70   26.08607   21.30369   31.51213 {txt}{c |}
- 71. {c |} {res}  23222   Female      13-15   Manual Worke   Semi-urban       Pre   351         71   31.16492    26.2306   36.56733 {txt}{c |}
- 72. {c |} {res}  23232   Female      13-15   Manual Worke        Urban       Pre   503         72   31.64188   27.03463   36.64002 {txt}{c |}
-     {c BLC}{hline 9}{c -}{hline 8}{c -}{hline 10}{c -}{hline 14}{c -}{hline 12}{c -}{hline 9}{c -}{hline 5}{c -}{hline 10}{c -}{hline 10}{c -}{hline 10}{c -}{hline 10}{c BRC}
+     {c TLC}{hline 9}{c -}{hline 7}{c -}{hline 10}{c -}{hline 14}{c -}{hline 12}{c -}{hline 9}{c -}{hline 5}{c -}{hline 10}{c -}{hline 10}{c -}{hline 10}{c -}{hline 10}{c TRC}
+     {c |} {res}stratum    sexo   edad_cat        clase_2        NUTS1   survey2     n   m1_pro~k   m1_pro~l   m1_tot~o   m1_tot~i {txt}{c |}
+     {c LT}{hline 9}{c -}{hline 7}{c -}{hline 10}{c -}{hline 14}{c -}{hline 12}{c -}{hline 9}{c -}{hline 5}{c -}{hline 10}{c -}{hline 10}{c -}{hline 10}{c -}{hline 10}{c RT}
+108. {c |} {res}  22232   Girls      12-15   Manual Worke         East       Pre   276        108   27.37249   22.48784   32.86824 {txt}{c |}
+109. {c |} {res}  22262   Girls      12-15   Manual Worke   North-West       Pre   197        109   29.49854   23.94468   35.73531 {txt}{c |}
+110. {c |} {res}  22172   Girls      12-15   Non-Manual W        South       Pre   197        110   30.58684   25.10003    36.6856 {txt}{c |}
+111. {c |} {res}  22271   Girls      12-15   Manual Worke        South      Post   170        111   35.46339   29.38517   42.05019 {txt}{c |}
+112. {c |} {res}  22272   Girls      12-15   Manual Worke        South       Pre   341        112   36.34636   30.98874   42.06564 {txt}{c |}
+     {c BLC}{hline 9}{c -}{hline 7}{c -}{hline 10}{c -}{hline 14}{c -}{hline 12}{c -}{hline 9}{c -}{hline 5}{c -}{hline 10}{c -}{hline 10}{c -}{hline 10}{c -}{hline 10}{c BRC}
+
+{com}.         
+. save "strata3_predicted_probabilities.dta", replace
+{txt}{p 0 4 2}
+file {bf}
+strata3_predicted_probabilities.dta{rm}
+saved
+{p_end}
 
 {com}. 
 . **# Figure 3 - Residual Effects
@@ -728,7 +759,7 @@ format
 {com}. 
 . * Replaces each observation in the dataset with 1000 copies of the observation
 . expand 1000
-{txt}(71,928 observations created)
+{txt}(111,888 observations created)
 
 {com}. // We do this as for this plot we follow a simulation-based approach to 
 . // calculating the limits of the approximate 95% confidence intervals of our 
@@ -772,9 +803,22 @@ format
 . * ── SAVE original data with stratum-level vars BEFORE collapsing ──
 . preserve
 {txt}
+{com}. keep stratum sexo edad_cat clase_2 NUTS1 survey2
+{txt}
+{com}. save "stratum_lookup.dta", replace
+{txt}{p 0 4 2}
+file {bf}
+stratum_lookup.dta{rm}
+saved
+{p_end}
+
+{com}. restore
+{txt}
 {com}. 
 . * Convert the data into a stratum-level dataset
-. collapse (mean) m1_diff, by(stratum m1_diff_lo m1_diff_hi)
+. collapse (mean) m1_diff m1_diff_lo m1_diff_hi ///
+>          (first) sexo edad_cat clase_2 NUTS1 survey2, ///
+>          by(stratum)
 {res}{txt}
 {com}. 
 . * Rank the predicted stratum percentage differences
@@ -782,10 +826,10 @@ format
 {txt}
 {com}. 
 . * Save stratum-level results
-. save "strata2.dta", replace
+. save "strata3.dta", replace
 {txt}{p 0 4 2}
 file {bf}
-strata2.dta{rm}
+strata3.dta{rm}
 saved
 {p_end}
 
@@ -798,7 +842,7 @@ saved
 >         (rspike m1_diff_hi m1_diff_lo m1_diff_rank, lcolor(gs4)) ///
 >         (scatter m1_diff m1_diff_rank, mcolor(black) msymbol(smcircle)) ///
 >         (scatter lab_y m1_diff_rank, msymbol(none) ///
->         mlabel(stratum) mlabsize(*0.8) mlabcolor(black) ///
+>         mlabel(stratum) mlabsize(*1) mlabcolor(black) ///
 >     mlabangle(90) mlabposition(12) mlabgap(*1)) ///)
 >         , ///
 >         ytitle("Difference in Predicted Percent" ///
@@ -807,7 +851,7 @@ saved
 >         yline(-10 -5 5 10 15, lcolor(gray)) ///
 >         ylabel(-10(5)15, angle(horizontal) labsize(*1.5)) ///
 >         xtitle("Stratum rank", size(*1.5)) ///
->         xlabel(0(12)72, labsize(*1.5)) ///
+>         xlabel(0(12)112, labsize(*1.5)) ///
 >         legend(off) ///
 >         scheme(s1mono) ///
 >         name(Figure3C, replace) ///
@@ -827,52 +871,15 @@ format
 {com}. 
 . * ── RESTORE original data and merge in the new stratum-level vars ──
 . restore
-{txt}
-{com}. 
-. * Merge in the stratum-level results
-. merge m:1 stratum using "strata2.dta"
-{res}{txt}(label {bf:{txt}stratum} already defined)
+{err}nothing to restore
+{txt}{search r(622), local:r(622);}
 
-{col 5}Result{col 33}Number of obs
-{col 5}{hline 41}
-{col 5}Not matched{col 30}{res}               0
-{txt}{col 5}Matched{col 30}{res}          72,000{txt}  (_merge==3)
-{col 5}{hline 41}
+end of do-file
 
-{com}. drop _merge
-{txt}
-{com}. 
-. * Generate list of 5 highest/lowest residual effects strata
-. 
-. sort m1_diff_rank
-{txt}
-{com}. list stratum sexo edad_cat3 clase_2 urb_rur survey2 n m1_diff_rank m1_diff m1_diff_lo m1_diff_hi in f/5
-{txt}
-     {c TLC}{hline 9}{c -}{hline 8}{c -}{hline 10}{c -}{hline 14}{c -}{hline 9}{c -}{hline 9}{c -}{hline 5}{c -}{hline 10}{c -}{hline 11}{c -}{hline 11}{c -}{hline 10}{c TRC}
-     {c |} {res}stratum     sexo   edad_c~3        clase_2   urb_rur   survey2     n   m1_dif~k     m1_diff   m1_diff~o   m1_dif~i {txt}{c |}
-     {c LT}{hline 9}{c -}{hline 8}{c -}{hline 10}{c -}{hline 14}{c -}{hline 9}{c -}{hline 9}{c -}{hline 5}{c -}{hline 10}{c -}{hline 11}{c -}{hline 11}{c -}{hline 10}{c RT}
-  1. {c |} {res}  21132   Female        6-9   Non-Manual W     Urban       Pre   514          1   -3.691597   -4.989115   .4280205 {txt}{c |}
-  2. {c |} {res}  21132   Female        6-9   Non-Manual W     Urban       Pre   514          1   -2.822013   -4.989115   .4280205 {txt}{c |}
-  3. {c |} {res}  21132   Female        6-9   Non-Manual W     Urban       Pre   514          1   -3.051135   -4.989115   .4280205 {txt}{c |}
-  4. {c |} {res}  21132   Female        6-9   Non-Manual W     Urban       Pre   514          1   -2.843754   -4.989115   .4280205 {txt}{c |}
-  5. {c |} {res}  21132   Female        6-9   Non-Manual W     Urban       Pre   514          1     .811718   -4.989115   .4280205 {txt}{c |}
-     {c BLC}{hline 9}{c -}{hline 8}{c -}{hline 10}{c -}{hline 14}{c -}{hline 9}{c -}{hline 9}{c -}{hline 5}{c -}{hline 10}{c -}{hline 11}{c -}{hline 11}{c -}{hline 10}{c BRC}
+{search r(622), local:r(622);}
 
-{com}. list stratum sexo edad_cat3 clase_2 urb_rur survey2 n m1_diff_rank m1_diff m1_diff_lo m1_diff_hi ///
->         in -5/-1
-{txt}
-       {c TLC}{hline 9}{c -}{hline 8}{c -}{hline 10}{c -}{hline 14}{c -}{hline 12}{c -}{hline 9}{c -}{hline 5}{c -}{hline 10}{c -}{hline 11}{c -}{hline 11}{c -}{hline 10}{c TRC}
-       {c |} {res}stratum     sexo   edad_c~3        clase_2      urb_rur   survey2     n   m1_dif~k     m1_diff   m1_diff~o   m1_dif~i {txt}{c |}
-       {c LT}{hline 9}{c -}{hline 8}{c -}{hline 10}{c -}{hline 14}{c -}{hline 12}{c -}{hline 9}{c -}{hline 5}{c -}{hline 10}{c -}{hline 11}{c -}{hline 11}{c -}{hline 10}{c RT}
-71996. {c |} {res}  23122   Female      13-15   Non-Manual W   Semi-urban       Pre   246         72    4.478016   -.7405663   9.239945 {txt}{c |}
-71997. {c |} {res}  23122   Female      13-15   Non-Manual W   Semi-urban       Pre   246         72    3.193956   -.7405663   9.239945 {txt}{c |}
-71998. {c |} {res}  23122   Female      13-15   Non-Manual W   Semi-urban       Pre   246         72   -.2015305   -.7405663   9.239945 {txt}{c |}
-71999. {c |} {res}  23122   Female      13-15   Non-Manual W   Semi-urban       Pre   246         72    5.583233   -.7405663   9.239945 {txt}{c |}
-72000. {c |} {res}  23122   Female      13-15   Non-Manual W   Semi-urban       Pre   246         72    2.353325   -.7405663   9.239945 {txt}{c |}
-       {c BLC}{hline 9}{c -}{hline 8}{c -}{hline 10}{c -}{hline 14}{c -}{hline 12}{c -}{hline 9}{c -}{hline 5}{c -}{hline 10}{c -}{hline 11}{c -}{hline 11}{c -}{hline 10}{c BRC}
+{com}. .0934837*100
+{err}invalid syntax
+{txt}{search r(198), local:r(198);}
 
-{com}.         
-. **# Close log file
-. capture log close
-{smcl}
-{com}{sf}{ul off}
+{com}. exit, clear
