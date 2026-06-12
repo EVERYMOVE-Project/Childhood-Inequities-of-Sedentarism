@@ -21,7 +21,6 @@ loadfonts(device = "win")
 ## Load data ----
 dt <- get(load("joined_6.RData")) ## 6 to 15 without dropping NAs
 dt_clean <- get(load("joined_clean_rii.RData")) ## 6 to 15 dropping NAs 
-maihda <- get(load("joined_clean_maihda.RData")) # maihda data for descriptive
 
 #### Baseline Characteristics without Survey Weights ####
 ## 6 to 15 with NAs
