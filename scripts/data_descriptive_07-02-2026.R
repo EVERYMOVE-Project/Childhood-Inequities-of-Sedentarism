@@ -2,7 +2,7 @@
 ## Project: Childhood Inequities of Sedentarism
 ## Script: Data Descriptive INE
 ## Finalized: July 24 2025
-## Edited: February 7 2026
+## Edited: July 20 2026
 
 ## Load libraries ----
 library(tidyverse)
@@ -68,7 +68,7 @@ tbl_summary(
   statistic = list(
     all_categorical() ~ "{n} ({p}%)"
   ),
-  digits = list(all_continuous() ~ 1)
+  digits = list(all_categorical() ~ 2)
 ) %>%
   add_n() %>%
   bold_labels() %>%
@@ -946,11 +946,12 @@ fig_desc_sedentarism_sex <- prevalences_spain %>%
     fill = sexo
   )) +
   geom_line(linewidth = 0.75) +
-  geom_ribbon(alpha = 0.3) +
+  geom_point(size = 1, color = "black") +
+  geom_ribbon(alpha = 0.25) +
   geom_text_repel(
     aes(label = prevalence_label, family = "Times New Roman"),
     size = 4,         # Adjust for readability
-    nudge_y = 1,
+    nudge_y = 0.75,
     max.overlaps = Inf,
     show.legend =  FALSE,
     fontface = "bold",
@@ -959,7 +960,7 @@ fig_desc_sedentarism_sex <- prevalences_spain %>%
   scale_y_continuous(
     expand = c(0, 0),
     breaks = seq(10, 40, by = 10),
-    limits = c(0, 40)
+    limits = c(0, 35)
   ) +
   scale_x_continuous(
     breaks = c(2003, 2006, 2011, 2017, 2023),
@@ -967,22 +968,22 @@ fig_desc_sedentarism_sex <- prevalences_spain %>%
   ) +
   scale_color_manual(
     values = c(
+      "Overall" = "#4BAE48",
       "Girls"   = "#317AB6",
-      "Boys"    = "#E41E20",
-      "Overall" = "#4BAE48"
+      "Boys"    = "#E41E20"
     )
   ) +
   scale_fill_manual(
     values = c(
+      "Overall" = "#4BAE48",
       "Girls"   = "#317AB6",
-      "Boys"    = "#E41E20",
-      "Overall" = "#4BAE48"
+      "Boys"    = "#E41E20"
     )
     ) +
   labs(
-    title = "Prevalence of Sedentarism Over Time by Sex",
+    title = "Prevalence of sedentarism from 2003-2023 by sex and overall",
     x = NULL,
-    y = "Prevalence (%) (95% CI)",
+    y = "Prevalence (95% CI)",
     color = "Sex",
     fill = "Sex"
   ) +
@@ -1304,3 +1305,13 @@ fig_desc_sedentarism_class_sex3 <- prevalence_class3 %>%
   theme(text = element_text(family = "Times New Roman"))
 fig_desc_sedentarism_class_sex3
 ggsave("Figures/prevalence/fig_desc_sedentarism_class_sex3.png", width = 4000, height = 2200, dpi=300, units = "px")
+
+#### Table to see quick prevalence ----
+dt_clean %>%
+  filter(sexo == "Male") %>%
+  filter(survey == "2023") %>% 
+  group_by(clase) %>%
+  summarise(
+    prevalence = mean(sedentarismo == 1) * 100,
+    n = n()
+  )

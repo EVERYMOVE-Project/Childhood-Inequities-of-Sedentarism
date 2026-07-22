@@ -2,7 +2,7 @@
 ## Project: Childhood Inequities of Sedentarism
 ## Script: MAIHDA Data analysis
 ## Finalized: March 10 2026
-## Edited: April 16 2026
+## Edited: July 22 2026
 
 # Load libraries----
 library(haven)
@@ -116,19 +116,14 @@ dt <- dt %>%
                       "Girls" = "Female")
   )
 
-maihda <- dt %>% 
-  select(factor2, sexo, edad_cat3, clase_2, survey, survey2, sedentarismo, urb_rur)
-
-maihda$survey <- factor(maihda$survey)
-
 maihda2 <- dt %>% 
   select(factor2, sexo, edad_cat, clase_2, survey, survey2, sedentarismo, urb_rur, NUTS1)
 
-save(maihda, file = "maihda.RData")
+maihda$survey <- factor(maihda$survey)
+
 save(maihda2, file = "maihda2.RData")
 
 # Load data ----
-dt <- get(load("maihda.RData"))
 dt <- get(load("maihda2.RData"))
 
 # Generate stratum ----
@@ -137,58 +132,23 @@ levels(dt$sexo)
 levels(dt$edad_cat3)
 levels(dt$edad_cat)
 levels(dt$clase_2)
-levels(dt$urb_rur)
 levels(dt$survey2)
 levels(dt$NUTS1)
 dt$NUTS1 <- relevel(dt$NUTS1, ref = "North-East")
 
-# STRATUM 1
-## sexo:     1 = Male, 2 = Female
-## edad_cat3:1 = 6-9, 2 = 10-12, 3 = 13-15
-## clase_2:  1 = Non-manual workers, Manual workers 
-## urb_rur:  1 = Rural, 2 = Semi-Urban, 3 = Urban
-## survey2:   1 = Post, 2 = Pre
-
-# STRATUM 2
-## sexo:     1 = Male, 2 = Female
-## edad_cat: 1 = 6-11, 2 = 12-15
-## clase_2:  1 = Non-manual workers, Manual workers 
-## urb_rur:  1 = Rural, 2 = Semi-Urban, 3 = Urban
-## survey2:  1 = Post, 2 = Pre
-
-# STRATUM 3
+# STRATUM 
 ## sexo:     1 = Male, 2 = Female
 ## edad_cat: 1 = 6-11, 2 = 12-15
 ## clase_2:  1 = Non-manual workers, Manual workers 
 ## NUTS1:    1 = Canary Islands, 2 = Centre, 3 = East, 4 = Madrid, 5 = North-East, 6 = North-West, 7 = South
 ## survey2:  1 = Post, 2 = Pre
-
-# STRATUM 4
-## sexo:     1 = Male, 2 = Female
-## edad_cat: 1 = 6-11, 2 = 12-15
-## clase_2:  1 = Non-manual workers, Manual workers 
-## NUTS1:    1 = Canary Islands, 2 = Centre, 3 = East, 4 = Madrid, 5 = North-East, 6 = North-West, 7 = South
 
 ## Need numeric type to create stratum ID
-# STRATA 1
-dt <- dt %>%
-  mutate(
-    sexo_num = as.numeric(sexo),
-    edad_cat3_num = as.numeric(edad_cat3),
-    clase_2_num = as.numeric(clase_2),
-    urb_rur_num = as.numeric(urb_rur),
-    survey_num = as.numeric(survey),
-    survey2_num = as.numeric(survey2),
-    sedentarismo2 = as.numeric(sedentarismo)
-  )
-
-# STRATA 2, 3, 4
 dt <- dt %>%
   mutate(
     sexo_num = as.numeric(sexo),
     edad_cat_num = as.numeric(edad_cat),
     clase_2_num = as.numeric(clase_2),
-    urb_rur_num = as.numeric(urb_rur),
     survey_num = as.numeric(survey),
     survey2_num = as.numeric(survey2),
     NUTS1_num = as.numeric(NUTS1),
@@ -198,43 +158,13 @@ dt <- dt %>%
 # Convert 1/2 to 0/1
 dt$sedentarismo2 <- dt$sedentarismo2 - 1
 
-# STRATUM 1
-## create new database with variables needed to construct stratum
-dt <- dt %>% 
-  mutate(
-    stratum = 10000*sexo_num + 1000*edad_cat3_num + 100*clase_2_num + 10*urb_rur_num + survey2_num
-  )
-
-dt_maihda <- dt %>% 
-  select(id, stratum, sedentarismo, sedentarismo2, sexo, edad_cat3, clase_2, urb_rur, survey2) %>% 
-  group_by(stratum)
-
-save(dt_maihda, file = "dt_maihda.RData")
-write_dta(dt_maihda, "dt_maihda.dta")
-
-# STRATUM 2
-## create new database with variables needed to construct stratum
-dt <- dt %>% 
-  mutate(
-    stratum2 = 10000*sexo_num + 1000*edad_cat_num + 100*clase_2_num + 10*urb_rur_num + survey2_num
-  )
-dt$stratum2 <- as.factor(dt$stratum2)
-
-# STRATUM 3
+# STRATUM
 ## create new database with variables needed to construct stratum
 dt <- dt %>% 
   mutate(
     stratum3 = 10000*sexo_num + 1000*edad_cat_num + 100*clase_2_num + 10*NUTS1_num + survey2_num
   )
 dt$stratum3 <- as.factor(dt$stratum3)
-
-# STRATUM 4
-## create new database with variables needed to construct stratum
-dt <- dt %>% 
-  mutate(
-    stratum4 = 1000*sexo_num + 100*edad_cat_num + 10*clase_2_num + 1*NUTS1_num
-  )
-dt$stratum4 <- as.factor(dt$stratum4)
 
 # percent of sedentarism overall and per sex
 prop.table(table(dt$sedentarismo))*100
@@ -246,10 +176,7 @@ tab_round <- round(tab, 1)
 clipr::write_clip(tab_round)
 
 ## maihda database with stratum variable
-save(dt, file = "maihda_stratum.RData")
-save(dt, file = "maihda2_stratum.RData")
 save(dt, file = "maihda3_stratum.RData")
-save(dt, file = "maihda4_stratum.RData")
 
 ## Sort data by stratum
 dt <- dt[order(dt$stratum4),]
@@ -264,58 +191,20 @@ dt <- dt %>%
   mutate(strataN = n())
 
 # Fit model 0 ----
-model0 <- glmer(sedentarismo ~ (1|stratum), data = dt, family = "binomial")
-tab_model(model0, show.se=T)
-
 model0_3 <- glmer(sedentarismo ~ (1|stratum3), data = dt, family = "binomial")
 tab_model(model0_3, show.se=T)
 
-model0_4 <- glmer(sedentarismo ~ (1|stratum4), data = dt, family = "binomial")
-tab_model(model0_4, show.se=T)
-
 ## Calculate the VPC
 ## approximated as the variance(stratum)/variance(stratum + 3.29)
-tau2 <- as.numeric(VarCorr(model0)$stratum[1,1]) 
-tau2
-VPC0 <- tau2 / (tau2 + (pi^2 / 3)) 
-VPC0_percent <- VPC0*100
-
 tau2 <- as.numeric(VarCorr(model0_3)$stratum[1,1]) 
 VPC0 <- tau2 / (tau2 + (pi^2 / 3)) 
 VPC0_percent <- VPC0*100
 VPC0_percent
 
-# model0_4
-tau2 <- as.numeric(VarCorr(model0_4)$stratum[1,1]) 
-tau2
-VPC0 <- tau2 / (tau2 + (pi^2 / 3)) 
-VPC0
-VPC0_percent <- VPC0*100
-VPC0_percent
-
 # Fit model 1 ----
-# STRATA 1
-model1 <- glmer(sedentarismo ~ sexo + edad_cat3 + clase_2 + urb_rur + survey2 +
-                  (1|stratum), data = dt, family = "binomial")
-tab_model(model1, show.se=T)
-
-# STRATA 2
-model1 <- glmer(sedentarismo ~ sexo + edad_cat + clase_2 + urb_rur + survey2 +
-                  (1|stratum), data = dt, family = "binomial")
-tab_model(model1, show.se=T)
-
-# STRATA 3
+# STRATA
 model1 <- glmer(sedentarismo ~ sexo + edad_cat + clase_2 + NUTS1 + survey2 +
                   (1|stratum3), data = dt, family = "binomial")
-tab_model(model1, show.se=T)
-
-# STRATA 4
-model <- glmer(sedentarismo ~ sexo + edad_cat + clase_2 + NUTS1 + survey2 +
-                  (1|stratum4), data = dt, family = "binomial")
-tab_model(model, show.se=T)
-
-model1 <- glmer(sedentarismo ~ sexo + edad_cat + clase_2 + NUTS1 + survey2 +
-                 (survey2||stratum4), data = dt, family = "binomial")
 tab_model(model1, show.se=T)
 VarCorr(model1)
 
@@ -382,55 +271,6 @@ dt2 <- merge(dt2, m1_prob_fixed, by="id") %>%
 dt2 <- merge(dt2, m1_random, by="id") %>%
   rename(m1fit_random=fit, m1upr_random=upr, m1lwr_random=lwr)
 
-# STRATA 1
-# collapse to stratum level
-stratum_level1 <- dt2 %>% 
-  group_by(stratum) %>% 
-  summarise(
-    across(c(sexo, edad_cat3, clase_2, urb_rur, survey2), first), 
-    across(c(sedentarismo2, strataN, 
-             m0_prob_total, m0_prob_fixed,
-             m1_log_total, m1_log_total_upr, m1_log_total_lwr, 
-             m1_log_fixed, m1fit_fixed, m1upr_fixed, m1lwr_fixed,
-             m1fit_total, m1upr_total, m1lwr_total, 
-             m1fit_random, m1upr_random, m1lwr_random), mean)
-  )
-
-# convert to percentage
-stratum_level1 <- stratum_level1 %>%
-  mutate(across(
-    c(m0_prob_total, m0_prob_fixed, 
-      m1fit_fixed, m1upr_fixed, m1lwr_fixed, 
-      m1fit_total, m1upr_total, m1lwr_total,
-      m1fit_random, m1upr_random, m1lwr_random),
-    ~ .x * 100
-  ))
-
-# STRATA 2
-# collapse to stratum level
-stratum_level2 <- dt2 %>% 
-  group_by(stratum) %>% 
-  summarise(
-    across(c(sexo, edad_cat, clase_2, urb_rur, survey2), first), 
-    across(c(sedentarismo2, strataN, 
-             m0_prob_total, m0_prob_fixed,
-             m1_log_total, m1_log_total_upr, m1_log_total_lwr, 
-             m1_log_fixed, m1fit_fixed, m1upr_fixed, m1lwr_fixed,
-             m1fit_total, m1upr_total, m1lwr_total, 
-             m1fit_random, m1upr_random, m1lwr_random), mean)
-  )
-
-# convert to percentage
-stratum_level2 <- stratum_level2 %>%
-  mutate(across(
-    c(m0_prob_total, m0_prob_fixed, 
-      m1fit_fixed, m1upr_fixed, m1lwr_fixed, 
-      m1fit_total, m1upr_total, m1lwr_total,
-      m1fit_random, m1upr_random, m1lwr_random),
-    ~ .x * 100
-  ))
-
-# STRATA 3
 # collapse to stratum level
 stratum_level3 <- dt %>% 
   group_by(stratum3) %>% 
@@ -463,44 +303,19 @@ stratum_level3 <- stratum_level3 %>%
   ))
 
 # create variable to represent percentage of sedentarismo
-stratum_level2$sedentarismo2_p <- stratum_level2$sedentarismo2*100
+stratum_level3$sedentarismo2_p <- stratum_level3$sedentarismo2*100
 
 # predict the stratum random effects and associated standard errors
 m1SE <- REsim(model1)
 
-save(stratum_level1, file = "stratum_level1.RData")
-stratum_level <- get(load("stratum_level1.RData"))
-clipr::write_clip(stratum_level1)
-
-save(stratum_level2, file = "stratum_level2.RData")
-stratum_level <- get(load("stratum_level2.RData"))
-clipr::write_clip(stratum_level2)
-
 save(stratum_level3, file = "stratum_level3.RData")
+# reloaded/renamed to remove 3
 stratum_level <- get(load("stratum_level3.RData"))
 clipr::write_clip(stratum_level3)
 
 # Table 2 ----
 # Generate binary indicators for whether each stratum has more than X 
 # individuals
-summary(stratum_level$strataN)
-stratum_level$n550plus <- ifelse(stratum_level$strataN>=550, 1,0)
-stratum_level$n500plus <- ifelse(stratum_level$strataN>=500, 1,0)
-stratum_level$n450plus <- ifelse(stratum_level$strataN>=450, 1,0)
-stratum_level$n400plus <- ifelse(stratum_level$strataN>=400, 1,0)
-stratum_level$n350plus <- ifelse(stratum_level$strataN>=350, 1,0)
-stratum_level$n300plus <- ifelse(stratum_level$strataN>=300, 1,0)
-stratum_level$n250plus <- ifelse(stratum_level$strataN>=250, 1,0)
-stratum_level$n200plus <- ifelse(stratum_level$strataN>=200, 1,0)
-stratum_level$n175plus <- ifelse(stratum_level$strataN>=175, 1,0)
-stratum_level$n150plus <- ifelse(stratum_level$strataN>=150, 1,0)
-stratum_level$n100plus <- ifelse(stratum_level$strataN>=100, 1,0)
-stratum_level$n90plus <- ifelse(stratum_level$strataN>=90, 1,0)
-stratum_level$n80plus <- ifelse(stratum_level$strataN>=80, 1,0)
-stratum_level$n70plus <- ifelse(stratum_level$strataN>=70, 1,0)
-stratum_level$n60plus <- ifelse(stratum_level$strataN>=60, 1,0)
-stratum_level$n50plus <- ifelse(stratum_level$strataN>=50, 1,0)
-
 stratum_level3$n500plus <- ifelse(stratum_level3$strataN>=500, 1,0)
 stratum_level3$n450plus <- ifelse(stratum_level3$strataN>=450, 1,0)
 stratum_level3$n400plus <- ifelse(stratum_level3$strataN>=400, 1,0)
@@ -521,25 +336,7 @@ stratum_level3$n30plus <- ifelse(stratum_level3$strataN>=30, 1,0)
 stratum_level3$n20plus <- ifelse(stratum_level3$strataN>=20, 1,0)
 stratum_level3$n10plus <- ifelse(stratum_level3$strataN>=10, 1,0)
 
-
 # tabulate the binary indicators
-table(stratum_level$n550plus)
-table(stratum_level$n500plus)
-table(stratum_level$n450plus)
-table(stratum_level$n400plus)
-table(stratum_level$n350plus)
-table(stratum_level$n300plus)
-table(stratum_level$n250plus)
-table(stratum_level$n200plus)
-table(stratum_level$n175plus)
-table(stratum_level$n150plus)
-table(stratum_level$n100plus)
-table(stratum_level$n90plus)
-table(stratum_level$n80plus)
-table(stratum_level$n70plus)
-table(stratum_level$n60plus)
-table(stratum_level$n50plus)
-
 table(stratum_level3$n500plus)
 table(stratum_level3$n450plus)
 table(stratum_level3$n400plus)
@@ -560,9 +357,8 @@ table(stratum_level3$n30plus)
 table(stratum_level3$n20plus)
 table(stratum_level3$n10plus)
 
-
 # Observed stratum-level means (prevalence of sedentarism)
-observed_table <- dt %>%
+observed_table <- dt2 %>%
   group_by(stratum) %>% 
   summarise(
     n = n(),
@@ -572,57 +368,6 @@ observed_table <- dt %>%
   mutate(prevalence_pct = prevalence * 100)
 clipr::write_clip(observed_table)
 
-# Overall dataframe stratum_level
-stratum_level_pp <- dt2 %>%
-  group_by(
-    sexo, edad_cat3, urb_rur, clase_2, survey2,
-    stratum, strataN
-  ) %>%
-  summarise(
-    observed_prevalence = mean(sedentarismo2, na.rm = TRUE)*100,
-    
-    m1fit_total = mean(m1fit_total, na.rm = TRUE)*100,
-    m1upr_total = mean(m1upr_total, na.rm = TRUE)*100,
-    m1lwr_total = mean(m1lwr_total, na.rm = TRUE)*100,
-    
-    
-    m1fit_fixed      = mean(m1fit_fixed, na.rm = TRUE)*100,
-    m1upr_fixed      = mean(m1upr_fixed, na.rm = TRUE)*100,
-    m1lwr_fixed      = mean(m1lwr_fixed, na.rm = TRUE)*100,
-    
-    .groups = "drop"
-  ) %>% 
-  arrange(m1fit_total)
-
-# STRATA 2
-# Overall dataframe stratum_level
-stratum_level_pp <- dt2 %>%
-  group_by(
-    stratum, strataN, sexo, edad_cat, urb_rur, clase_2, survey2
-    
-  ) %>%
-  summarise(
-    observed_prevalence = mean(sedentarismo2, na.rm = TRUE)*100,
-    
-    m1fit_total = mean(m1fit_total, na.rm = TRUE)*100,
-    m1upr_total = mean(m1upr_total, na.rm = TRUE)*100,
-    m1lwr_total = mean(m1lwr_total, na.rm = TRUE)*100,
-    
-    
-    m1fit_fixed      = mean(m1fit_fixed, na.rm = TRUE)*100,
-    m1upr_fixed      = mean(m1upr_fixed, na.rm = TRUE)*100,
-    m1lwr_fixed      = mean(m1lwr_fixed, na.rm = TRUE)*100,
-    
-    .groups = "drop"
-  ) %>% 
-  arrange(m1fit_total)
-
-clipr::write_clip(stratum_level_pp)
-
-head(stratum_level_pp)
-tail(stratum_level_pp)
-
-# STRATA 3
 # Overall dataframe stratum_level
 stratum_level_pp <- dt2 %>%
   group_by(
@@ -945,17 +690,6 @@ stratum_level3 <- stratum_level3 %>%
 stratum_level3 <- stratum_level3 %>%
   mutate(rank2=rank(dif_mean))
 
-# STRATA 1
-# add stratum info
-stratum_info2 <- stratum_level %>%
-  distinct(stratum, sexo, edad_cat3, urb_rur, clase_2, survey2)
-
-# STRATA 2
-# add stratum info
-stratum_info2 <- stratum_level %>%
-  distinct(stratum, sexo, edad_cat, urb_rur, clase_2, survey2)
-
-# STRATA 3
 # add stratum info
 stratum_info2 <- stratum_level %>%
   distinct(stratum, sexo, edad_cat, NUTS1, clase_2, survey2)
@@ -1163,10 +897,6 @@ stata <- stata %>%
   group_by(stratum) %>%
   mutate(strataN = n())
 
-grand_mean <- weighted.mean(stata$m1_total_prob, stata$strataN
-
-bot_y <- max(stata$m1_total_lo) - 35
-
 ggplot(stata, aes(x = m1_prob_total_rank, y = m1_total_prob)) +
   geom_text(
     aes(
@@ -1294,219 +1024,3 @@ ggplot(stata, aes(x = m1_diff_rank, y = m1_diff)) +
   )
 
 ggsave("Figures/MAIHDA/caterpillarplot_re_s3_23-04-26.png", width = 4000, height = 2200, dpi=300, units = "px")
-
-# Figure 4 Clusters ----
-clust <- read_excel("STATA/clusters.xlsx")
-View(clust)
-
-## Clustering
-X <- clust %>% 
-  select(m1_total_prob, m1_total_lo, m1_total_hi)
-
-## Compute distance matrix and apply Ward hierarchical clustering
-dist_matrix <- dist(X, method = "euclidean")
-hc <- hclust(dist_matrix, method = "ward.D2")
-
-## Cut clusters 
-clust$cluster_raw <- cutree(hc, k = 4)
-
-## Re-label clusters by ascending mean predicted probability
-cluster_order <- clust %>% 
-  group_by(cluster_raw) %>%
-  summarise(mean_prob = mean(m1_total_prob)) %>%
-  arrange(mean_prob) %>%
-  mutate(cluster = row_number())
-
-View(cluster_order)
-
-clust <- clust %>% 
-  left_join(cluster_order %>% select(cluster_raw, cluster), by = "cluster_raw")
-
-cluster_labels <- c("1" = "Low",
-                    "2" = "Medium-Low",
-                    "3" = "Medium-High",
-                    "4" = "High")
-
-cluster_colors <- c("1" = "#2166ac",
-                    "2" = "#74add1",
-                    "3" = "#f4a582",
-                    "4" = "#d6604d")
-
-clust$cluster_label <- cluster_labels[as.character(clust$cluster)]
-clust$cluster_f     <- factor(clust$cluster)
-
-## Display labels
-# Short label: Sex Age Class Region Period
-clust <- clust %>%
-  mutate(
-    sex_s    = ifelse(sexo == "Boys", "B", "G"),
-    age_s    = ifelse(grepl("6", edad_cat), "6-11", "12-15"),
-    class_s  = ifelse(grepl("Non", clase_2), "NMW", "MW"),
-    region_s = recode(NUTS1,
-                      "Canary Islands" = "CI",
-                      "Centre"         = "Ctr",
-                      "East"           = "E",
-                      "Madrid"         = "Mad",
-                      "North-East"     = "NE",
-                      "North-West"     = "NW",
-                      "South"          = "S"),
-    label = paste(sex_s, age_s, class_s, region_s, survey2)
-  )
-
-# Sort by predicted probability (bottom to top in forest plot)
-clust <- clust %>% 
-  arrange(m1_total_prob) %>% 
-  mutate(y_pos = row_number())
-
-clust$label <- factor(clust$label, levels = clust$label)
-
-## Summary values of clusters
-cluster_summary <- clust %>%
-  group_by(cluster, cluster_label, cluster_f) %>%
-  summarise(
-    mean_prob = mean(m1_total_prob),
-    mean_lo   = mean(m1_total_lo),
-    mean_hi   = mean(m1_total_hi),
-    n         = n(),
-    y_min     = min(y_pos),
-    y_max     = max(y_pos),
-    .groups   = "drop"
-  )
-
-## Match label colour to cluster
-axis_labels <- setNames(clust$label, clust$y_pos)
-
-label_colors <- cluster_colors[as.character(clust$cluster)]
-
-## Grand mean
-grand_mean <- mean(clust$m1_total_prob)
-
-## Forest Plot
-p <- ggplot() +
-  
-  # background
-  geom_rect(
-    data = cluster_summary,
-    aes(
-      xmin = -Inf, xmax = Inf,
-      ymin = y_min - 0.5, ymax = y_max + 0.5,
-      fill = cluster_f
-    ),
-    inherit.aes = FALSE,
-    alpha = 0.06
-  ) +
-  
-  # cluster CI shaded band
-  geom_rect(
-    data = cluster_summary,
-    aes(
-      xmin = mean_lo, xmax = mean_hi,
-      ymin = y_min - 0.5, ymax = y_max + 0.5,
-      fill = cluster_f
-    ),
-    inherit.aes = FALSE,
-    alpha = 0.12
-  ) +
-  
-  # cluster mean dashed line
-  geom_segment(
-    data = cluster_summary,
-    aes(
-      x = mean_prob, xend = mean_prob,
-      y = y_min - 0.5, yend = y_max + 0.5,
-      color = cluster_f
-    ),
-    inherit.aes = FALSE,
-    linewidth = 0.9, linetype = "dashed", alpha = 0.75
-  ) +
-  
-  # grand mean reference line
-  geom_vline(xintercept = grand_mean,
-             linetype = "dotted", color = "black", linewidth = 0.7) +
-  
-  # CI error bars
-  geom_errorbarh(
-    data = clust,
-    aes(y = y_pos, xmin = m1_total_lo, xmax = m1_total_hi, 
-        color = cluster_f),
-    height = 0.3, linewidth = 0.55, alpha = 0.7
-  ) +
-  
-  # point estimates
-  geom_point(
-    data = clust, 
-    aes(x = m1_total_prob, y = y_pos, color = cluster_f),
-    size = 1.6, shape = 21, fill = "white", stroke = 0.8) +
-  
-  # cluster separator lines
-  geom_hline(
-    data = cluster_summary %>% filter(cluster < 4),
-    aes(yintercept = y_max + 0.5),
-    inherit.aes = FALSE,
-    color = "grey60", linewidth = 0.5, linetype = "dotted"
-  ) +
-  
-  # cluster annotations
-  geom_text(
-    data = cluster_summary,
-    aes(x = 42.5,
-        y = (y_min + y_max) / 2,
-        label = paste0(cluster_label, "\n(n=", n, ", mean=", round(mean_prob, 1), "%)"),
-        color = cluster_f),
-    hjust = 1, size = 2.7, fontface = "bold", lineheight = 1.1,
-    show.legend = TRUE
-  ) +
-  
-  # grand mean label
-  annotate("text",
-           x = grand_mean + 0.3, y = 0.5,
-           label = paste0("Grand mean\n", round(grand_mean, 1), "%"),
-           hjust = 0, size = 2.5, color = "grey40") +
-  
-  # scales
-  scale_color_manual(
-    values = cluster_colors,
-    labels = cluster_labels,
-    name   = "Cluster"
-  ) +
-  scale_fill_manual(
-    values = cluster_colors,
-    labels = cluster_labels,
-    name   = "Cluster"
-  ) +
-  scale_x_continuous(
-    limits = c(0, 44),
-    breaks = seq(0, 40, by = 5),
-    expand = c(0, 0)
-  ) +
-  
-  # labels
-  labs(
-    title    = "Predicted Probabilities of Sedentarism by Stratum",
-    subtitle = "Colour-coded by sedentarism cluster (Hierarchical clustering, Ward, k=4)",
-    x        = "Predicted Probability (%)",
-    y        = NULL
-  ) +
-  
-  # theme
-  theme_minimal(base_size = 9) +
-  theme(
-    plot.title        = element_text(face = "bold", size = 11),
-    plot.subtitle     = element_text(size = 8.5, color = "grey40"),
-    axis.text.y       = element_text(size = 6.2, family = "mono",
-                                     color = label_colors),
-    axis.text.x       = element_text(size = 8),
-    panel.grid.major.y = element_blank(),
-    panel.grid.minor   = element_blank(),
-    panel.grid.major.x = element_line(color = "grey88", linewidth = 0.4),
-    legend.position   = "bottom",
-    legend.title      = element_text(face = "bold", size = 8),
-    legend.text       = element_text(size = 8),
-    plot.margin       = margin(10, 15, 10, 10)
-  )
-
-p
-
-## Save
-ggsave("STATA/forest_plot_clusters.png", plot = p,
-       width = 13, height = 28, units = "in", dpi = 180, bg = "white")
