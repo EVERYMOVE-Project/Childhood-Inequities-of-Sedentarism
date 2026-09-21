@@ -122,11 +122,9 @@ maihda2 <- dt %>%
 maihda$survey <- factor(maihda$survey)
 
 save(maihda2, file = "maihda2.RData")
-
-# Load data ----
+# Generate stratum ----
 dt <- get(load("maihda2.RData"))
 
-# Generate stratum ----
 ## Generate stratum ID
 levels(dt$sexo)
 levels(dt$edad_cat3)
