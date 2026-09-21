@@ -865,7 +865,13 @@ tail(stratum_level3)
 
 ### Figures for Stata ----
 
-## load data from Stata
+## database for Stata
+
+dt_stata3 <- dt %>% 
+  select(-m0_prob_total, -m0_prob_fixed, -m1_log_total, -m1_log_total_upr, m1_log_total_lwr, m1_log_fixed, id)
+write_dta(dt_stata3, "dt_stata3.dta")
+
+## load clean data
 stata <- read_excel("stata_strata3.xlsx")
 
 stata <- stata %>%
