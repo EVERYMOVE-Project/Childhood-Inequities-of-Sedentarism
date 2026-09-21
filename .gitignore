@@ -3,3 +3,45 @@
 .RData
 .Ruserdata
 .RDataTmp*
+
+# =========================
+# Folders to keep private
+# =========================
+
+Archive RData/
+Datasets/
+Luis/
+Old databases/
+Reports/
+Resources/
+STATA/
+Figures/
+
+# Archive folder inside scripts
+Scripts/Archive/
+Tables/Archive/
+Tables/Prevalence+RII/Archive/
+Scripts/data_graphs_ministerio.R/
+
+# =========================
+# Project-specific files
+# =========================
+
+dt_maihda.RData
+dt_maihda.dta
+dt_strata1.RData
+dt_strata1.dta
+ine_municipios.RData
+ine_municipios.xlsx
+joined_clean_maihda.RData
+maihda.RData
+maihda2.RData
+maihda2_stratum.RData
+maihda3_stratum.RData
+maihda4_stratum.Rdata
+maihda_stratum.RData
+map_ccaa.qgz
+stata_strata3.xlsx
+stratum_level.RData
+stratum_level2.RData
+stratum_level3.RData
