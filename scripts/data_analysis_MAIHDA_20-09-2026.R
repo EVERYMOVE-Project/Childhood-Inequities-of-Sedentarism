@@ -89,6 +89,7 @@ table1_sed <- dt %>%
 table1_sed
 
 # Inflection Point ----
+## load data
 rii_sedentarism_overall_clase <- get(load("~/UAH/PhD Documents/INEdatos/Analysis/Datasets/clase_tr/rii_sedentarism_overall_clase.RData"))
 rii_sedentarism_overall_clase$encuesta <- as.numeric(rii_sedentarism_overall_clase$encuesta)
 
